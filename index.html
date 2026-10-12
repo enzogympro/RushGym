@@ -290,6 +290,25 @@ a.btn{text-decoration:none}
 label.btn{cursor:pointer}
 .meter i.indet{width:40%;background:var(--accent);animation:ind 1.1s ease-in-out infinite alternate}
 @keyframes ind{from{transform:translateX(-10%)}to{transform:translateX(160%)}}
+
+/* accent themes */
+:root[data-accent="rouge"]{--accent:#FF3B4E;--on-accent:#FFFFFF;--accent-ink:#FF7D88;--b1:rgba(255,59,78,.52);--b2:rgba(255,130,60,.30)}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"])[data-accent="rouge"]{--accent-ink:#B8122A}}
+:root[data-theme="light"][data-accent="rouge"]{--accent-ink:#B8122A}
+:root[data-accent="vert"]{--accent:#2FD573;--on-accent:#05200F;--accent-ink:#5BE596;--b1:rgba(47,213,115,.42);--b2:rgba(30,190,200,.30)}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"])[data-accent="vert"]{--accent-ink:#0B7A3B}}
+:root[data-theme="light"][data-accent="vert"]{--accent-ink:#0B7A3B}
+:root[data-accent="bleu"]{--accent:#2F7BFF;--on-accent:#FFFFFF;--accent-ink:#7AAAFF;--b1:rgba(47,123,255,.52);--b2:rgba(130,90,255,.34)}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"])[data-accent="bleu"]{--accent-ink:#1450C8}}
+:root[data-theme="light"][data-accent="bleu"]{--accent-ink:#1450C8}
+:root[data-accent="rose"]{--accent:#FF4FA3;--on-accent:#FFFFFF;--accent-ink:#FF8CC3;--b1:rgba(255,79,163,.48);--b2:rgba(190,90,255,.32)}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"])[data-accent="rose"]{--accent-ink:#B81468}}
+:root[data-theme="light"][data-accent="rose"]{--accent-ink:#B81468}
+.accents{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.acc{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
+.acc i{width:44px;height:44px;border-radius:50%;background:var(--c);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 14px -6px var(--c);border:3px solid transparent;outline:1px solid var(--edge)}
+.acc.on i{border-color:var(--fg)}
+.acc.on{color:var(--fg)}
 /* diet */
 .ringwrap{display:flex;align-items:center;gap:16px}
 .ring{width:132px;height:132px;flex:none;position:relative}
@@ -334,6 +353,33 @@ label.btn{cursor:pointer}
 <div id="sheet" hidden></div>
 <div id="toast" role="status"></div>
 
+<script>
+/* RushGym access gate: personal codes, revocable by removing a line below and re-uploading index.html */
+(function(){
+var ACCESS={"4cqir2": {"name": "Sandric", "owner": false}, "1xu5ebw": {"name": "Elena", "owner": false}, "m6mi9x": {"name": "Enzo", "owner": true}};
+var K="rushgym-access",DATA="carnet-de-fonte-v1";
+function h(c){var x=2166136261,s="rushgym:"+c;for(var i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,16777619);}return (x>>>0).toString(36);}
+function norm(c){return String(c||"").toUpperCase().replace(/[\s\u2010-\u2015_]+/g,"-").replace(/^-+|-+$/g,"").replace(/-+/g,"-");}
+function get(){try{return JSON.parse(localStorage.getItem(K)||"null");}catch(e){return null;}}
+function set(v){try{localStorage.setItem(K,JSON.stringify(v));}catch(e){}}
+window.RG_GATE=function(){try{var dd=JSON.parse(localStorage.getItem(DATA)||"null");if(dd&&dd.profile&&dd.profile.accent&&dd.profile.accent!=="orange")document.documentElement.setAttribute("data-accent",dd.profile.accent);}catch(e){}
+  var a=get();
+  if(!a){try{var d=JSON.parse(localStorage.getItem(DATA)||"null");if(d&&d.profile){a={who:"owner"};set(a);}}catch(e){}}
+  if(a&&a.who==="owner")return true;
+  if(a&&a.h&&ACCESS[a.h]){window.RG_NAME=ACCESS[a.h].name;return true;}
+  draw(a&&a.h?"Ton accès à RushGym a été retiré. Demande un nouveau code à Enzo.":"");return false;};
+function draw(msg){
+  var tabs=document.getElementById("tabs");if(tabs)tabs.hidden=true;
+  var app=document.getElementById("app");
+  app.innerHTML='<div class="ob" style="padding-top:8vh"><div class="obhero">'+(window.RG_LOGO||"")+'<h1 class="word" style="font-size:38px">Rush<b>Gym</b></h1><p class="muted">Version de test privée. Entre le code personnel qu\'Enzo t\'a donné.</p></div><section class="glass card stack"><label class="lab">Code d\'accès<input class="inp" id="rgcode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="PRÉNOM-XXXX" style="font-size:18px;letter-spacing:.06em;text-transform:uppercase"></label><p class="sm" id="rgmsg" style="color:var(--hot);font-weight:600">'+msg+'</p><button class="btn" id="rggo">Entrer</button></section></div>';
+  function go(){var c=norm(document.getElementById("rgcode").value),k=h(c);
+    if(ACCESS[k]){set(ACCESS[k].owner?{who:"owner"}:{h:k});location.reload();}
+    else document.getElementById("rgmsg").textContent="Ce code ne marche pas. Vérifie-le avec Enzo.";}
+  document.getElementById("rggo").onclick=go;
+  document.getElementById("rgcode").onkeydown=function(e){if(e.key==="Enter")go();};
+}
+})();
+</script>
 <script>
 (function(){
 "use strict";
@@ -965,7 +1011,7 @@ function profForm(p,step){
 function vOnboard(){
   var O=S.ob,p=O.p,st=O.step,h='<div class="ob">';
   h+='<div class="obdots">'+[0,1,2,3,4,5].map(function(i){return '<i class="'+(i<=st?"on":"")+'"></i>';}).join("")+'</div>';
-  if(st===0)h+='<div class="obhero">'+LOGO.replace('class="logo"','class="logo big"')+'<h1 class="word" style="font-size:38px">Rush<b>Gym</b></h1><p class="muted">Crée ton profil en une minute : on règle tes objectifs, ta diète et ton rang de départ.</p></div><section class="glass card stack"><label class="lab">Ton prénom<input class="inp" id="pf-name" data-p="name" value="'+esc(p.name)+'" placeholder="Enzo" autocomplete="given-name"></label></section>';
+  if(st===0)h+='<div class="obhero">'+LOGO.replace('class="logo"','class="logo big"')+'<h1 class="word" style="font-size:38px">Rush<b>Gym</b></h1><p class="muted">Crée ton profil en une minute : on règle tes objectifs, ta diète et ton rang de départ.</p></div><section class="glass card stack"><label class="lab">Ton prénom<input class="inp" id="pf-name" data-p="name" value="'+esc(p.name)+'" placeholder="Enzo" autocomplete="given-name"></label>'+accentPicker(p.accent)+'</section>';
   else if(st>=1&&st<=3)h+='<h2 class="obt">'+["","Parle-nous de toi","Ton objectif","Tes goûts"][st]+'</h2><section class="glass card stack">'+profForm(p,st)+'</section>';
   else if(st===4)h+='<h2 class="obt">Ta Whoop</h2><p class="muted sm">RushGym lit ta récupération, ton sommeil et ton effort du jour pour te dire si tu peux taper lourd.</p>'+(p.whoop?whoopCard():'<section class="glass card stack"><button class="btn" data-a="ob-whoop">Connecter ma Whoop</button><p class="xs muted">Le connecteur Whoop de ton compte claude.ai est utilisé. Rien n\'est modifié côté Whoop.</p></section>');
   else{var T=calcTargets(p);h+='<div class="obhero">'+badge(0,0,120)+'<h2 class="obt" style="text-align:center">Bienvenue, '+esc(p.name)+'</h2><p class="muted" style="text-align:center">Tu commences au rang <b>Cuivre III</b>. Chaque séance, chaque record et chaque quête te font monter jusqu\'à Légende.</p></div>';
@@ -974,7 +1020,7 @@ function vOnboard(){
   return h;}
 function vProfile(){
   var p=S.pedit,h='<div class="shead glass"><button class="back" data-a="prof-close" aria-label="Retour">‹</button><h2>Mon profil</h2></div>';
-  h+='<section class="glass card stack"><label class="lab">Prénom<input class="inp" id="pf-name" data-p="name" value="'+esc(p.name)+'"></label>'+profForm(p,null)+'</section>';
+  h+='<section class="glass card stack"><label class="lab">Prénom<input class="inp" id="pf-name" data-p="name" value="'+esc(p.name)+'"></label>'+accentPicker(p.accent)+profForm(p,null)+'</section>';
   h+=whoopCard();
   h+='<div class="stack"><button class="btn" data-a="prof-save">Enregistrer</button><p class="xs muted" style="text-align:center">Enregistrer recalcule tes objectifs diète à partir de ton profil.</p></div>';
   return h;}
@@ -986,7 +1032,7 @@ function saveProfile(p){
   var prevW=S.profile&&num(S.profile.weight);S.profile=clone(p);S.profile.name=String(p.name||"").trim();put("profil");
   var w=num(p.weight);if(w>0&&w!==prevW){S.poids.entries=S.poids.entries||{};S.poids.entries[ymd(new Date())]=Math.round(w*10)/10;put("poids");}
   var T=calcTargets(p);if(T){S.diet.targets=T;put("diete");}}
-function afterLoad(){if(!S.profile&&S.view==="tabs"){S.view="onboard";S.ob={step:0,p:{name:"",sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false}};render();}
+function afterLoad(){if(!S.profile&&S.view==="tabs"){S.view="onboard";S.ob={step:0,p:{name:(window.RG_NAME||""),sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"}};render();}
   else if(S.profile&&S.profile.whoop&&WH.state==="off")whoopFetch(false);}
 
 /* ---------- gym photo proof ---------- */
@@ -1069,7 +1115,12 @@ async function handlePhoto(file){
   }catch(e){PH={state:"err",msg:"La photo n'a pas pu être traitée. Réessaie."};renderProof();}
 }
 
+var ACCENTS=[["orange","Orange","#FF9F0A"],["rouge","Rouge","#FF3B4E"],["vert","Vert","#2FD573"],["bleu","Bleu","#2F7BFF"],["rose","Rose","#FF4FA3"]];
+function accentPicker(cur){return '<div class="stack" style="gap:8px"><p class="eyebrow">Couleur de l\'appli</p><div class="accents">'+ACCENTS.map(function(a){return '<button class="acc'+((cur||"orange")===a[0]?" on":"")+'" data-a="pset" data-k="accent" data-v="'+a[0]+'" style="--c:'+a[2]+'"><i></i>'+a[1]+'</button>';}).join("")+'</div></div>';}
+function applyAccent(){var a=S.view==="onboard"&&S.ob?S.ob.p.accent:S.view==="profile"&&S.pedit?S.pedit.accent:(S.profile&&S.profile.accent);
+  var r=document.documentElement;if(a&&a!=="orange")r.setAttribute("data-accent",a);else r.removeAttribute("data-accent");}
 function render(){
+  applyAccent();
   var app=document.getElementById("app"),insess=S.view!=="tabs";
   app.className=S.view==="session"?"insession":"";
   document.getElementById("tabs").hidden=insess;
@@ -1118,7 +1169,7 @@ function act(a,el){
    case "open":S.open=S.open===v?null:v;S.edit=null;render();break;
    case "rank-open":S.view="rank";render();window.scrollTo(0,0);break;
    case "rank-close":S.view="tabs";S.tab="today";render();break;
-   case "prof-open":S.pedit=clone(S.profile||{name:"",sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false});S.view="profile";render();window.scrollTo(0,0);break;
+   case "prof-open":S.pedit=clone(S.profile||{name:"",sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"});S.view="profile";render();window.scrollTo(0,0);break;
    case "prof-close":S.pedit=null;S.view="tabs";S.tab="today";render();break;
    case "prof-save":{var er=profValid(S.pedit,0)||profValid(S.pedit,1);if(er){toast(er);return;}saveProfile(S.pedit);S.pedit=null;S.view="tabs";S.tab="today";render();toast("Profil enregistré");break;}
    case "pset":{var tgt=S.view==="onboard"?S.ob.p:S.pedit;tgt[el.dataset.k]=el.dataset.k==="perWeek"?+v:v;render();break;}
@@ -1207,6 +1258,8 @@ document.addEventListener("visibilitychange",function(){if(!document.hidden){flu
 window.addEventListener("online",flushAll);
 
 /* ---------- boot ---------- */
+window.RG_LOGO=LOGO.replace('class="logo"','class="logo big"');
+if(window.RG_GATE&&!window.RG_GATE())return;
 loadLocal();
 if(!S.program||!S.program.days||!S.program.days.length)S.program=clone(DEFAULT_PROGRAM);
 if(!S.program.favs)S.program.favs=[];if(!S.program.custom)S.program.custom=[];
