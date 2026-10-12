@@ -422,7 +422,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=10;
+var APPV=11;
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
 var RESTS=[45,60,75,90,120,150,180];
@@ -1069,13 +1069,14 @@ function vProfile(){
   var p=S.pedit,h='<div class="shead glass"><button class="back" data-a="prof-close" aria-label="Retour">‹</button><h2>Mon profil</h2></div>';
   h+='<section class="glass card stack"><label class="lab">Prénom<input class="inp" id="pf-name" data-p="name" value="'+esc(p.name)+'"></label>'+accentPicker(p.accent)+profForm(p,null)+'</section>';
   h+=whoopCard();
+  if(useGeo()){var gg=S.profile&&S.profile.gym,cd=gymCooldown();h+='<section class="glass card stack"><p class="eyebrow">Ma salle</p><p class="sm">'+(gg?'Enregistrée le '+dlong(gg.setAt)+'. Tes photos de séance doivent être prises sur place.':'Pas encore enregistrée : ce sera fait à ta première séance, une fois dans la salle.')+'</p>'+(gg?'<button class="btn line small" style="width:100%" data-a="gym-reset">'+(cd?'Changer de salle (possible dans '+cd+' jours)':'Changer de salle')+'</button>':'')+'</section>';}
   h+='<div class="stack"><button class="btn" data-a="prof-save">Enregistrer</button><p class="xs muted" style="text-align:center">Enregistrer recalcule tes objectifs diète à partir de ton profil.</p><p class="xs muted" style="text-align:center">RushGym version '+APPV+'</p></div>';
   return h;}
 function profValid(p,step){
   if(step===0&&!String(p.name||"").trim())return "Indique ton prénom";
   if(step===1||step==null){var a=num(p.age),hh=num(p.height),w=num(p.weight);if(!(a>=12&&a<=90))return "Indique ton âge";if(!(hh>=120&&hh<=230))return "Indique ta taille en centimètres";if(!(w>=30&&w<=250))return "Indique ton poids en kilos";}
   return null;}
-function saveProfile(p){
+function saveProfile(p){if(S.profile&&S.profile.gym!==undefined)p.gym=S.profile.gym;
   var prevW=S.profile&&num(S.profile.weight);S.profile=clone(p);S.profile.name=String(p.name||"").trim();put("profil");
   var w=num(p.weight);if(w>0&&w!==prevW){S.poids.entries=S.poids.entries||{};S.poids.entries[ymd(new Date())]=Math.round(w*10)/10;put("poids");}
   var T=calcTargets(p);if(T){S.diet.targets=T;put("diete");}}
@@ -1134,13 +1135,14 @@ function hydratePhotos(){Array.prototype.forEach.call(document.querySelectorAll(
 function proofCard(s){
   var p=s.proof,h='<section class="glass card stack proof" id="proof">';
   if(PH&&PH.state==="busy")return h+'<p class="eyebrow">Preuve de salle</p><p class="sm">'+esc(PH.msg)+'</p><div class="meter"><i class="indet"></i></div></section>';
-  if(p){var st=p.ok?(p.ai==="oui"?["good","Salle confirmée"]:["good","Photo validée"]):["hot","Photo refusée"];
+  if(p){var st=p.ok?(p.ai==="oui"||p.ai==="geo"?["good","Salle confirmée"]:["good","Photo validée"]):["hot","Photo refusée"];
     h+='<div class="row between"><p class="eyebrow">Preuve de salle</p><span class="pchip" style="--c:var(--'+st[0]+')">'+st[1]+'</span></div>'+photoTag(p.ref,"proofimg")+
-     '<p class="xs muted">Prise le '+dlong(p.at)+' à '+hhmm(p.at)+' · code '+esc(p.code)+(p.ai==="indispo"?" · vérification automatique indisponible, date contrôlée":"")+'</p>';
+     '<p class="xs muted">Prise le '+dlong(p.at)+' à '+hhmm(p.at)+' · code '+esc(p.code)+(p.dist!=null?" · à "+fmtDist(p.dist)+" de ta salle":p.ai==="indispo"?" · date contrôlée":"")+'</p>';
     if(!p.ok)h+='<p class="sm" style="color:var(--hot);font-weight:600">'+esc(p.reason||"Ça ne ressemble pas à une salle de sport.")+' La séance ne rapportera que la moitié des XP.</p>';
     if(!p.ok||(PH&&PH.state==="err"))h+=camBtn("Reprendre une photo");
     if(PH&&PH.state==="err")h+='<p class="sm" style="color:var(--hot);font-weight:600">'+esc(PH.msg)+'</p>';
     return h+'</section>';}
+  if(useGeo()&&!(S.profile&&S.profile.gym)){h+='<div class="row between"><p class="eyebrow">Preuve de salle</p><span class="pchip" style="--c:var(--accent)">À faire</span></div><p class="sm">D\'abord, enregistre la position de ta salle. Fais-le une seule fois, quand tu es dedans : ensuite, chaque photo devra être prise sur place.</p>'+(PH&&PH.state==="err"?'<p class="sm" style="color:var(--hot);font-weight:600">'+esc(PH.msg)+'</p>':'')+'<button class="btn" data-a="gym-set">Je suis à ma salle : l\'enregistrer</button><p class="xs muted">Tu pourras changer de salle une fois par mois.</p></section>';return h;}
   h+='<div class="row between"><p class="eyebrow">Preuve de salle</p><span class="pchip" style="--c:var(--accent)">À faire</span></div><p class="sm">Prends une photo de ta salle maintenant. Elle est datée et vérifiée. Sans photo, la séance ne rapporte que la moitié des XP et ne compte pas pour les quêtes.</p>';
   if(PH&&PH.state==="err")h+='<p class="sm" style="color:var(--hot);font-weight:600">'+esc(PH.msg)+'</p>';
   return h+camBtn("Prendre la photo de ma salle")+'</section>';}
@@ -1153,15 +1155,23 @@ async function handlePhoto(file){
   if(lm<s.start-30*60000){PH={state:"err",msg:"La photo doit être prise pendant ta séance."};renderProof();return;}
   PH={state:"busy",msg:"Préparation de la photo…"};renderProof();
   try{
-    var im=await loadImg(file),hash=ahash(im);
+    var posP=useGeo()?getPos().then(function(p){return {p:p};},function(e){return {err:e.code};}):Promise.resolve(null);
+    var im=await loadImg(file),hash=ahash(im),st=imgStats(im);
+    if(st.mean<38){PH={state:"err",msg:"Photo trop sombre : on ne voit pas ta salle. Reprends-la avec de la lumière."};renderProof();return;}
+    if(st.sd<14){PH={state:"err",msg:"Photo trop uniforme : cadre une vraie vue de ta salle, avec des machines."};renderProof();return;}
     var dup=Object.keys(S.sessions).some(function(id){var x=S.sessions[id];return id!==s.id&&x.proof&&x.proof.hash&&ham(x.proof.hash,hash)<=5;});
     if(dup){PH={state:"err",msg:"Cette photo a déjà servi pour une autre séance. Prends-en une nouvelle."};renderProof();return;}
     var code=code6(s.id+":"+now),blob=await stampPhoto(im,now,s,code);
     PH.msg="Vérification de la salle…";renderProof();
-    var ai=await aiCheck(blob);
+    var ai,dist=null;
+    if(useGeo()){var g=S.profile.gym,r=await posP;
+      if(!r||r.err){PH={state:"err",msg:geoMsg(r&&r.err)};renderProof();return;}
+      dist=Math.round(distM(g,r.p));var lim=Math.min(1000,Math.max(250,r.p.acc+(g.acc||0)));
+      ai=dist<=lim?{v:"geo"}:{v:"non",reason:"Photo prise à "+fmtDist(dist)+" de ta salle enregistrée."};}
+    else ai=await aiCheck(blob);
     PH.msg="Enregistrement…";renderProof();
     var ref=await savePhoto(blob);
-    s.proof={ref:ref,at:now,ok:ai.v!=="non",ai:ai.v,reason:ai.reason||"",hash:hash,code:code};
+    s.proof={ref:ref,at:now,ok:ai.v!=="non",ai:ai.v,reason:ai.reason||"",hash:hash,code:code,dist:dist};
     put("s:"+s.id);PH=null;render();toast(s.proof.ok?"Séance vérifiée : XP complets":"Photo refusée, tu peux en reprendre une");
   }catch(e){PH={state:"err",msg:"La photo n'a pas pu être traitée. Réessaie."};renderProof();}
 }
@@ -1256,6 +1266,20 @@ var QUOTES=["La douleur d'aujourd'hui, c'est la force de demain.","Pas de motiva
 var QI=Math.floor(Math.random()*QUOTES.length);
 setInterval(function(){var q=document.getElementById("quote");if(!q)return;q.style.opacity=0;setTimeout(function(){QI=(QI+1)%QUOTES.length;q.textContent=QUOTES[QI];q.style.opacity=1;},420);},7000);
 
+/* ---------- gym location check (home-screen app) ---------- */
+function useGeo(){return !(window.claude&&window.claude.use)&&!!navigator.geolocation;}
+function getPos(){return new Promise(function(ok,ko){if(!navigator.geolocation)return ko({code:"none"});navigator.geolocation.getCurrentPosition(function(p){ok({lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy)});},function(e){ko({code:e&&e.code===1?"denied":"fail"});},{enableHighAccuracy:true,timeout:15000,maximumAge:0});});}
+function distM(a,b){var R=6371000,t=Math.PI/180,dLa=(b.lat-a.lat)*t,dLo=(b.lng-a.lng)*t,x=Math.pow(Math.sin(dLa/2),2)+Math.cos(a.lat*t)*Math.cos(b.lat*t)*Math.pow(Math.sin(dLo/2),2);return 2*R*Math.asin(Math.sqrt(x));}
+function fmtDist(m){return m<1000?Math.round(m/10)*10+" m":(Math.round(m/100)/10+" km").replace(".",",");}
+function geoMsg(code){return code==="denied"?"La localisation est refusée. Autorise-la dans Réglages → Confidentialité → Service de localisation → Sites Safari, puis réessaie.":"Impossible de trouver ta position. Réessaie dans un instant, si possible près d'une fenêtre.";}
+function imgStats(im){var c=document.createElement("canvas");c.width=c.height=32;var x=c.getContext("2d");x.drawImage(im,0,0,32,32);var d=x.getImageData(0,0,32,32).data,sum=0,sq=0,n=1024;
+  for(var i=0;i<n;i++){var v=d[i*4]*.3+d[i*4+1]*.59+d[i*4+2]*.11;sum+=v;sq+=v*v;}var m=sum/n;return {mean:m,sd:Math.sqrt(Math.max(0,sq/n-m*m))};}
+function gymCooldown(){var g=S.profile&&S.profile.gym;if(!g)return 0;return Math.max(0,Math.ceil((g.setAt+30*864e5-Date.now())/864e5));}
+async function setGym(){PH={state:"busy",msg:"Recherche de ta position…"};renderProof();
+  try{var p=await getPos();if(p.acc>150){PH={state:"err",msg:"Position trop imprécise ("+p.acc+" m). Réessaie dans la salle, près d'une fenêtre ou de l'entrée."};renderProof();return;}
+    S.profile.gym={lat:p.lat,lng:p.lng,acc:p.acc,setAt:Date.now()};put("profil");PH=null;render();toast("Salle enregistrée");}
+  catch(e){PH={state:"err",msg:geoMsg(e.code)};renderProof();}}
+
 function render(){
   applyAccent();
   var app=document.getElementById("app"),insess=S.view!=="tabs";
@@ -1311,6 +1335,8 @@ function act(a,el){
    case "unequip":unequip(v);break;
    case "use-boost":if((S.shop.boost||0)>0&&s&&!s.boost){S.shop.boost--;s.boost=true;put("boutique");put("s:"+s.id);render();toast("Booster ×2 activé");}break;
    case "use-joker":{var ck=wkOf(new Date());if((S.shop.joker||0)>0){S.shop.joker--;S.shop.jokerWeeks=(S.shop.jokerWeeks||[]).concat([ck]);put("boutique");render();toast("Joker utilisé : série protégée");}break;}
+   case "gym-set":setGym();break;
+   case "gym-reset":if(gymCooldown()>0){toast("Changement possible dans "+gymCooldown()+" jours");return;}S.profile.gym=null;if(S.pedit)S.pedit.gym=null;put("profil");render();toast("Salle effacée : enregistre la nouvelle à ta prochaine séance");break;
    case "rank-open":S.view="rank";render();window.scrollTo(0,0);break;
    case "rank-close":S.view="tabs";S.tab="today";render();break;
    case "prof-open":S.pedit=clone(S.profile||{name:"",sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"});S.view="profile";render();window.scrollTo(0,0);break;
