@@ -422,7 +422,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=9;
+var APPV=10;
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
 var RESTS=[45,60,75,90,120,150,180];
@@ -1079,7 +1079,11 @@ function saveProfile(p){
   var prevW=S.profile&&num(S.profile.weight);S.profile=clone(p);S.profile.name=String(p.name||"").trim();put("profil");
   var w=num(p.weight);if(w>0&&w!==prevW){S.poids.entries=S.poids.entries||{};S.poids.entries[ymd(new Date())]=Math.round(w*10)/10;put("poids");}
   var T=calcTargets(p);if(T){S.diet.targets=T;put("diete");}}
-function afterLoad(){if(!S.profile&&S.view==="tabs"){S.view="onboard";S.ob={step:0,p:{name:(window.RG_NAME||""),sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"}};render();}
+function cleanStale(){var now=Date.now(),ch=false;Object.keys(S.sessions).forEach(function(id){var x=S.sessions[id];if(x.done)return;
+  if(countSets(x)===0&&now-x.start>3*3600000){delete S.sessions[id];put("s:"+id);ch=true;}
+  else if(countSets(x)>0&&now-x.start>12*3600000){x.done=true;x.end=x.start+(x.min||60)*60000;put("s:"+id);ch=true;}});
+  if(ch){if(S.active&&!(S.sessions[S.active]&&!S.sessions[S.active].done))S.active=null;if(S.view==="session"&&!S.active)S.view="tabs";render();}}
+function afterLoad(){cleanStale();if(!S.profile&&S.view==="tabs"){S.view="onboard";S.ob={step:0,p:{name:(window.RG_NAME||""),sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"}};render();}
   else if(S.profile&&S.profile.whoop&&WH.state==="off")whoopFetch(false);}
 
 /* ---------- gym photo proof ---------- */
