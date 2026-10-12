@@ -310,6 +310,44 @@ label.btn{cursor:pointer}
 .acc i{width:44px;height:44px;border-radius:50%;background:var(--c);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 14px -6px var(--c);border:3px solid transparent;outline:1px solid var(--edge)}
 .acc.on i{border-color:var(--fg)}
 .acc.on{color:var(--fg)}
+
+/* home hero + shop */
+.rush{padding:20px 16px 16px;display:flex;flex-direction:column;gap:14px;border-radius:32px}
+.quote{font-size:14px;font-style:italic;color:var(--muted);min-height:2.7em;transition:opacity .4s;line-height:1.35}
+.rushq{font-size:clamp(23px,6.8vw,30px);line-height:1.12}
+.rushq span{background:linear-gradient(100deg,var(--g1),var(--g2) 50%,var(--g3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.daygrid{display:flex;flex-direction:column;gap:8px}
+.daybtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:7px 12px 7px 7px;border-radius:18px;background:var(--glass);border:1px solid var(--edge)}
+.daybtn b{display:block;font-weight:800;font-size:15px;line-height:1.2}
+.daybtn .go{color:var(--muted);font-size:20px}
+.daybtn.sug{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent),0 8px 20px -12px var(--accent)}
+.daybtn.sug .go{color:var(--accent-ink)}
+.coins{display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-weight:700;font-size:15px;padding:5px 10px;border-radius:99px;background:var(--glass-2);border:1px solid var(--edge);flex:none}
+.rankcard .coins{align-self:flex-start}
+.rtitle{display:block;font-family:var(--font);font-weight:700;font-size:12px;color:var(--accent-ink);letter-spacing:.02em;margin-top:2px}
+.sitem{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--edge)}
+.sitem:first-child{border-top:0}
+.sitem b{display:block;font-weight:800;font-size:15px}
+.sitem.locked{opacity:.5}
+.sprev{width:46px;height:46px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--well)}
+.sprev.ico{font-family:var(--display);font-weight:800;font-size:16px;color:var(--accent-ink)}
+.sprev.ttl{font-family:var(--display);font-weight:800;color:var(--accent-ink)}
+.sprev.av .avatar{width:34px;height:34px;font-size:13px}
+.sbuy{flex:none;display:inline-flex;align-items:center;gap:4px;height:36px;padding:0 12px;border-radius:99px;font-weight:800;font-size:13px;background:var(--accent);color:var(--on-accent)}
+.sbuy.poor{background:var(--glass-2);color:var(--muted)}
+.sbuy.own{background:var(--glass-2);color:var(--fg);border:1px solid var(--edge)}
+.sbuy.eq{background:none;color:var(--good);border:1px solid var(--good)}
+.slock{flex:none;font-size:12px;font-weight:700;color:var(--muted)}
+.boostline{text-align:center;font-weight:800;font-size:14px;color:var(--accent-ink)}
+.avatar{position:relative;isolation:isolate}
+.avatar.fr-flame{box-shadow:0 0 0 3px var(--bg),0 0 0 6px #FF7A1A,0 0 18px 6px rgba(255,90,0,.55);animation:flick 1.4s ease-in-out infinite alternate}
+@keyframes flick{to{box-shadow:0 0 0 3px var(--bg),0 0 0 6px #FFB13B,0 0 24px 9px rgba(255,60,0,.6)}}
+.avatar.fr-chrome{box-shadow:0 0 0 3px var(--bg),0 0 0 6px #DCE2EA,0 0 0 7px #8C97A6}
+.avatar.fr-diamond{box-shadow:0 0 0 3px var(--bg),0 0 0 6px #9FDcFF,0 0 18px 5px rgba(120,200,255,.6)}
+.avatar.fr-legend::before{content:"";position:absolute;inset:-7px;border-radius:50%;z-index:-1;background:conic-gradient(#FFE29A,#E0306A,#FF8A3D,#FFE29A);animation:spin 3s linear infinite}
+.avatar.fr-legend::after{content:"";position:absolute;inset:-3px;border-radius:50%;z-index:-1;background:var(--bg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.avatar.fr-flame,.avatar.fr-legend::before{animation:none}}
 /* diet */
 .ringwrap{display:flex;align-items:center;gap:16px}
 .ring{width:132px;height:132px;flex:none;position:relative}
@@ -384,7 +422,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=8;
+var APPV=9;
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
 var RESTS=[45,60,75,90,120,150,180];
@@ -456,7 +494,7 @@ var FOCUS_ORDER=["Pectoraux","Dos","Épaules","Bras"];
 var FOODS=[
 ["Riz blanc cuit",130,2.7,28,0.3],["Riz blanc cru",356,7,79,0.6],["Pâtes cuites",150,5,30,0.9],["Pâtes crues",359,12.5,72,1.5],
 ["Pomme de terre cuite",86,1.9,19,0.1],["Patate douce cuite",90,2,20,0.2],["Semoule cuite",112,3.8,23,0.2],["Quinoa cuit",120,4.4,21,1.9],
-["Flocons d'avoine",372,13.5,59,7],["Muesli",370,10,62,7],["Granola",450,9,62,17],["Baguette",275,9,56,1.2,"1/4 de baguette",60],
+["Flocons d'avoine",372,13.5,59,7],["Céréales Lion",409,8.2,73.9,7.7,"1 bol",40],["Muesli",370,10,62,7],["Granola",450,9,62,17],["Baguette",275,9,56,1.2,"1/4 de baguette",60],
 ["Pain complet",247,10,43,3,"1 tranche",35],["Pain de mie",265,8,49,3.5,"1 tranche",25],["Galette de riz",387,8,81,2.8,"1 galette",9],["Tortilla de blé",310,8,52,7,"1 tortilla",60],
 ["Lentilles cuites",116,9,17,0.4],["Pois chiches cuits",150,8.5,20,2.6],["Haricots rouges cuits",127,8.7,16,0.5],
 ["Blanc de poulet cuit",165,31,0,3.6],["Blanc de poulet cru",110,23,0,1.5],["Cuisse de poulet cuite",209,26,0,11],["Escalope de dinde cuite",135,30,0,1.5],
@@ -487,21 +525,22 @@ var DEFAULT_TARGETS={kcal:2800,p:120,c:400,f:80};
 /* ---------- state + storage ---------- */
 var LS="carnet-de-fonte-v1";
 var S={program:null,sessions:{},poids:{entries:{}},focus:{},diet:{targets:null,foods:[],days:{}},dietDay:null,dietEdit:false,add:null,
-  picker:null,build:null,profile:null,ob:null,pedit:null,tab:"today",view:"tabs",active:null,open:null,edit:null,pick:null,grp:"Tous",confirm:null,sum:null,sync:"load",rest:null};
+  picker:null,build:null,profile:null,shop:{owned:[],equipped:{},spent:0},ob:null,pedit:null,tab:"today",view:"tabs",active:null,open:null,edit:null,pick:null,grp:"Tous",confirm:null,sum:null,sync:"load",rest:null};
 var pending=new Set(),ver={},busy={},R=null;
 function clone(o){return JSON.parse(JSON.stringify(o));}
 function loadLocal(){try{var d=JSON.parse(localStorage.getItem(LS)||"null");if(!d)return;
   if(d.program)S.program=d.program;if(d.sessions)S.sessions=d.sessions;if(d.poids)S.poids=d.poids;if(d.focus)S.focus=d.focus;
-  if(d.profile)S.profile=d.profile;
+  if(d.profile)S.profile=d.profile;if(d.shop)S.shop=d.shop;
   if(d.diet){S.diet.targets=d.diet.targets||null;S.diet.foods=d.diet.foods||[];S.diet.days=d.diet.days||{};}
   (d.pending||[]).forEach(function(k){pending.add(k);});}catch(e){}}
-function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({profile:S.profile,program:S.program,sessions:S.sessions,poids:S.poids,focus:S.focus,diet:S.diet,pending:Array.from(pending)}));}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({shop:S.shop,profile:S.profile,program:S.program,sessions:S.sessions,poids:S.poids,focus:S.focus,diet:S.diet,pending:Array.from(pending)}));}catch(e){}}
 function setSync(s){S.sync=s;var el=document.getElementById("sync");if(el){el.className="sync glass "+(s==="ok"?"ok":s==="err"?"err":"");el.lastChild.textContent=syncLabel();}}
 function syncLabel(){return {load:"Connexion…",ok:"Sauvegardé",local:"Sur cet appareil",err:"En attente de réseau"}[S.sync];}
 function writeRemote(key){
   if(key==="programme")return R.prog.set({program:clone(S.program),focus:clone(S.focus)});
   if(key==="poids")return R.poids.set(clone(S.poids));
   if(key==="profil")return R.profil.set(clone(S.profile));
+  if(key==="boutique")return R.shop.set(clone(S.shop));
   if(key==="diete")return R.diete.set({targets:clone(S.diet.targets||DEFAULT_TARGETS),foods:clone(S.diet.foods)});
   var id=key.slice(2);
   if(key.charAt(0)==="j"){var day=S.diet.days[id];return day&&day.items.length?R.jours.doc(id).set(clone(day)):R.jours.doc(id).delete();}
@@ -523,8 +562,9 @@ async function connect(){
     var db=res[0],user=res[1];if(!db||!user){setSync("local");afterLoad();return;}
     var uid=await user.id();if(!uid){setSync("local");afterLoad();return;}
     var base="data/users/"+uid;
-    var r={prog:db.doc(base+"/programme"),seances:db.doc(base+"/journal").collection("seances"),poids:db.doc(base+"/poids"),diete:db.doc(base+"/diete"),profil:db.doc(base+"/profil"),jours:db.doc(base+"/diete").collection("jours")};
-    var got=await Promise.all([r.prog.get(),r.seances.limit(1000).get(),r.poids.get(),r.diete.get(),r.jours.limit(1000).get(),r.profil.get()]);
+    var r={prog:db.doc(base+"/programme"),seances:db.doc(base+"/journal").collection("seances"),poids:db.doc(base+"/poids"),diete:db.doc(base+"/diete"),profil:db.doc(base+"/profil"),shop:db.doc(base+"/boutique"),jours:db.doc(base+"/diete").collection("jours")};
+    var got=await Promise.all([r.prog.get(),r.seances.limit(1000).get(),r.poids.get(),r.diete.get(),r.jours.limit(1000).get(),r.profil.get(),r.shop.get()]);
+    if(!pending.has("boutique")&&got[6].exists){S.shop=clone(got[6].data());S.shop.owned=S.shop.owned||[];S.shop.equipped=S.shop.equipped||{};}
     if(!pending.has("profil")&&got[5].exists)S.profile=clone(got[5].data());
     R=r;
     if(!pending.has("programme")&&got[0].exists){var pd=got[0].data();if(pd.program&&pd.program.days){S.program=clone(pd.program);if(!S.program.favs)S.program.favs=[];if(!S.program.custom)S.program.custom=[];}S.focus=clone(pd.focus||{});}
@@ -614,28 +654,27 @@ function vToday(){
   var now=new Date(),mon=monday(now),ds=doneSessions(),doneDays={},weekCount=0;
   ds.forEach(function(s){if(s.start>=mon.getTime()){doneDays[ymd(s.start)]=1;weekCount++;}});
   var act=S.active&&S.sessions[S.active],nd=nextDay(),today=ymd(now),fm=focusNow();
-  var h='<header class="top"><div class="brand">'+LOGO+'<h1 class="word">Rush<b>Gym</b></h1></div><div class="row" style="gap:8px"><span class="sync glass '+(S.sync==="ok"?"ok":S.sync==="err"?"err":"")+'" id="sync" title="'+syncLabel()+'"><i></i><span>'+syncLabel()+'</span></span><button class="avatar" data-a="prof-open" aria-label="Mon profil">'+esc(((S.profile&&S.profile.name)||"?").charAt(0).toUpperCase())+'</button></div></header>';
+  var h='<header class="top"><div class="brand">'+LOGO+'<h1 class="word">Rush<b>Gym</b></h1></div><div class="row" style="gap:8px"><span class="sync glass '+(S.sync==="ok"?"ok":S.sync==="err"?"err":"")+'" id="sync" title="'+syncLabel()+'"><i></i><span>'+syncLabel()+'</span></span><button class="avatar'+frameCls()+'" data-a="prof-open" aria-label="Mon profil">'+esc(((S.profile&&S.profile.name)||"?").charAt(0).toUpperCase())+'</button></div></header>';
   h+=rankCard(xpCompute())+whoopCard();
-  var cv=act?(function(){for(var i=0;i<act.exercises.length;i++)if(IMG[act.exercises[i].exId])return act.exercises[i].exId;return null;})():cover(nd);
-  h+='<section class="hero">'+(cv?'<img src="'+src(cv,1)+'" alt=""><div class="fade"></div>':"")+'<div class="panel glass">';
-  if(act){h+='<p class="eyebrow">Séance en cours</p><h2>'+esc(act.name)+'</h2><p class="sm muted">'+countSets(act)+' séries validées, commencée à '+("0"+new Date(act.start).getHours()).slice(-2)+"h"+("0"+new Date(act.start).getMinutes()).slice(-2)+'</p><button class="btn" data-a="resume">Reprendre</button>';}
-  else{h+='<p class="eyebrow">'+(doneDays[today]?"Déjà une séance aujourd'hui · la suivante":"Prochaine séance")+'</p><h2>'+esc(nd.name)+'</h2><p class="sm muted">'+nd.exercises.length+' exercices · 3 séries en 12 / 10 / 8 · '+nd.min+' min</p><button class="btn" data-a="start" data-v="'+esc(nd.id)+'">Démarrer</button>';}
-  h+='</div></section>';
+  if(act){var cva=null;act.exercises.forEach(function(e){if(!cva&&IMG[e.exId])cva=e.exId;});
+    h+='<section class="glass card row" style="gap:14px">'+thumb(cva,"t",act.c)+'<span class="grow"><span class="eyebrow">Séance en cours</span><b class="h3" style="display:block">'+esc(act.name)+'</b><span class="xs muted">'+countSets(act)+' séries validées</span></span><button class="btn small" data-a="resume">Reprendre</button></section>';}
+  else{h+='<section class="rush glass"><p class="quote" id="quote">'+esc(QUOTES[QI])+'</p><h2 class="rushq">On <span>rush</span> quel muscle aujourd\'hui ?</h2><div class="daygrid">';
+    S.program.days.forEach(function(d){var sug=d.id===nd.id;h+='<button class="daybtn'+(sug?" sug":"")+'" data-a="start" data-v="'+esc(d.id)+'">'+thumb(cover(d),"s",d.c)+'<span class="grow"><b>'+esc(d.name)+'</b><span class="xs muted">'+(sug?(doneDays[today]?"La suivante · ":"Suggérée · "):"")+d.exercises.length+' exercices · '+d.min+' min</span></span><span class="go">›</span></button>';});
+    h+='</div><button class="btn line" data-a="build-new">+ Ajouter une séance</button></section>';}
   h+='<section class="sect"><div class="row between"><p class="eyebrow">Cette semaine</p><p class="num sm muted" style="font-weight:700">'+weekCount+' / '+((S.profile&&S.profile.perWeek)||5)+' séances</p></div><div class="glass card stack"><div class="week">';
   for(var i=0;i<7;i++){var d=new Date(mon);d.setDate(mon.getDate()+i);var k=ymd(d);h+='<div class="day'+(k===today?" today":"")+(doneDays[k]?" done":"")+'"><span>'+"LMMJVSD"[i]+'</span><b>'+d.getDate()+'</b><span class="dot"></span></div>';}
   h+='</div><div class="meter"><i style="width:'+Math.min(100,weekCount/((S.profile&&S.profile.perWeek)||5)*100)+'%"></i></div></div></section>';
   h+='<section class="sect"><p class="eyebrow">Focus de la semaine</p><div class="glass card stack"><p class="sm muted">Le muscle travaillé deux fois cette semaine. Il tourne tout seul chaque lundi, ou choisis-le toi-même.</p><div class="chips">';
   FOCUS_ORDER.forEach(function(m){h+='<button class="chip'+(m===fm?" on":"")+'" data-a="focus" data-v="'+esc(m)+'">'+esc(m)+'</button>';});
   h+='</div>'+(act?"":'<button class="btn line small" style="width:100%" data-a="start" data-v="focus-'+esc(fm)+'">Séance bonus '+esc(fm)+'</button>')+'</div></section>';
-  if(!act){h+='<section class="sect"><p class="eyebrow">Choisir une autre séance</p>';
-    S.program.days.forEach(function(d){h+='<button class="item glass" data-a="start" data-v="'+esc(d.id)+'">'+thumb(cover(d),"t",d.c)+'<span class="grow"><h3>'+esc(d.name)+'</h3><span class="xs muted">'+d.exercises.length+' exercices · '+d.min+' min</span></span><span class="chev">›</span></button>';});
-    h+='</section>';}
+
   return h;
 }
 function vSession(){
   var s=S.sessions[S.active];if(!s){S.view="tabs";return vToday();}
   var h='<div class="shead glass"><button class="back" data-a="minimise" aria-label="Retour">‹</button><h2>'+esc(s.name)+'</h2><span class="clock" id="clock">0:00</span></div>';
   h+=proofCard(s);
+  if(s.boost)h+='<p class="boostline">Booster XP ×2 actif sur cette séance</p>';else if((S.shop.boost||0)>0)h+='<button class="btn line small" style="width:100%" data-a="use-boost">Activer un booster XP ×2 ('+S.shop.boost+' dispo)</button>';
   h+='<p class="sm muted" style="padding:0 6px">Échauffement au poids du corps : muscle-ups et tractions, puis une série légère sur le premier exercice.</p>';
   s.exercises.forEach(function(ex,i){
     var hist=exHistory(ex.exId,s.id),last=hist[hist.length-1],n=doneSets(ex).length,cnt='<span class="cnt">'+n+'/'+ex.sets.length+'</span>';
@@ -901,17 +940,19 @@ function xpCompute(exclude){
     if(ver)lines.unshift(["Séance vérifiée par photo",0]);
     var sx=0;lines.forEach(function(l){sx+=l[1];});
     if(!ver&&sx>0){var cut=Math.floor(sx/2);lines.push(["Sans photo de la salle : XP divisés par 2",-cut]);sx-=cut;}
+    if(s.boost&&ver&&sx>0){lines.push(["Booster XP ×2",sx]);sx*=2;}
     bySes[s.id]={xp:sx,lines:lines};total+=sx;
     var w=W(wkOf(s.start));if(sets>=3&&ver)w.n++;w.rec+=ver?rec:0;if(weakN>=2&&ver)w.weak++;
   });
   var T=targets();
   Object.keys(S.diet.days).forEach(function(k){var it=dayItems(k);if(!it.length)return;var w=W(wkOf(k+"T12:00:00"));
     if(it.length>=3){total+=10;w.diet++;}if(totals(it).p>=T.p)w.prot++;});
+  var JW=(S.shop&&S.shop.jokerWeeks)||[];JW.forEach(function(k){W(k);});
   var keys=Object.keys(weeks).sort(),streak=0,prev=null,cur=wkOf(new Date());
   keys.forEach(function(k){var w=weeks[k];if(prev&&addDays(prev,7)!==k)streak=0;
     w.mult=1+0.1*Math.min(5,streak);
     w.quests=questDefs(w,per).map(function(q){q.done=q.val>=q.target;q.earned=q.done?Math.round(q.xp*w.mult):0;total+=q.earned;return q;});
-    if(w.quests[0].done)streak++;else if(k!==cur)streak=0;prev=k;});
+    if(w.quests[0].done||JW.indexOf(k)>=0)streak++;else if(k!==cur)streak=0;prev=k;});
   if(prev&&prev!==cur&&addDays(prev,7)!==cur)streak=0;
   if(!weeks[cur])weeks[cur]={n:0,weak:0,rec:0,prot:0,diet:0,mult:1+0.1*Math.min(5,streak),quests:null};
   if(!weeks[cur].quests)weeks[cur].quests=questDefs(weeks[cur],per).map(function(q){q.done=false;q.earned=0;return q;});
@@ -922,13 +963,17 @@ function questDefs(w,per){var wl=weakGroups().join(" / ").toLowerCase();return [
   {id:"weak",label:"2 séances "+wl,val:w.weak,target:2,xp:100},
   {id:"rec",label:"Battre un record",val:w.rec,target:1,xp:75},
   {id:"prot",label:"Objectif protéines 4 jours",val:w.prot,target:4,xp:100}];}
-function rankCard(X){var R2=rankOf(X.total),pct=R2.hi?Math.min(100,(X.total-R2.lo)/(R2.hi-R2.lo)*100):100;
-  return '<button class="rankcard glass" data-a="rank-open">'+badge(R2.t,R2.div,58)+'<span class="grow"><span class="eyebrow">Ton rang</span><span class="rname">'+R2.name+'</span><span class="meter" style="--m:linear-gradient(90deg,'+TIERS[R2.t][2]+','+TIERS[R2.t][3]+')"><i style="width:'+pct+'%"></i></span><span class="xs muted num">'+(R2.hi?big(X.total)+' / '+big(R2.hi)+' XP · prochain : '+R2.next:big(X.total)+' XP')+(X.streak>1?' · série de '+X.streak+' semaines':'')+'</span></span><span class="chev">›</span></button>';}
+function rankCard(X){var CC=coinsOf(X),R2=rankOf(X.total),pct=R2.hi?Math.min(100,(X.total-R2.lo)/(R2.hi-R2.lo)*100):100;
+  return '<button class="rankcard glass" data-a="rank-open">'+badge(R2.t,R2.div,58)+'<span class="grow"><span class="eyebrow">Ton rang</span><span class="rname">'+R2.name+(titleTxt()?'<small class="rtitle">'+esc(titleTxt())+'</small>':'')+'</span><span class="meter" style="--m:linear-gradient(90deg,'+TIERS[R2.t][2]+','+TIERS[R2.t][3]+')"><i style="width:'+pct+'%"></i></span><span class="xs muted num">'+(R2.hi?big(X.total)+' / '+big(R2.hi)+' XP · prochain : '+R2.next:big(X.total)+' XP')+(X.streak>1?' · série de '+X.streak+' semaines':'')+'</span></span><span class="coins sm">'+coinIco(16)+'<b>'+big(CC)+'</b></span></button>';}
 function vRank(){
   var X=xpCompute(),R2=rankOf(X.total),Q=X.cur.quests,h='<div class="shead glass"><button class="back" data-a="rank-close" aria-label="Retour">‹</button><h2>Ton rang</h2></div>';
   h+='<section class="rankhero glass">'+badge(R2.t,R2.div,132)+'<h2 class="rbig" style="--t1:'+TIERS[R2.t][2]+';--t2:'+TIERS[R2.t][3]+'">'+R2.name+'</h2><p class="muted num">'+big(X.total)+' XP au total</p>';
   if(R2.hi)h+='<div class="meter" style="width:100%;--m:linear-gradient(90deg,'+TIERS[R2.t][2]+','+TIERS[R2.t][3]+')"><i style="width:'+Math.min(100,(X.total-R2.lo)/(R2.hi-R2.lo)*100)+'%"></i></div><p class="sm">Encore <b>'+big(R2.hi-X.total)+' XP</b> pour passer '+R2.next+'</p>';
   h+='</section>';
+  h+='<button class="btn" data-a="shop-open">'+coinIco(20)+' Boutique · '+big(coinsOf(X))+' pièces</button>';
+  var curWk=wkOf(new Date()),jw=(S.shop.jokerWeeks||[]);
+  if((S.shop.joker||0)>0&&jw.indexOf(curWk)<0&&!Q[0].done)h+='<button class="btn line small" style="width:100%" data-a="use-joker">Utiliser un joker de série cette semaine ('+S.shop.joker+' dispo)</button>';
+  else if(jw.indexOf(curWk)>=0)h+='<p class="xs muted" style="text-align:center">Joker actif cette semaine : ta série est protégée.</p>';
   h+='<section class="sect"><div class="row between"><p class="eyebrow">Quêtes de la semaine</p>'+(X.cur.mult>1?'<span class="tag" style="background:var(--accent);color:var(--on-accent)">Bonus série ×'+X.cur.mult.toFixed(1).replace(".",",")+'</span>':'')+'</div><div class="glass card stack">';
   Q.forEach(function(q){h+='<div class="quest'+(q.done?" done":"")+'"><div class="row between"><b>'+esc(q.label)+'</b><span class="xs num">'+(q.done?"Validée":Math.min(q.val,q.target)+" / "+q.target)+' · +'+Math.round(q.xp*X.cur.mult)+' XP</span></div><div class="meter" style="--m:var(--accent)"><i style="width:'+Math.min(100,q.val/q.target*100)+'%"></i></div></div>';});
   h+='<p class="xs muted">Valide « '+esc(Q[0].label.toLowerCase())+' » chaque semaine pour faire grimper ta série : +10 % sur les quêtes par semaine d\'affilée, jusqu\'à +50 %.</p></div></section>';
@@ -1118,28 +1163,101 @@ async function handlePhoto(file){
 }
 
 var ACCENTS=[["orange","Orange","#FF9F0A"],["rouge","Rouge","#FF3B4E"],["vert","Vert","#2FD573"],["bleu","Bleu","#2F7BFF"],["rose","Rose","#FF4FA3"]];
-function accentPicker(cur){return '<div class="stack" style="gap:8px"><p class="eyebrow">Couleur de l\'appli</p><div class="accents">'+ACCENTS.map(function(a){return '<button class="acc'+((cur||"orange")===a[0]?" on":"")+'" data-a="pset" data-k="accent" data-v="'+a[0]+'" style="--c:'+a[2]+'"><i style="background:linear-gradient(135deg,'+(PAL[a[0]]?PAL[a[0]].g.join(","):"#FFB13B,#FF5E3A,#E5306F")+')"></i>'+a[1]+'</button>';}).join("")+'</div></div>';}
+function accentPicker(cur){var L=ACCENTS.concat(SHOP.filter(function(x){return x.theme&&owns(x.id);}).map(function(x){return [x.theme,x.name,PAL[x.theme].a];}));return '<div class="stack" style="gap:8px"><p class="eyebrow">Couleur de l\'appli</p><div class="accents">'+L.map(function(a){return '<button class="acc'+((cur||"orange")===a[0]?" on":"")+'" data-a="pset" data-k="accent" data-v="'+a[0]+'" style="--c:'+a[2]+'"><i style="background:linear-gradient(135deg,'+(PAL[a[0]]?PAL[a[0]].g.join(","):"#FFB13B,#FF5E3A,#E5306F")+')"></i>'+a[1]+'</button>';}).join("")+'</div></div>';}
 var PAL={
  rouge:{a:"#FF3B4E",on:"#FFFFFF",inkD:"#FF8590",inkL:"#B8122A",g:["#FF8A6B","#FF3B4E","#C8102E"],bD:"#0E0608",bL:"#F9EDEF",bl:["rgba(255,59,78,.58)","rgba(255,40,100,.42)","rgba(150,20,50,.50)","rgba(255,120,80,.30)"]},
  vert:{a:"#2FD573",on:"#04200E",inkD:"#62E89C",inkL:"#0B7A3B",g:["#B5F56B","#2FD573","#0FA38A"],bD:"#040C07",bL:"#EAF7EF",bl:["rgba(47,213,115,.50)","rgba(20,200,170,.40)","rgba(10,110,70,.50)","rgba(170,235,60,.28)"]},
  bleu:{a:"#2F7BFF",on:"#FFFFFF",inkD:"#82B0FF",inkL:"#1450C8",g:["#5BD0FF","#2F7BFF","#5B3BFF"],bD:"#04060F",bL:"#EAF0FC",bl:["rgba(47,123,255,.58)","rgba(100,80,255,.44)","rgba(20,60,170,.52)","rgba(40,200,255,.32)"]},
+ or:{a:"#F5C542",on:"#2A1B00",inkD:"#FFD970",inkL:"#8A5F00",g:["#FFF0A0","#F5C542","#C08414"],bD:"#0D0A03",bL:"#FBF4E2",bl:["rgba(245,197,66,.50)","rgba(255,170,40,.36)","rgba(140,90,10,.48)","rgba(255,230,140,.26)"]},
+ neon:{a:"#22E5FF",on:"#001A20",inkD:"#6CF2FF",inkL:"#007A8C",g:["#22E5FF","#8B5CFF","#FF3FD8"],bD:"#05040F",bL:"#EEF0FF",bl:["rgba(34,229,255,.42)","rgba(139,92,255,.46)","rgba(255,63,216,.36)","rgba(34,229,255,.24)"]},
+ lave:{a:"#FF5A1F",on:"#FFFFFF",inkD:"#FF8C5A",inkL:"#B83A00",g:["#FFD23F","#FF5A1F","#B3001B"],bD:"#100503",bL:"#FBEDE6",bl:["rgba(255,90,31,.56)","rgba(255,200,60,.32)","rgba(179,0,27,.50)","rgba(255,120,40,.30)"]},
+ galaxie:{a:"#9D7BFF",on:"#FFFFFF",inkD:"#BCA6FF",inkL:"#5A35D6",g:["#5BD0FF","#9D7BFF","#FF5FC8"],bD:"#05040C",bL:"#EFEBFC",bl:["rgba(157,123,255,.52)","rgba(255,95,200,.36)","rgba(40,30,120,.56)","rgba(91,208,255,.28)"]},
+ legende:{a:"#FFB547",on:"#2A1400",inkD:"#FFC873",inkL:"#9A5A00",g:["#FFE29A","#FF8A3D","#E0306A"],bD:"#0D0606",bL:"#FBEFE6",bl:["rgba(255,181,71,.50)","rgba(224,48,106,.42)","rgba(120,20,40,.50)","rgba(255,226,154,.28)"]},
  rose:{a:"#FF4FA3",on:"#FFFFFF",inkD:"#FF93C7",inkL:"#B81468",g:["#FFA3CF","#FF4FA3","#C33BFF"],bD:"#0E0509",bL:"#FBEBF4",bl:["rgba(255,79,163,.56)","rgba(200,80,255,.44)","rgba(150,30,110,.50)","rgba(255,150,200,.32)"]}};
+function shopTheme(a){for(var i=0;i<SHOP.length;i++)if(SHOP[i].theme===a)return SHOP[i].id;return null;}
 var ACC_KEYS=["--accent","--on-accent","--accent-ink","--g1","--g2","--g3","--bg","--b1","--b2","--b3","--b4"];
 function isDark(){var t=document.documentElement.getAttribute("data-theme");if(t==="dark")return true;if(t==="light")return false;return !(window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches);}
 function curAccent(){return S.view==="onboard"&&S.ob?S.ob.p.accent:S.view==="profile"&&S.pedit?S.pedit.accent:(S.profile&&S.profile.accent);}
-function applyAccent(){var a=curAccent(),r=document.documentElement,P=PAL[a],st=r.style;
+function applyAccent(){var a=curAccent(),r=document.documentElement,P=PAL[a],st=r.style;if(P&&shopTheme(a)&&!owns(shopTheme(a)))P=null;
   if(!P){r.removeAttribute("data-accent");ACC_KEYS.forEach(function(k){st.removeProperty(k);});return;}
   r.setAttribute("data-accent",a);var d=isDark();
   st.setProperty("--accent",P.a);st.setProperty("--on-accent",P.on);st.setProperty("--accent-ink",d?P.inkD:P.inkL);
   st.setProperty("--g1",P.g[0]);st.setProperty("--g2",P.g[1]);st.setProperty("--g3",P.g[2]);st.setProperty("--bg",d?P.bD:P.bL);
   P.bl.forEach(function(c,i){st.setProperty("--b"+(i+1),c);});}
 try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",applyAccent);new MutationObserver(applyAccent).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});}catch(e){}
+/* ---------- coins + shop ---------- */
+var SHOP=[
+ {id:"boost",cat:"Bonus",name:"Booster XP ×2",desc:"Double les XP d'une séance vérifiée. Active-le pendant la séance.",price:300,tier:0,cons:true},
+ {id:"joker",cat:"Bonus",name:"Joker de série",desc:"Sauve ta série si tu rates ton objectif de la semaine.",price:500,tier:1,cons:true},
+ {id:"th-or",cat:"Thèmes",name:"Or massif",desc:"Thème doré, réservé aux rangs Or et plus.",price:600,tier:2,theme:"or"},
+ {id:"th-neon",cat:"Thèmes",name:"Néon",desc:"Cyan, violet et magenta façon salle de nuit.",price:900,tier:3,theme:"neon"},
+ {id:"th-lave",cat:"Thèmes",name:"Lave",desc:"Rouge braise et orange en fusion.",price:1200,tier:4,theme:"lave"},
+ {id:"th-galaxie",cat:"Thèmes",name:"Galaxie",desc:"Violet profond et éclats roses.",price:2000,tier:5,theme:"galaxie"},
+ {id:"th-legende",cat:"Thèmes",name:"Légende",desc:"Or et rubis, le thème des légendes.",price:4000,tier:7,theme:"legende"},
+ {id:"fr-flame",cat:"Cadres",name:"Flammes",desc:"Un cadre de feu autour de ton profil.",price:400,tier:1,frame:"flame"},
+ {id:"fr-chrome",cat:"Cadres",name:"Chrome",desc:"Anneau acier poli.",price:700,tier:2,frame:"chrome"},
+ {id:"fr-diamond",cat:"Cadres",name:"Diamant",desc:"Anneau glacé qui scintille.",price:1500,tier:5,frame:"diamond"},
+ {id:"fr-legend",cat:"Cadres",name:"Couronne de Légende",desc:"Anneau or et rubis qui tourne.",price:3000,tier:7,frame:"legend"},
+ {id:"ti-machine",cat:"Titres",name:"La Machine",desc:"Titre affiché sous ton rang.",price:150,tier:0,title:"La Machine"},
+ {id:"ti-jambes",cat:"Titres",name:"Bête des jambes",desc:"Pour ceux qui ne zappent pas le leg day.",price:250,tier:1,title:"Bête des jambes"},
+ {id:"ti-pecdeck",cat:"Titres",name:"Roi du pec deck",desc:"Titre affiché sous ton rang.",price:250,tier:1,title:"Roi du pec deck"},
+ {id:"ti-tot",cat:"Titres",name:"Lève-tôt de la fonte",desc:"Titre affiché sous ton rang.",price:300,tier:2,title:"Lève-tôt de la fonte"},
+ {id:"ti-inarretable",cat:"Titres",name:"Inarrêtable",desc:"Titre affiché sous ton rang.",price:800,tier:4,title:"Inarrêtable"},
+ {id:"ti-legende",cat:"Titres",name:"Légende vivante",desc:"Le titre ultime.",price:2500,tier:7,title:"Légende vivante"}];
+function shopItem(id){return SHOP.filter(function(x){return x.id===id;})[0];}
+function owns(id){return (S.shop.owned||[]).indexOf(id)>=0;}
+function coinsEarned(X){var r=rankOf(X.total),div=r.t===TIERS.length-1?r.t*3:r.t*3+r.div;return Math.floor(X.total/10)+div*50+r.t*200;}
+function coinsOf(X){return coinsEarned(X)-(S.shop.spent||0);}
+function coinIco(sz){return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;vertical-align:-3px"><circle cx="12" cy="12" r="10" fill="#F5C542"/><circle cx="12" cy="12" r="7.4" fill="none" stroke="#C08414" stroke-width="1.6"/><path d="M10 16.5v-9h2.8a2.5 2.5 0 0 1 0 5H10.6M12.6 12.5l2.6 4" fill="none" stroke="#8A5A00" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+function frameCls(){var f=S.shop.equipped&&S.shop.equipped.frame;return f&&owns("fr-"+f)?" fr-"+f:"";}
+function titleTxt(){var t=S.shop.equipped&&S.shop.equipped.title,it=t&&shopItem(t);return it&&owns(t)?it.title:"";}
+function shopPreview(it){
+  if(it.theme){var P=PAL[it.theme];return '<span class="sprev" style="background:linear-gradient(135deg,'+P.g.join(",")+')"></span>';}
+  if(it.frame)return '<span class="sprev av"><span class="avatar fr-'+it.frame+'">'+esc(((S.profile&&S.profile.name)||"R").charAt(0).toUpperCase())+'</span></span>';
+  if(it.title)return '<span class="sprev ttl">«&nbsp;»</span>';
+  if(it.id==="boost")return '<span class="sprev ico">×2</span>';
+  return '<span class="sprev ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>';}
+function vShop(){
+  var X=xpCompute(),R2=rankOf(X.total),C=coinsOf(X),E=S.shop.equipped||{};
+  var h='<div class="shead glass"><button class="back" data-a="shop-close" aria-label="Retour">‹</button><h2>Boutique</h2><span class="coins">'+coinIco(20)+'<b>'+big(C)+'</b></span></div>';
+  h+='<p class="sm muted" style="padding:0 6px">Tu gagnes 1 pièce tous les 10 XP, plus 50 pièces à chaque niveau de rang et 200 à chaque nouveau rang. Plus tu montes, plus la boutique s\'ouvre.</p>';
+  ["Bonus","Thèmes","Cadres","Titres"].forEach(function(cat){
+    h+='<section class="sect"><p class="eyebrow">'+cat+'</p><div class="glass card">';
+    SHOP.filter(function(x){return x.cat===cat;}).forEach(function(it){
+      var own=owns(it.id),lock=R2.t<it.tier,eq=(it.theme&&S.profile&&S.profile.accent===it.theme)||(it.frame&&E.frame===it.frame)||(it.title&&E.title===it.id),cnt=it.cons?(S.shop[it.id]||0):0,btn;
+      if(lock)btn='<span class="slock">Rang '+TIERS[it.tier][0]+'</span>';
+      else if(it.cons||!own)btn='<button class="sbuy'+(C<it.price?" poor":"")+'" data-a="buy" data-v="'+it.id+'">'+(S.confirm==="buy:"+it.id?"Confirmer":coinIco(15)+" "+big(it.price))+'</button>';
+      else if(eq)btn='<button class="sbuy eq" data-a="unequip" data-v="'+it.id+'">Équipé</button>';
+      else btn='<button class="sbuy own" data-a="equip" data-v="'+it.id+'">Équiper</button>';
+      h+='<div class="sitem'+(lock?" locked":"")+'">'+shopPreview(it)+'<span class="grow"><b>'+esc(it.name)+(cnt?' <span class="tag" style="background:var(--accent);color:var(--on-accent)">×'+cnt+'</span>':'')+'</b><span class="xs muted">'+esc(it.desc)+'</span></span>'+btn+'</div>';});
+    h+='</div></section>';});
+  return h;}
+function buy(id){var it=shopItem(id),X=xpCompute(),C=coinsOf(X);if(!it)return;
+  if(rankOf(X.total).t<it.tier){toast("Débloqué au rang "+TIERS[it.tier][0]);return;}
+  if(C<it.price){toast("Il te manque "+big(it.price-C)+" pièces");return;}
+  if(S.confirm!=="buy:"+id){S.confirm="buy:"+id;render();return;}
+  S.confirm=null;S.shop.spent=(S.shop.spent||0)+it.price;
+  if(it.cons)S.shop[id]=(S.shop[id]||0)+1;else{S.shop.owned=S.shop.owned||[];S.shop.owned.push(id);}
+  put("boutique");if(!it.cons)equip(id,true);render();toast(it.name+" acheté");}
+function equip(id,silent){var it=shopItem(id);if(!it||!owns(id))return;S.shop.equipped=S.shop.equipped||{};
+  if(it.theme){S.profile.accent=it.theme;put("profil");}
+  if(it.frame)S.shop.equipped.frame=it.frame;
+  if(it.title)S.shop.equipped.title=id;
+  put("boutique");if(!silent){render();toast(it.name+" équipé");}}
+function unequip(id){var it=shopItem(id);S.shop.equipped=S.shop.equipped||{};
+  if(it.theme){S.profile.accent="orange";put("profil");}
+  if(it.frame)delete S.shop.equipped.frame;if(it.title)delete S.shop.equipped.title;put("boutique");render();}
+/* ---------- home hero ---------- */
+var QUOTES=["La douleur d'aujourd'hui, c'est la force de demain.","Pas de motivation ? La discipline, elle, est déjà là.","Chaque rep compte. Surtout la dernière.","Tu ne regretteras jamais une séance faite.","Le miroir ment parfois. La barre, jamais.","Petit progrès chaque jour, gros résultats chaque mois.","Ton seul adversaire, c'est toi d'hier.","Les excuses ne soulèvent pas de poids.","Aujourd'hui, on charge un peu plus que la dernière fois.","Le corps va où l'esprit le pousse.","Fatigué ? Termine quand même. La fierté arrive après.","Les jambes aussi, ça se mérite.","Sois plus fort que ta meilleure excuse.","Rush. Récupère. Recommence.","Le rang Légende se construit une séance à la fois."];
+var QI=Math.floor(Math.random()*QUOTES.length);
+setInterval(function(){var q=document.getElementById("quote");if(!q)return;q.style.opacity=0;setTimeout(function(){QI=(QI+1)%QUOTES.length;q.textContent=QUOTES[QI];q.style.opacity=1;},420);},7000);
+
 function render(){
   applyAccent();
   var app=document.getElementById("app"),insess=S.view!=="tabs";
   app.className=S.view==="session"?"insession":"";
   document.getElementById("tabs").hidden=insess;
-  app.innerHTML=S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vHist():vToday();
+  app.innerHTML=S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vHist():vToday();
   Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.classList.toggle("on",t.dataset.v===S.tab);});
   renderRest();tick();hydratePhotos();
 }
@@ -1157,7 +1275,7 @@ function startSession(dayId){
 function dietDay(){var k=S.dietDay;if(!S.diet.days[k])S.diet.days[k]={items:[]};return S.diet.days[k];}
 function act(a,el){
   var s=S.active&&S.sessions[S.active],v=el.dataset.v,i=+el.dataset.i,j=+el.dataset.j;
-  if(a!=="abandon"&&a!=="del")S.confirm=null;
+  if(a!=="abandon"&&a!=="del"&&a!=="buy")S.confirm=null;
   switch(a){
    case "tab":S.tab=v;S.open=null;S.build=null;S.dietEdit=false;if(v==="diet")S.dietDay=ymd(new Date());render();window.scrollTo(0,0);break;
    case "start":armAudio();startSession(v);break;
@@ -1182,6 +1300,13 @@ function act(a,el){
      delete S.sessions[s.id];put("s:"+s.id);S.active=null;S.rest=null;S.confirm=null;S.view="tabs";S.tab="today";render();window.scrollTo(0,0);break;
    case "close-sum":S.view="tabs";S.tab="today";render();window.scrollTo(0,0);break;
    case "open":S.open=S.open===v?null:v;S.edit=null;render();break;
+   case "shop-open":S.view="shop";S.confirm=null;render();window.scrollTo(0,0);break;
+   case "shop-close":S.view="rank";S.confirm=null;render();window.scrollTo(0,0);break;
+   case "buy":buy(v);break;
+   case "equip":equip(v);break;
+   case "unequip":unequip(v);break;
+   case "use-boost":if((S.shop.boost||0)>0&&s&&!s.boost){S.shop.boost--;s.boost=true;put("boutique");put("s:"+s.id);render();toast("Booster ×2 activé");}break;
+   case "use-joker":{var ck=wkOf(new Date());if((S.shop.joker||0)>0){S.shop.joker--;S.shop.jokerWeeks=(S.shop.jokerWeeks||[]).concat([ck]);put("boutique");render();toast("Joker utilisé : série protégée");}break;}
    case "rank-open":S.view="rank";render();window.scrollTo(0,0);break;
    case "rank-close":S.view="tabs";S.tab="today";render();break;
    case "prof-open":S.pedit=clone(S.profile||{name:"",sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"});S.view="profile";render();window.scrollTo(0,0);break;
