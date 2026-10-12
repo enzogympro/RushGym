@@ -27,6 +27,7 @@
   --accent:#FF9F0A; --accent-ink:#FFB64A; --on-accent:#1E1200;
   --good:#30D158; --hot:#FF5A4F; --blue:#3E9BFF; --violet:#C77DFF;
   --b1:rgba(255,128,48,.50); --b2:rgba(222,62,128,.40); --b3:rgba(52,104,255,.46); --b4:rgba(32,196,170,.28);
+  --g1:#FFB13B; --g2:#FF5E3A; --g3:#E5306F;
   --on-photo:#FFFFFF; --scrim:rgba(4,5,10,.78); --sheet:rgba(22,24,34,.86); --solid:#161822; --bar:rgba(24,26,36,.58);
   --font:"Manrope",-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;
   --display:"Unbounded","Arial Black",-apple-system,system-ui,sans-serif;
@@ -204,10 +205,10 @@ svg.chart{width:100%;height:auto;display:block}
 
 /* brand */
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
-.logo{width:42px;height:42px;flex:none;filter:drop-shadow(0 6px 14px rgba(255,94,58,.45))}
+.logo{width:42px;height:42px;flex:none;filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--g2) 45%,transparent))}
 .word{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.03em;line-height:1}
-.word b{font-weight:800;background:linear-gradient(100deg,#FFB13B,#FF5E3A 50%,#E5306F);-webkit-background-clip:text;background-clip:text;color:transparent}
-.newico{display:flex!important;align-items:center;justify-content:center;font-size:30px;font-weight:500;color:var(--on-accent);background:linear-gradient(135deg,#FFB13B,#FF5E3A 55%,#E5306F)!important}
+.word b{font-weight:800;background:linear-gradient(100deg,var(--g1),var(--g2) 50%,var(--g3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.newico{display:flex!important;align-items:center;justify-content:center;font-size:30px;font-weight:500;color:var(--on-accent);background:linear-gradient(135deg,var(--g1),var(--g2) 55%,var(--g3))!important}
 .plus{width:44px;height:44px;border-radius:50%;font-size:26px;font-weight:500;line-height:1;color:var(--on-accent);flex:none;background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,0) 55%),var(--accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 20px -6px var(--accent)}
 /* builder */
 .bex{display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--edge)}
@@ -242,7 +243,7 @@ svg.chart{width:100%;height:auto;display:block}
 .btn[disabled]{opacity:.45;box-shadow:none}
 
 /* rank + whoop + profile */
-.avatar{width:40px;height:40px;border-radius:50%;flex:none;font-family:var(--display);font-weight:700;font-size:16px;color:#fff;background:linear-gradient(135deg,#FFB13B,#FF5E3A 55%,#E5306F);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 14px -6px #FF5E3A}
+.avatar{width:40px;height:40px;border-radius:50%;flex:none;font-family:var(--display);font-weight:700;font-size:16px;color:#fff;background:linear-gradient(135deg,var(--g1),var(--g2) 55%,var(--g3));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 14px -6px var(--g2)}
 .sync span{display:none}
 .rankcard{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 16px 12px 12px;border-radius:26px}
 .rankcard .grow{display:flex;flex-direction:column;gap:5px}
@@ -447,7 +448,7 @@ var FOCUS={
  "Épaules":{c:"accent",ex:[E("ohpm","Développé épaules à la machine","Deltoïde antérieur","Épaules",90),E("latc","Élévations latérales à la poulie","Deltoïde moyen","Épaules",60),E("lat","Élévations latérales haltères","Deltoïde moyen","Épaules",60),E("rear","Oiseau à la machine","Deltoïde postérieur","Épaules",60)]},
  "Bras":{c:"violet",ex:[E("ezcurl","Curl barre EZ","Biceps","Bras",75),E("pushd","Extension triceps à la poulie","Triceps","Bras",75),E("hammer","Curl marteau","Brachial","Bras",60),E("ohext","Extension au-dessus de la tête","Triceps, longue portion","Bras",60)]}
 };
-var LOGO='<svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="rgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB13B"/><stop offset=".55" stop-color="#FF5E3A"/><stop offset="1" stop-color="#E5306F"/></linearGradient><linearGradient id="rgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#rgA)"/><path d="M2 20a18 18 0 0 1 18-18h24a18 18 0 0 1 18 18v10H2z" fill="url(#rgB)"/><g transform="skewX(-12) translate(8 0)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M27 47V18h10.5a8.5 8.5 0 0 1 0 17H28M37 35l9 12" stroke-width="7"/><path d="M12 24h7M8 32h11M12 40h7" stroke-width="4" opacity=".9"/></g></svg>';
+var LOGO='<svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="rgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--g1,#FFB13B)"/><stop offset=".55" style="stop-color:var(--g2,#FF5E3A)"/><stop offset="1" style="stop-color:var(--g3,#E5306F)"/></linearGradient><linearGradient id="rgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#rgA)"/><path d="M2 20a18 18 0 0 1 18-18h24a18 18 0 0 1 18 18v10H2z" fill="url(#rgB)"/><g transform="skewX(-12) translate(8 0)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M27 47V18h10.5a8.5 8.5 0 0 1 0 17H28M37 35l9 12" stroke-width="7"/><path d="M12 24h7M8 32h11M12 40h7" stroke-width="4" opacity=".9"/></g></svg>';
 var FOCUS_ORDER=["Pectoraux","Dos","Épaules","Bras"];
 
 /* Foods: name, kcal, protéines, glucides, lipides for 100 g, then an optional usual portion (label, grams). Approximate table values. */
@@ -1051,7 +1052,7 @@ async function stampPhoto(im,now,s,code){
   var c=document.createElement("canvas");c.width=W;c.height=H;var x=c.getContext("2d");x.drawImage(im,0,0,W,H);
   var bh=Math.round(Math.max(150,H*.2)),g=x.createLinearGradient(0,H-bh*1.4,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.82)");x.fillStyle=g;x.fillRect(0,H-bh*1.4,W,bh*1.4);
   var u=W/1080,pad=40*u,ls=88*u,y0=H-pad-ls;
-  var lg=x.createLinearGradient(pad,y0,pad+ls,y0+ls);lg.addColorStop(0,"#FFB13B");lg.addColorStop(.55,"#FF5E3A");lg.addColorStop(1,"#E5306F");
+  var lg=x.createLinearGradient(pad,y0,pad+ls,y0+ls);var cs=getComputedStyle(document.documentElement);lg.addColorStop(0,cs.getPropertyValue("--g1").trim()||"#FFB13B");lg.addColorStop(.55,cs.getPropertyValue("--g2").trim()||"#FF5E3A");lg.addColorStop(1,cs.getPropertyValue("--g3").trim()||"#E5306F");
   x.fillStyle=lg;if(x.roundRect){x.beginPath();x.roundRect(pad,y0,ls,ls,24*u);x.fill();}else x.fillRect(pad,y0,ls,ls);
   x.fillStyle="#fff";x.font="800 "+Math.round(56*u)+"px Unbounded, 'Arial Black', sans-serif";x.textAlign="center";x.textBaseline="middle";x.fillText("R",pad+ls/2,y0+ls/2+2*u);
   x.textAlign="left";x.textBaseline="alphabetic";var tx=pad+ls+24*u,d=new Date(now);
@@ -1116,9 +1117,22 @@ async function handlePhoto(file){
 }
 
 var ACCENTS=[["orange","Orange","#FF9F0A"],["rouge","Rouge","#FF3B4E"],["vert","Vert","#2FD573"],["bleu","Bleu","#2F7BFF"],["rose","Rose","#FF4FA3"]];
-function accentPicker(cur){return '<div class="stack" style="gap:8px"><p class="eyebrow">Couleur de l\'appli</p><div class="accents">'+ACCENTS.map(function(a){return '<button class="acc'+((cur||"orange")===a[0]?" on":"")+'" data-a="pset" data-k="accent" data-v="'+a[0]+'" style="--c:'+a[2]+'"><i></i>'+a[1]+'</button>';}).join("")+'</div></div>';}
-function applyAccent(){var a=S.view==="onboard"&&S.ob?S.ob.p.accent:S.view==="profile"&&S.pedit?S.pedit.accent:(S.profile&&S.profile.accent);
-  var r=document.documentElement;if(a&&a!=="orange")r.setAttribute("data-accent",a);else r.removeAttribute("data-accent");}
+function accentPicker(cur){return '<div class="stack" style="gap:8px"><p class="eyebrow">Couleur de l\'appli</p><div class="accents">'+ACCENTS.map(function(a){return '<button class="acc'+((cur||"orange")===a[0]?" on":"")+'" data-a="pset" data-k="accent" data-v="'+a[0]+'" style="--c:'+a[2]+'"><i style="background:linear-gradient(135deg,'+(PAL[a[0]]?PAL[a[0]].g.join(","):"#FFB13B,#FF5E3A,#E5306F")+')"></i>'+a[1]+'</button>';}).join("")+'</div></div>';}
+var PAL={
+ rouge:{a:"#FF3B4E",on:"#FFFFFF",inkD:"#FF8590",inkL:"#B8122A",g:["#FF8A6B","#FF3B4E","#C8102E"],bD:"#0E0608",bL:"#F9EDEF",bl:["rgba(255,59,78,.58)","rgba(255,40,100,.42)","rgba(150,20,50,.50)","rgba(255,120,80,.30)"]},
+ vert:{a:"#2FD573",on:"#04200E",inkD:"#62E89C",inkL:"#0B7A3B",g:["#B5F56B","#2FD573","#0FA38A"],bD:"#040C07",bL:"#EAF7EF",bl:["rgba(47,213,115,.50)","rgba(20,200,170,.40)","rgba(10,110,70,.50)","rgba(170,235,60,.28)"]},
+ bleu:{a:"#2F7BFF",on:"#FFFFFF",inkD:"#82B0FF",inkL:"#1450C8",g:["#5BD0FF","#2F7BFF","#5B3BFF"],bD:"#04060F",bL:"#EAF0FC",bl:["rgba(47,123,255,.58)","rgba(100,80,255,.44)","rgba(20,60,170,.52)","rgba(40,200,255,.32)"]},
+ rose:{a:"#FF4FA3",on:"#FFFFFF",inkD:"#FF93C7",inkL:"#B81468",g:["#FFA3CF","#FF4FA3","#C33BFF"],bD:"#0E0509",bL:"#FBEBF4",bl:["rgba(255,79,163,.56)","rgba(200,80,255,.44)","rgba(150,30,110,.50)","rgba(255,150,200,.32)"]}};
+var ACC_KEYS=["--accent","--on-accent","--accent-ink","--g1","--g2","--g3","--bg","--b1","--b2","--b3","--b4"];
+function isDark(){var t=document.documentElement.getAttribute("data-theme");if(t==="dark")return true;if(t==="light")return false;return !(window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches);}
+function curAccent(){return S.view==="onboard"&&S.ob?S.ob.p.accent:S.view==="profile"&&S.pedit?S.pedit.accent:(S.profile&&S.profile.accent);}
+function applyAccent(){var a=curAccent(),r=document.documentElement,P=PAL[a],st=r.style;
+  if(!P){r.removeAttribute("data-accent");ACC_KEYS.forEach(function(k){st.removeProperty(k);});return;}
+  r.setAttribute("data-accent",a);var d=isDark();
+  st.setProperty("--accent",P.a);st.setProperty("--on-accent",P.on);st.setProperty("--accent-ink",d?P.inkD:P.inkL);
+  st.setProperty("--g1",P.g[0]);st.setProperty("--g2",P.g[1]);st.setProperty("--g3",P.g[2]);st.setProperty("--bg",d?P.bD:P.bL);
+  P.bl.forEach(function(c,i){st.setProperty("--b"+(i+1),c);});}
+try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",applyAccent);new MutationObserver(applyAccent).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});}catch(e){}
 function render(){
   applyAccent();
   var app=document.getElementById("app"),insess=S.view!=="tabs";
