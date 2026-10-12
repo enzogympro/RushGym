@@ -384,6 +384,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
+var APPV=8;
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
 var RESTS=[45,60,75,90,120,150,180];
@@ -1023,7 +1024,7 @@ function vProfile(){
   var p=S.pedit,h='<div class="shead glass"><button class="back" data-a="prof-close" aria-label="Retour">‹</button><h2>Mon profil</h2></div>';
   h+='<section class="glass card stack"><label class="lab">Prénom<input class="inp" id="pf-name" data-p="name" value="'+esc(p.name)+'"></label>'+accentPicker(p.accent)+profForm(p,null)+'</section>';
   h+=whoopCard();
-  h+='<div class="stack"><button class="btn" data-a="prof-save">Enregistrer</button><p class="xs muted" style="text-align:center">Enregistrer recalcule tes objectifs diète à partir de ton profil.</p></div>';
+  h+='<div class="stack"><button class="btn" data-a="prof-save">Enregistrer</button><p class="xs muted" style="text-align:center">Enregistrer recalcule tes objectifs diète à partir de ton profil.</p><p class="xs muted" style="text-align:center">RushGym version '+APPV+'</p></div>';
   return h;}
 function profValid(p,step){
   if(step===0&&!String(p.name||"").trim())return "Indique ton prénom";
@@ -1272,6 +1273,7 @@ document.addEventListener("visibilitychange",function(){if(!document.hidden){flu
 window.addEventListener("online",flushAll);
 
 /* ---------- boot ---------- */
+try{if(location.protocol.indexOf("http")===0)fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(j&&j.v>APPV){var k="rg-upd-"+j.v;if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,"1");location.replace(location.pathname+"?v="+j.v);}}}).catch(function(){});}catch(e){}
 window.RG_LOGO=LOGO.replace('class="logo"','class="logo big"');
 if(window.RG_GATE&&!window.RG_GATE())return;
 loadLocal();
