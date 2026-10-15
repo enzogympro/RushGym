@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=17">
+<link rel="manifest" href="manifest.webmanifest?v=19">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -524,6 +524,10 @@ button.w{width:100%}
 .bigclock{font-size:54px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-1px;padding:6px 0}
 .racego{font-size:17px;padding:18px}
 .runbig{display:flex;align-items:baseline;justify-content:center;gap:8px;padding:8px 0}.runbig b{font-size:72px;font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums;line-height:1}.runbig span{font-size:20px;color:var(--muted);font-weight:700}
+.approw{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--edge)}.approw:last-child{border-bottom:0}.approw.soon .appico,.approw.soon b{filter:grayscale(1);opacity:.45}
+.aup,.adn{font-style:normal;font-weight:800;margin-left:2px}.aup{color:var(--good)}.adn{color:var(--hot)}
+.mealph{display:flex;flex-direction:column;gap:10px}.mrow{display:grid;grid-template-columns:28px 1fr 92px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--edge)}.mrow.off{opacity:.4}.mrow .ck{width:26px;height:26px;border-radius:8px;border:2px solid var(--edge);display:flex;align-items:center;justify-content:center;font-weight:800}.mrow.on .ck{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}.mrow .field{height:44px;padding:0 10px}.mrow .field input{font-size:18px}
+.photobtn.soon{opacity:.45;filter:grayscale(1)}
 </style>
 
 <div class="field-bg" aria-hidden="true"></div>
@@ -569,7 +573,8 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=17;
+var APPV=19;var APPDATE="2026-10-16";
+function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
 var RESTS=[45,60,75,90,120,150,180];
@@ -615,10 +620,19 @@ function sportProgram(sp,lv){var f=[0.75,1,1.25,1.5][lv]||1;function n(x){return
 function PD(){var sp=curSport();if(sp==="fitness")return S.program.days;S.program.alt=S.program.alt||{};
   if(!S.program.alt[sp]){var lv=((S.profile&&S.profile.sp&&S.profile.sp[sp])||{}).lv||1;S.program.alt[sp]={days:sportProgram(sp,lv)};}return S.program.alt[sp].days;}
 function setPD(d){var sp=curSport();if(sp==="fitness")S.program.days=d;else{PD();S.program.alt[sp].days=d;}}
+function incFor(id){var e=lib(id),q=e&&e.q;return q==="Poids du corps"?0:q==="Haltères"?2:2.5;}
+function reco(id,last,j,target){if(!last)return null;var ls=last.sets[j];if(!ls||!(num(ls.kg)>0))return null;var k=num(ls.kg),r=num(ls.reps),t=num(ls.target)||target,inc=incFor(id);
+  if(!inc)return {kg:k,why:"same"};if(r>=t)return {kg:k+inc,why:"up"};if(r<=t-3)return {kg:Math.max(inc,k-inc),why:"down"};return {kg:k,why:"same"};}
+function autoHint(ex,last){var up=0,dn=0,sm=0;ex.sets.forEach(function(x){if(x.auto==="up")up++;else if(x.auto==="down")dn++;else if(x.auto==="same")sm++;});var inc=incFor(ex.exId);
+  if(!up&&!dn&&!sm)return "";
+  if(up&&!dn&&!sm)return '<p class="hint">Progression auto : <b>+'+kg(inc)+' kg</b> sur chaque série, tu as tout validé la dernière fois.</p>';
+  if(dn)return '<p class="hint">Progression auto : charge un peu baissée sur '+dn+' série'+(dn>1?"s":"")+' pour retrouver toutes tes reps.'+(up?" +"+kg(inc)+" kg là où tu avais réussi.":"")+'</p>';
+  if(up)return '<p class="hint">Progression auto : <b>+'+kg(inc)+' kg</b> sur '+up+' série'+(up>1?"s":"")+'. Garde la même charge sur les autres jusqu\'à faire toutes les reps.</p>';
+  return '<p class="hint">Même charge qu\'à la dernière séance : valide toutes tes reps et l\'appli te fera monter.</p>';}
 function mkSets(e,last){var t=e.type||exType(e.id||e.exId);
   if(t==="dist"||t==="time"){var n=e.n||1;return Array.apply(null,Array(n)).map(function(_,j){var ls=last&&last.sets[j];return {target:0,d:t==="dist"?String(e.val||(ls&&ls.d)||""):"",t:"",reps:"1",kg:"",done:false};});}
   if(t==="reps"){var n2=e.n||3;return Array.apply(null,Array(n2)).map(function(_,j){var ls=last&&last.sets[j];return {target:e.val||10,kg:ls&&num(ls.kg)?kg(num(ls.kg)):"",reps:String(e.val||10),done:false};});}
-  return REPS.map(function(r,j){var ls=last&&last.sets[j];return {target:r,kg:ls&&num(ls.kg)?kg(num(ls.kg)):"",reps:String(r),done:false};});}
+  return REPS.map(function(r,j){var rc=reco(e.id||e.exId,last,j,r),o={target:r,kg:rc?kg(rc.kg):"",reps:String(r),done:false};if(rc)o.auto=rc.why;return o;});}
 /* ---------- sport onboarding ---------- */
 var LV={hyrox:["Débutant · jamais fait","Intermédiaire","Avancé","Élite"],course:["Débutant","Régulier","Confirmé","Compétiteur"]};
 function vSportOb(){var O=S.sob,d=O.d,sp=O.sport,st=O.step,h='<div class="ob">';
@@ -705,14 +719,11 @@ async function importTrack(file,srcName){try{var txt=await file.text();if(/\.fit
   put("s:"+id);S.view="tabs";S.tab="stats";render();toast("Sortie importée : "+km(r.dist)+" km en "+fmtT(r.dur));}catch(e){toast("Import impossible : fichier non reconnu");}}
 /* ---------- connected apps hub ---------- */
 var APPS=[["strava","Strava","#FC4C02","Sur strava.com, ouvre ton activité → ⋯ → « Exporter GPX ». Puis importe le fichier ici."],["garmin","Garmin Connect","#007CC3","Dans Garmin Connect (site), ouvre l'activité → ⚙ → « Exporter vers GPX » ou TCX."],["apple","Apple Santé · Apple Watch","#FF2D55","Avec l'app gratuite HealthFit ou RunGap, exporte tes séances en GPX dans Fichiers, puis importe-les ici."],["polar","Polar Flow","#D10027","Dans Polar Flow, ouvre la séance → « Exporter la séance » → GPX ou TCX."],["coros","Coros","#111","Dans l'app Coros, ouvre l'activité → partager → « Exporter GPX »."],["suunto","Suunto","#1C1C1C","Dans Suunto, ouvre l'activité → ⋯ → « Exporter GPX »."],["nike","Nike Run Club","#111","Nike n'exporte pas directement : synchronise avec Strava (via RunGap), puis exporte le GPX depuis Strava."],["zwift","Zwift · tapis connectés","#FC6719","Sur zwift.com, ouvre l'activité → « Télécharger » le fichier, ou passe par Strava."]];
-function vApps(){var h='<div class="shead glass"><button class="back" data-a="apps-close" aria-label="Retour">‹</button><h2>Applis connectées</h2></div>';
-  h+='<p class="sm muted" style="padding:0 4px">RushGym récupère tes activités venant de tes autres applis : tu ne perds rien en changeant, et tout est réuni au même endroit avec tes rangs et tes stats.</p>';
-  var cnt={};runs().forEach(function(r){var k=(r.src||"").replace("import:","");cnt[k]=(cnt[k]||0)+1;});
-  h+='<section class="glass card stack"><div class="row"><span class="appico" style="background:#000;color:#fff">W</span><span class="grow"><b class="h3" style="display:block">Whoop</b><span class="xs muted">'+(window.claude&&window.claude.use?(S.profile&&S.profile.whoop?"Connectée : récup, sommeil, effort":"Disponible : active-la dans ton profil"):"Connexion directe dans la version Claude de RushGym")+'</span></span><span class="pchip" style="--c:var(--'+(S.profile&&S.profile.whoop?"good":"muted")+')">'+(S.profile&&S.profile.whoop?"Connectée":"—")+'</span></div></section>';
-  APPS.forEach(function(a){var open=S.appOpen===a[0];h+='<section class="glass card stack"><button class="row" style="width:100%;text-align:left" data-a="app-open" data-v="'+a[0]+'"><span class="appico" style="background:'+a[2]+'">'+esc(a[1].charAt(0))+'</span><span class="grow"><b class="h3" style="display:block">'+esc(a[1])+'</b><span class="xs muted">'+(cnt[a[0]]?cnt[a[0]]+" activité"+(cnt[a[0]]>1?"s":"")+" importée"+(cnt[a[0]]>1?"s":""):"Import de tes activités")+'</span></span><span class="chev">'+(open?"–":"+")+'</span></button>';
-    if(open)h+='<p class="sm">'+esc(a[3])+'</p><label class="btn small" style="width:100%" for="trk-'+a[0]+'">Importer un fichier GPX ou TCX</label><input type="file" id="trk-'+a[0]+'" data-trk="'+a[0]+'" accept=".gpx,.tcx,.xml,application/gpx+xml,application/octet-stream" hidden><p class="xs muted">Connexion automatique (sans fichier) : arrive avec le serveur RushGym.</p>';
-    h+='</section>';});
-  h+='<section class="glass card stack"><p class="eyebrow">Tes données t\'appartiennent</p><p class="sm muted">Exporte tout RushGym (séances, sorties, diète, profil) dans un fichier, pour le garder ou le réimporter.</p><button class="btn line small" style="width:100%" data-a="export-all">Exporter toutes mes données</button><label class="btn line small" style="width:100%" for="restore">Restaurer une sauvegarde</label><input type="file" id="restore" accept=".json,application/json" hidden></section>';
+function vApps(){var h='<div class="shead glass"><button class="back" data-a="apps-close" aria-label="Retour">‹</button><h2>Mes applis</h2></div>';
+  h+='<p class="sm muted" style="padding:0 4px">Bientôt, toutes tes activités au même endroit : tes courses, tes séances et ta récup arriveront toutes seules dans RushGym.</p>';
+  var wOn=!!(window.claude&&window.claude.use&&S.profile&&S.profile.whoop),L=[["Whoop","#000","W"]].concat(APPS.map(function(a){return [a[1],a[2],a[1].charAt(0)];}));
+  h+='<section class="glass card">'+L.map(function(a,i){var on=i===0&&wOn;return '<div class="approw'+(on?"":" soon")+'"><span class="appico" style="background:'+a[1]+'">'+esc(a[2])+'</span><b class="grow">'+esc(a[0])+'</b><span class="pchip" style="--c:var(--'+(on?"good":"muted")+')">'+(on?"Connectée":"Prochainement")+'</span></div>';}).join("")+'</section>';
+  h+='<section class="glass card stack"><p class="eyebrow">Sauvegarde</p><p class="sm muted">Garde une copie de toutes tes séances, à remettre si tu changes de téléphone.</p><button class="btn line small" style="width:100%" data-a="export-all">Sauvegarder mes données</button><label class="btn line small" style="width:100%" for="restore">Remettre une sauvegarde</label><input type="file" id="restore" accept=".json,application/json" hidden></section>';
   return h;}
 async function restoreAll(file){try{var d=JSON.parse(await file.text());if(!d||d.app!=="RushGym"||!d.sessions){toast("Ce fichier n'est pas une sauvegarde RushGym");return;}
   ["profile","program","poids","diet","friends","shop"].forEach(function(k){if(d[k])S[k]=d[k];});Object.keys(d.sessions).forEach(function(id){if(!S.sessions[id])S.sessions[id]=d.sessions[id];});
@@ -732,7 +743,7 @@ function sportHero(sp,nd,act,doneToday){var d=spData(sp),h='<section class="w wi
     if(days!=null&&days>=0)h+='<p class="sm"><b>J−'+days+'</b> avant ta course'+(goal?" · objectif "+fmtT(goal)+(ref?" (écart "+(ref>goal?"+":"−")+fmtT(Math.abs(ref-goal))+")":""):"")+'</p>';}
   else{var wk=weekKm(),kmw=num(d.kmw)||0,days2=d.date?Math.ceil((new Date(d.date+"T09:00:00")-new Date())/864e5):null;
     h+='<p class="eyebrow">Course</p><h2 class="rushq">On <span>rush</span> combien de km ?</h2><button class="wsug" data-a="run-start"><span class="sporticon">📍</span><span class="grow"><b>Démarrer une sortie GPS</b><span class="xs muted">Distance, allure et kilomètres en direct</span></span><span class="wgo">Go</span></button>';
-    h+='<div class="hscroll">'+PD().map(function(x){return '<button class="chip'+(x.id===nd.id?" on":"")+'" data-a="start" data-v="'+esc(x.id)+'">'+esc(x.name)+'</button>';}).join("")+'<button class="chip" data-a="runadd-open">+ Saisir une sortie</button><button class="chip" data-a="apps-open">Importer</button></div>';
+    h+='<div class="hscroll">'+PD().map(function(x){return '<button class="chip'+(x.id===nd.id?" on":"")+'" data-a="start" data-v="'+esc(x.id)+'">'+esc(x.name)+'</button>';}).join("")+'<button class="chip" data-a="runadd-open">+ Saisir une sortie</button></div>';
     if(days2!=null&&days2>=0)h+='<p class="sm"><b>J−'+days2+'</b> avant ton '+({5:"5 km",10:"10 km",21:"semi",42:"marathon",trail:"trail"}[d.gd]||"objectif")+(parseT(d.goal)?" · objectif "+fmtT(parseT(d.goal)):"")+'</p>';}
   return h+'</section>';}
 function sportWidgets(sp){var W={},d=spData(sp);
@@ -750,7 +761,7 @@ function sportProgress(sp){var h="";
   if(sp==="course"){var vals=[],labs=[];for(var w=7;w>=0;w--){vals.push(Math.round(weekKm(w)/100)/10);var m=monday(new Date());m.setDate(m.getDate()-7*w);labs.push(m.getDate()+"/"+(m.getMonth()+1));}
     h+='<section class="sect"><p class="eyebrow">Kilomètres par semaine</p><div class="glass card">'+bars(vals,labs,"km par semaine")+'</div></section>';
     h+='<section class="sect"><p class="eyebrow">Records</p><div class="glass card">'+["r5","r10","r21","r42"].map(function(k){var b=bestFor(k);return '<div class="exline"><b>'+DIST[k][1]+'</b><span class="r num"><b style="font-size:15px">'+(b?fmtT(b.t):"—")+'</b>'+(b?'<br>'+pace(b.t,DIST[k][0])+' · '+b.src:'')+'</span></div>';}).join("")+'</div></section>';
-    var R=runs().slice(-8).reverse();h+='<section class="sect"><p class="eyebrow">Dernières sorties</p><div class="glass card">'+(R.length?R.map(function(r){return '<div class="exline"><span class="medal">'+(r.src==="gps"?"📍":r.src==="manual"?"✎":"⇣")+'</span><b>'+esc(r.name)+'<br><span class="xs muted" style="font-weight:500">'+dlong(r.start)+(r.src&&r.src.indexOf("import:")===0?" · "+r.src.slice(7):"")+'</span></b><span class="r num"><b style="font-size:14px">'+fmtT(r.dur)+'</b><br>'+pace(r.dur,r.dist)+(r.elev?" · "+r.elev+" m D+":"")+'</span></div>';}).join(""):'<p class="sm muted">Lance une sortie GPS, saisis-la, ou importe-la depuis Strava ou Garmin.</p>')+'</div></section>';}
+    var R=runs().slice(-8).reverse();h+='<section class="sect"><p class="eyebrow">Dernières sorties</p><div class="glass card">'+(R.length?R.map(function(r){return '<div class="exline"><span class="medal">'+(r.src==="gps"?"📍":r.src==="manual"?"✎":"⇣")+'</span><b>'+esc(r.name)+'<br><span class="xs muted" style="font-weight:500">'+dlong(r.start)+(r.src&&r.src.indexOf("import:")===0?" · "+r.src.slice(7):"")+'</span></b><span class="r num"><b style="font-size:14px">'+fmtT(r.dur)+'</b><br>'+pace(r.dur,r.dist)+(r.elev?" · "+r.elev+" m D+":"")+'</span></div>';}).join(""):'<p class="sm muted">Lance une sortie GPS ou saisis-la à la main.</p>')+'</div></section>';}
   if(sp==="hyrox"){var RC=races().slice().reverse(),st=stationBests();
     h+='<section class="sect"><p class="eyebrow">Simulations Hyrox</p><div class="glass card">'+(RC.length?RC.slice(0,6).map(function(r,i){return '<div class="exline"><b>'+dlong(r.start)+'</b><span class="r num"><b style="font-size:15px">'+fmtT(r.total)+'</b>'+(bestRace()&&bestRace().id===r.id?'<br><span class="up">Record</span>':'')+'</span></div>';}).join(""):'<p class="sm muted">Fais ta première simulation complète depuis l\'accueil.</p>')+'</div></section>';
     if(Object.keys(st).length)h+='<section class="sect"><p class="eyebrow">Meilleur temps par station</p><div class="glass card">'+Object.keys(st).map(function(k){return '<div class="exline">'+thumb(k,"s")+'<b>'+esc(LIB[k].name)+'</b><span class="r num"><b style="font-size:14px">'+fmtT(st[k])+'</b></span></div>';}).join("")+'</div></section>';}
@@ -1009,7 +1020,7 @@ function vToday(){
   if(act){var cva=null;act.exercises.forEach(function(e){if(!cva&&IMG[e.exId])cva=e.exId;});
     hero+='<p class="eyebrow">'+(act.kind==="run"?"Sortie en cours":act.kind==="race"?"Simulation en cours":"Séance en cours")+'</p><div class="row" style="gap:14px">'+thumb(cva||(act.kind==="run"?"c_foot":act.kind==="race"?"hx_push":null),"t",act.c)+'<span class="grow"><b class="wbig">'+esc(act.name)+'</b><span class="xs muted">'+(act.kind==="run"?km(act.dist)+" km":act.kind==="race"?"Étape "+(act.splits.length+1)+" / 16":countSets(act)+' séries validées')+' · commencée à '+hhmm(act.start)+'</span></span></div><button class="btn" data-a="resume">Reprendre</button>';}
   else if(doneToday.length){var s0=doneToday[doneToday.length-1],xp0=(X.bySes[s0.id]||{xp:0}).xp;
-    hero+='<p class="eyebrow">Aujourd\'hui</p><div class="row" style="gap:14px"><span class="wdone">✓</span><span class="grow"><b class="wbig">'+esc(s0.name)+' terminée</b><span class="xs muted">'+(s0.kind==="run"?km(s0.dist)+" km · "+pace(s0.dur,s0.dist):s0.kind==="race"?fmtT(s0.total):countSets(s0)+' séries · '+big(volume(s0))+' kg')+' · +'+big(xp0)+' XP</span></span></div><p class="sm muted">Récupère bien : protéines, eau et sommeil. Prochaine séance : <b style="color:var(--fg)">'+esc(nextDay().name)+'</b>.</p><div class="chips">'+(sp==="hyrox"?'<button class="chip" data-a="race-start">🏁 Simulation Hyrox</button>':sp==="course"?'<button class="chip" data-a="run-start">📍 Sortie GPS</button><button class="chip" data-a="runadd-open">Saisir une sortie</button><button class="chip" data-a="apps-open">Importer</button>':'')+'<button class="chip" data-a="tab" data-v="diet">Noter mes repas</button><button class="chip" data-a="start" data-v="'+esc(nextDay().id)+'">Encore une séance</button></div>';}
+    hero+='<p class="eyebrow">Aujourd\'hui</p><div class="row" style="gap:14px"><span class="wdone">✓</span><span class="grow"><b class="wbig">'+esc(s0.name)+' terminée</b><span class="xs muted">'+(s0.kind==="run"?km(s0.dist)+" km · "+pace(s0.dur,s0.dist):s0.kind==="race"?fmtT(s0.total):countSets(s0)+' séries · '+big(volume(s0))+' kg')+' · +'+big(xp0)+' XP</span></span></div><p class="sm muted">Récupère bien : protéines, eau et sommeil. Prochaine séance : <b style="color:var(--fg)">'+esc(nextDay().name)+'</b>.</p><div class="chips">'+(sp==="hyrox"?'<button class="chip" data-a="race-start">🏁 Simulation Hyrox</button>':sp==="course"?'<button class="chip" data-a="run-start">📍 Sortie GPS</button><button class="chip" data-a="runadd-open">Saisir une sortie</button>':'')+'<button class="chip" data-a="tab" data-v="diet">Noter mes repas</button><button class="chip" data-a="start" data-v="'+esc(nextDay().id)+'">Encore une séance</button></div>';}
   else if(tp==="rest"){hero+='<p class="eyebrow">Jour de repos</p><b class="wbig">☾ On récupère aujourd\'hui</b><p class="sm muted">Les muscles grandissent au repos. Marche, étirements, et vise tes protéines.</p><div class="chips"><button class="chip" data-a="start" data-v="'+esc(nextDay().id)+'">M\'entraîner quand même</button><button class="chip" data-a="day-rest" data-v="'+today+'">Annuler le repos</button></div>';}
   else if(sp!=="fitness"){hero=sportHero(sp,nd).replace('</section>','');}
   else{hero+='<p class="eyebrow">'+(tp?"Prévue aujourd'hui":hr>=18?"Ce soir":"Aujourd'hui")+'</p><h2 class="rushq">On <span>rush</span> quoi ?</h2><button class="wsug" data-a="start" data-v="'+esc(nd.id)+'">'+thumb(cover(nd),"t",nd.c)+'<span class="grow"><b>'+esc(nd.name)+'</b><span class="xs muted">'+nd.exercises.length+' exercices · '+nd.min+' min</span></span><span class="wgo">Go</span></button><div class="hscroll">'+PD().filter(function(d){return d.id!==nd.id;}).map(function(d){return '<button class="chip" data-a="start" data-v="'+esc(d.id)+'">'+esc(d.name)+'</button>';}).join("")+'<button class="chip" data-a="build-new">+ Séance</button></div>';}
@@ -1070,8 +1081,7 @@ function vSession(){
     else h+='<div class="row between nophoto" style="padding:8px 6px 0;align-items:flex-start"><button class="xbtn" data-a="ex-rm" data-i="'+i+'" style="order:3">'+(S.confirm==="exrm"+i?"?":"×")+'</button><div style="min-width:0"><h3>'+esc(ex.name||"Exercice")+'</h3><p class="xs muted" style="margin-top:4px">'+esc(ex.muscle)+' · repos '+mmss(ex.rest)+'</p></div>'+cnt+'</div>';
     h+='<div class="body">';
     if(last){h+='<p class="xs muted last">Dernière fois, le '+dshort(last.t)+' : <b>'+setsText(last.sets)+'</b></p>';
-      var ok=ety==="force"&&last.sets.length>=REPS.length&&REPS.every(function(r,j){return num(last.sets[j].reps)>=r;});
-      if(ok&&last.top>0)h+='<p class="hint">12 / 10 / 8 validés la dernière fois. Tente un peu plus lourd aujourd\'hui.</p>';}
+      if(ety==="force")h+=autoHint(ex,last);}
     else h+='<p class="xs muted">'+(ety==="dist"?"Note la distance et ton temps : ils serviront de repère.":ety==="time"?"Note ton temps : il servira de repère.":"Première fois : note tes charges, elles serviront de repère.")+'</p>';
     h+='<div class="sets">';
     ex.sets.forEach(function(st,j){
@@ -1079,7 +1089,7 @@ function vSession(){
        '<label class="field"><input id="t-'+i+'-'+j+'" inputmode="numeric" autocomplete="off" placeholder="0:00" value="'+esc(st.t)+'" data-i="'+i+'" data-j="'+j+'" data-f="t" aria-label="Temps série '+(j+1)+'"><span>⏱</span></label>'+
        '<button class="check" data-a="check" data-i="'+i+'" data-j="'+j+'" aria-label="Valider la série '+(j+1)+'">✓</button></div>';return;}
       h+='<div class="set'+(st.done?" done":"")+(st.pr?" pr":"")+'"><span class="n">'+(j+1)+'</span>'+
-       '<label class="field"><input id="k-'+i+'-'+j+'" inputmode="decimal" autocomplete="off" placeholder="0" value="'+esc(st.kg)+'" data-i="'+i+'" data-j="'+j+'" data-f="kg" aria-label="Charge série '+(j+1)+'"><span>kg</span></label>'+
+       '<label class="field"><input id="k-'+i+'-'+j+'" inputmode="decimal" autocomplete="off" placeholder="0" value="'+esc(st.kg)+'" data-i="'+i+'" data-j="'+j+'" data-f="kg" aria-label="Charge série '+(j+1)+'"><span>kg'+(!st.done&&st.auto==="up"?'<i class="aup">↑</i>':!st.done&&st.auto==="down"?'<i class="adn">↓</i>':'')+'</span></label>'+
        '<label class="field"><input id="r-'+i+'-'+j+'" inputmode="numeric" autocomplete="off" placeholder="'+(st.target||"")+'" value="'+esc(st.reps)+'" data-i="'+i+'" data-j="'+j+'" data-f="reps" aria-label="Répétitions série '+(j+1)+'"><span>reps</span></label>'+
        '<button class="check" data-a="check" data-i="'+i+'" data-j="'+j+'" aria-label="Valider la série '+(j+1)+'">'+(st.pr?"★":"✓")+'</button></div>';
     });
@@ -1288,6 +1298,22 @@ function resList(){
   h+=list.map(function(p){return resRow(p[0],p[1]);}).join("");
   return h;
 }
+var MEALAI=false;
+var MEAL_PROMPT='Tu es nutritionniste pour une appli de musculation française. Regarde la photo du repas et liste chaque aliment visible séparément (ex. riz, poulet, brocolis, sauce). Estime le poids cuit dans l\'assiette en grammes en t\'aidant de la taille de l\'assiette et des couverts, puis donne les valeurs nutritionnelles moyennes pour 100 g de cet aliment tel que servi. Réponds uniquement en JSON : {"aliments":[{"nom":"nom court en français","grammes":nombre,"kcal100":nombre,"p100":nombre,"g100":nombre,"l100":nombre}],"remarque":"une phrase courte"}. p = protéines, g = glucides, l = lipides. Si la photo ne montre pas de nourriture, renvoie {"aliments":[],"remarque":"pas de repas visible"}.';
+async function mealAIcheck(){try{if(!window.claude||!window.claude.use)return;var sm=await window.claude.use("sample");if(!sm)return;var l=await sm.limits();MEALAI=!!(l&&l.images);if(MEALAI&&S.add&&!S.add.food&&!S.add.create)renderSheet();}catch(e){}}
+async function mealPhoto(file){var A=S.add;if(!A)return;A.photo={state:"busy"};renderSheet();
+  try{var sm=await window.claude.use("sample"),small=await shrinkBlob(file,1024),r=await sm.json(MEAL_PROMPT,{images:[small],cache:false});
+    var L=(r&&Array.isArray(r.aliments)?r.aliments:[]).map(function(x){return {name:String(x.nom||"Aliment").slice(0,40),g:String(Math.max(1,Math.round(+x.grammes||100))),k:+x.kcal100||0,p:+x.p100||0,c:+x.g100||0,f:+x.l100||0,on:true};}).filter(function(x){return x.k>0||x.p>0;});
+    if(!S.add)return;S.add.photo=L.length?{state:"done",items:L,note:String((r&&r.remarque)||"").slice(0,160)}:{state:"err",msg:"Je ne vois pas de repas sur cette photo. Prends l'assiette bien de face, en entier."};}
+  catch(e){if(S.add)S.add.photo={state:"err",msg:"Analyse impossible pour le moment. Réessaie dans un instant."};}
+  renderSheet();}
+function mpTot(){var t={k:0,p:0,c:0,f:0};(S.add.photo.items||[]).forEach(function(x){if(!x.on)return;var g=num(x.g)||0;t.k+=x.k*g/100;t.p+=x.p*g/100;t.c+=x.c*g/100;t.f+=x.f*g/100;});return Math.round(t.k)+" kcal · Protéines "+g1(t.p)+" g · Glucides "+g1(t.c)+" g · Lipides "+g1(t.f)+" g";}
+function mealPhotoView(meal){var P=S.add.photo,h='<div class="mealph">';
+  if(P.state==="busy")return h+'<p class="eyebrow">Photo de l\'assiette</p><p class="sm">Analyse de ton assiette en cours…</p><div class="meter"><i class="indet"></i></div></div>';
+  if(P.state==="err")return h+'<p class="sm" style="color:var(--hot);font-weight:600">'+esc(P.msg)+'</p><label class="btn small" for="mealpic">Reprendre une photo</label><input type="file" id="mealpic" accept="image/*" capture="environment" hidden><button class="link" data-a="mp-back">‹ Retour à la liste</button></div>';
+  h+='<p class="sm muted">Vérifie les quantités : touche un aliment pour l\'enlever, corrige les grammes si besoin.</p><div>'+P.items.map(function(x,i){return '<div class="mrow'+(x.on?" on":" off")+'"><button class="ck" data-a="mp-tog" data-i="'+i+'" aria-label="Garder '+esc(x.name)+'">'+(x.on?"✓":"")+'</button><span><b>'+esc(x.name)+'</b><span class="xs muted" style="display:block">'+Math.round(x.k)+' kcal · P '+g1(x.p)+' pour 100 g</span></span><label class="field"><input inputmode="decimal" data-mp="'+i+'" value="'+esc(x.g)+'" aria-label="Grammes de '+esc(x.name)+'"><span>g</span></label></div>';}).join("")+'</div>';
+  h+='<p class="sm" id="mptot" style="font-weight:600">'+mpTot()+'</p>'+(P.note?'<p class="xs muted">'+esc(P.note)+'</p>':'')+'<p class="xs muted">Estimation à partir de la photo : pèse les aliments pour être précis à 100 %.</p><button class="btn" data-a="mp-add">Ajouter · '+meal+'</button><button class="link" data-a="mp-back">‹ Retour à la liste</button></div>';
+  return h;}
 function prevLine(){var a=S.add,g=num(a.g);if(!isFinite(g)||g<=0)return "Indique une quantité en grammes.";var m=macrosFor(a.food,g);return m.kcal+" kcal · Protéines "+g1(m.p)+" g · Glucides "+g1(m.c)+" g · Lipides "+g1(m.f)+" g";}
 function renderSheet(){
   if(S.picker)return renderPicker();
@@ -1295,13 +1321,14 @@ function renderSheet(){
   var el=document.getElementById("sheet"),a=S.add;
   if(!a){el.hidden=true;el.innerHTML="";document.getElementById("tabs").hidden=S.view!=="tabs";lockScroll(false);return;}
   var meal=MEALS.filter(function(m){return m[0]===a.meal;})[0][1],h='<div class="box glass"><div class="row between"><h2 style="font-size:22px">'+(a.create?"Nouvel aliment":a.food?esc(a.food[0]):"Ajouter · "+meal)+'</h2><button class="back" data-a="add-close" aria-label="Fermer">×</button></div>';
-  if(a.create){
+  if(a.photo){h+=mealPhotoView(meal);}
+  else if(a.create){
     h+='<label class="lab">Nom<input class="inp" id="nf-name" placeholder="Ex. Pâtes au pesto maison"></label><p class="xs muted">Valeurs pour 100 g, comme sur l\'étiquette.</p><div class="four">'+[["kcal","Calories"],["p","Protéines"],["c","Glucides"],["f","Lipides"]].map(function(x){return '<label>'+x[1]+'<input class="inp" id="nf-'+x[0]+'" inputmode="decimal" placeholder="0"></label>';}).join("")+'</div><button class="btn" data-a="food-save">Enregistrer l\'aliment</button><button class="link" data-a="food-back">‹ Retour à la liste</button>';
   }else if(a.food){
     var f=a.food,chips=f[5]?[[f[5],f[6]],["2 × "+f[5],f[6]*2],["3 × "+f[5],f[6]*3],["100 g",100]]:[["50 g",50],["100 g",100],["150 g",150],["200 g",200],["250 g",250]];
     h+='<p class="sm muted">Pour 100 g : '+f[1]+' kcal · P '+g1(f[2])+' · G '+g1(f[3])+' · L '+g1(f[4])+'</p><label class="field"><input id="fg" inputmode="decimal" autocomplete="off" value="'+esc(a.g)+'" aria-label="Quantité en grammes"><span>grammes</span></label><div class="chips">'+chips.map(function(c){return '<button class="chip" data-a="fgram" data-v="'+c[1]+'">'+esc(c[0])+'</button>';}).join("")+'</div><p class="sm" id="fprev" style="font-weight:600">'+prevLine()+'</p><button class="btn" data-a="food-add">Ajouter · '+meal+'</button><button class="link" data-a="food-back">‹ Choisir un autre aliment</button>';
   }else{
-    h+='<div class="shsticky"><div class="row"><input class="inp" id="fq" placeholder="Chercher : riz, poulet, œuf…" autocomplete="off" value="'+esc(a.q||"")+'" aria-label="Chercher un aliment"><button class="scanbtn" data-a="scan-open" aria-label="Scanner un code-barres"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M7 8v8M10 8v8M13 8v8M16.5 8v8"/></svg></button></div><div class="row"><button class="btn small" style="flex:1" data-a="scan-open">Scanner un produit</button><button class="btn line small" style="flex:1" data-a="food-new">Créer un aliment</button></div></div><div id="fres">'+resList()+'</div>';
+    h+='<div class="shsticky"><div class="row"><input class="inp" id="fq" placeholder="Chercher : riz, poulet, œuf…" autocomplete="off" value="'+esc(a.q||"")+'" aria-label="Chercher un aliment"><button class="scanbtn" data-a="scan-open" aria-label="Scanner un code-barres"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M7 8v8M10 8v8M13 8v8M16.5 8v8"/></svg></button></div><div class="row"><button class="btn small" style="flex:1" data-a="scan-open">Scanner un produit</button><button class="btn line small" style="flex:1" data-a="food-new">Créer un aliment</button></div>'+(MEALAI?'<label class="btn small photobtn" for="mealpic">📷 Photo de mon assiette</label><input type="file" id="mealpic" accept="image/*" capture="environment" hidden>':'<button class="btn line small photobtn soon" disabled>📷 Photo de l\'assiette · prochainement</button>')+'</div><div id="fres">'+resList()+'</div>';
   }
   el.innerHTML=h+'</div>';el.hidden=false;document.getElementById("tabs").hidden=true;lockScroll(true);fitSheet();
 }
@@ -1471,10 +1498,10 @@ function vOnboard(){
 function vProfile(){
   var p=S.pedit,h='<div class="shead glass"><button class="back" data-a="prof-close" aria-label="Retour">‹</button><h2>Mon profil</h2></div>';
   h+='<section class="glass card stack"><label class="lab">Prénom<input class="inp" id="pf-name" data-p="name" value="'+esc(p.name)+'"></label>'+accentPicker(p.accent)+profForm(p,null)+'</section>';
-  h+='<section class="glass card stack"><p class="eyebrow">Mes sports</p>'+["hyrox","course"].map(function(k){var d=spData(k),on=d.lv!=null;return '<button class="row" style="width:100%;text-align:left" data-a="sob-edit" data-v="'+k+'"><span class="sporticon">'+sportIco(k)+'</span><span class="grow"><b class="h3" style="display:block">'+(k==="hyrox"?"Hyrox":"Course")+'</b><span class="xs muted">'+(on?esc(LV[k][d.lv])+" · modifier niveau, stats et objectif":"Pas encore configuré")+'</span></span><span class="chev">›</span></button>';}).join("")+'<button class="btn line small" style="width:100%" data-a="apps-open">Applis connectées : Strava, Garmin, Apple Santé…</button></section>';
+  h+='<section class="glass card stack"><p class="eyebrow">Mes sports</p>'+["hyrox","course"].map(function(k){var d=spData(k),on=d.lv!=null;return '<button class="row" style="width:100%;text-align:left" data-a="sob-edit" data-v="'+k+'"><span class="sporticon">'+sportIco(k)+'</span><span class="grow"><b class="h3" style="display:block">'+(k==="hyrox"?"Hyrox":"Course")+'</b><span class="xs muted">'+(on?esc(LV[k][d.lv])+" · modifier niveau, stats et objectif":"Pas encore configuré")+'</span></span><span class="chev">›</span></button>';}).join("")+'<button class="btn line small" style="width:100%" data-a="apps-open">Mes applis · Strava, Garmin… prochainement</button></section>';
   h+=whoopCard()+remCard();
   if(useGeo()){var gg=S.profile&&S.profile.gym,cd=gymCooldown();h+='<section class="glass card stack"><p class="eyebrow">Ma salle</p><p class="sm">'+(gg?'Enregistrée le '+dlong(gg.setAt)+'. Tes photos de séance doivent être prises sur place.':'Pas encore enregistrée : ce sera fait à ta première séance, une fois dans la salle.')+'</p>'+(gg?'<button class="btn line small" style="width:100%" data-a="gym-reset">'+(cd?'Changer de salle (possible dans '+cd+' jours)':'Changer de salle')+'</button>':'')+'</section>';}
-  h+='<div class="stack"><button class="btn" data-a="prof-save">Enregistrer</button><p class="xs muted" style="text-align:center">Enregistrer recalcule tes objectifs diète à partir de ton profil.</p><p class="xs muted" style="text-align:center">RushGym version '+APPV+'</p></div>';
+  h+='<div class="stack"><button class="btn" data-a="prof-save">Enregistrer</button><p class="xs muted" style="text-align:center">Enregistrer recalcule tes objectifs diète à partir de ton profil.</p><p class="xs muted" style="text-align:center">RushGym · '+majTxt()+'</p></div>';
   return h;}
 function profValid(p,step){
   if(step===0&&!String(p.name||"").trim())return "Indique ton prénom";
@@ -2063,6 +2090,7 @@ function act(a,el){
        st.done=true;var k=num(st.kg)||0,hist=exHistory(ex.exId,s.id),best=-Infinity;hist.forEach(function(x){if(x.top>best)best=x.top;});
        ex.sets.forEach(function(o){if(o!==st&&o.done&&o.pr)best=Math.max(best,num(o.kg)||0);});
        if(hist.length&&k>0&&k>best){st.pr=true;toast("Nouveau record sur "+ex.name+" : "+kg(k)+" kg");}
+       var nx=ex.sets[j+1],inc2=incFor(ex.exId);if(nx&&!nx.done&&!String(nx.kg||"").trim()&&k>0&&inc2){nx.kg=kg(k+inc2);nx.auto="up";}
        var lastOfAll=i===s.exercises.length-1&&j===ex.sets.length-1;if(!lastOfAll)startRest(ex.rest,ex.name);
      }else{st.done=false;delete st.pr;}
      put("s:"+s.id);render();break;}
@@ -2168,6 +2196,11 @@ function act(a,el){
    case "add-open":S.add={meal:v,q:"",food:null,g:"",create:false};renderSheet();break;
    case "add-close":S.add=null;renderSheet();break;
    case "food":{var all=allFoods(),fd=all[+v];if(!fd)return;S.add.food=fd;var rc=recents(all).filter(function(r){return r.f[0]===fd[0];})[0];S.add.g=String(rc?rc.g:(fd[6]||100)).replace(".",",");renderSheet();break;}
+   case "mp-back":S.add.photo=null;renderSheet();break;
+   case "mp-tog":{var mi=S.add.photo.items[i];mi.on=!mi.on;renderSheet();break;}
+   case "mp-add":{var MI=S.add.photo.items.filter(function(x){return x.on&&num(x.g)>0;});if(!MI.length){toast("Garde au moins un aliment");return;}var dmp=dietDay();
+     MI.forEach(function(x){var g=num(x.g);dmp.items.push({id:uid("f"),meal:S.add.meal,name:x.name,g:Math.round(g),kcal:Math.round(x.k*g/100),p:Math.round(x.p*g/10)/10,c:Math.round(x.c*g/10)/10,f:Math.round(x.f*g/10)/10});});
+     put("j:"+S.dietDay);S.add=null;renderSheet();render();toast(MI.length+" aliment"+(MI.length>1?"s":"")+" ajouté"+(MI.length>1?"s":""));break;}
    case "food-back":S.add.food=null;S.add.create=false;renderSheet();break;
    case "food-new":S.add.create=true;renderSheet();break;
    case "fgram":S.add.g=String(v);document.getElementById("fg").value=v;document.getElementById("fprev").textContent=prevLine();break;
@@ -2187,6 +2220,8 @@ function onField(ev){
   var el=ev.target,f=el.dataset.f;
   if(el.dataset.trk&&el.type==="file"){if(ev.type==="change"&&el.files&&el.files[0]){importTrack(el.files[0],el.dataset.trk);el.value="";}return;}
   if(el.id==="restore"){if(ev.type==="change"&&el.files&&el.files[0]){restoreAll(el.files[0]);el.value="";}return;}
+  if(el.id==="mealpic"){if(ev.type==="change"&&el.files&&el.files[0]){mealPhoto(el.files[0]);}return;}
+  if(el.dataset.mp!=null){var mpi=S.add&&S.add.photo&&S.add.photo.items[+el.dataset.mp];if(mpi){mpi.g=el.value;var mt=document.getElementById("mptot");if(mt)mt.textContent=mpTot();}return;}
   if(el.dataset.sob){S.sob.d[el.dataset.sob]=el.value;return;}
   if(el.dataset.ra){S.runadd[el.dataset.ra]=el.value;return;}
   if(el.id==="gymcam"){if(ev.type==="change"&&el.files&&el.files[0])handlePhoto(el.files[0]);return;}
@@ -2223,7 +2258,7 @@ S.dietDay=ymd(new Date());
 S.active=Object.keys(S.sessions).filter(function(id){return !S.sessions[id].done;})[0]||null;
 if(S.active&&S.sessions[S.active].kind==="run"&&!S.sessions[S.active].paused&&navigator.geolocation)geoWatch(S.sessions[S.active]);
 render();
-connect();
+connect();mealAIcheck();
 })();
 </script>
 
