@@ -8,9 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="RushGym">
 <meta name="theme-color" content="#07080E">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="rg-icon-180.png">
+<link rel="icon" type="image/png" href="rg-icon-192.png">
+<link rel="manifest" href="manifest.webmanifest?v=17">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -569,7 +569,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=16;
+var APPV=17;
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
 var RESTS=[45,60,75,90,120,150,180];
@@ -712,8 +712,13 @@ function vApps(){var h='<div class="shead glass"><button class="back" data-a="ap
   APPS.forEach(function(a){var open=S.appOpen===a[0];h+='<section class="glass card stack"><button class="row" style="width:100%;text-align:left" data-a="app-open" data-v="'+a[0]+'"><span class="appico" style="background:'+a[2]+'">'+esc(a[1].charAt(0))+'</span><span class="grow"><b class="h3" style="display:block">'+esc(a[1])+'</b><span class="xs muted">'+(cnt[a[0]]?cnt[a[0]]+" activité"+(cnt[a[0]]>1?"s":"")+" importée"+(cnt[a[0]]>1?"s":""):"Import de tes activités")+'</span></span><span class="chev">'+(open?"–":"+")+'</span></button>';
     if(open)h+='<p class="sm">'+esc(a[3])+'</p><label class="btn small" style="width:100%" for="trk-'+a[0]+'">Importer un fichier GPX ou TCX</label><input type="file" id="trk-'+a[0]+'" data-trk="'+a[0]+'" accept=".gpx,.tcx,.xml,application/gpx+xml,application/octet-stream" hidden><p class="xs muted">Connexion automatique (sans fichier) : arrive avec le serveur RushGym.</p>';
     h+='</section>';});
-  h+='<section class="glass card stack"><p class="eyebrow">Tes données t\'appartiennent</p><p class="sm muted">Exporte tout RushGym (séances, sorties, diète, profil) dans un fichier, pour le garder ou le réimporter.</p><button class="btn line small" style="width:100%" data-a="export-all">Exporter toutes mes données</button></section>';
+  h+='<section class="glass card stack"><p class="eyebrow">Tes données t\'appartiennent</p><p class="sm muted">Exporte tout RushGym (séances, sorties, diète, profil) dans un fichier, pour le garder ou le réimporter.</p><button class="btn line small" style="width:100%" data-a="export-all">Exporter toutes mes données</button><label class="btn line small" style="width:100%" for="restore">Restaurer une sauvegarde</label><input type="file" id="restore" accept=".json,application/json" hidden></section>';
   return h;}
+async function restoreAll(file){try{var d=JSON.parse(await file.text());if(!d||d.app!=="RushGym"||!d.sessions){toast("Ce fichier n'est pas une sauvegarde RushGym");return;}
+  ["profile","program","poids","diet","friends","shop"].forEach(function(k){if(d[k])S[k]=d[k];});Object.keys(d.sessions).forEach(function(id){if(!S.sessions[id])S.sessions[id]=d.sessions[id];});
+  if(!S.program.favs)S.program.favs=[];if(!S.program.custom)S.program.custom=[];
+  ["profil","programme","poids","diete","amis","boutique"].forEach(function(k){try{put(k);}catch(e){}});Object.keys(d.sessions).forEach(function(id){try{put("s:"+id);}catch(e){}});
+  saveLocal();S.view="tabs";S.tab="today";render();toast("Sauvegarde restaurée : "+Object.keys(d.sessions).length+" séances");}catch(e){toast("Restauration impossible : fichier illisible");}}
 async function exportAll(){var data=JSON.stringify({app:"RushGym",v:APPV,at:new Date().toISOString(),profile:S.profile,program:S.program,sessions:S.sessions,poids:S.poids,diet:S.diet,friends:S.friends,shop:S.shop},null,1),f=new File([data],"rushgym-export-"+ymd(new Date())+".json",{type:"application/json"});
   try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Export RushGym"});return;}}catch(e){if(e&&e.name==="AbortError")return;}
   try{if(window.claude&&window.claude.use){var dl=await window.claude.use("downloads");if(dl){await dl.save({filename:f.name,data:data});return;}}}catch(e){}
@@ -2181,6 +2186,7 @@ document.addEventListener("click",function(ev){var el=ev.target.closest("[data-a
 function onField(ev){
   var el=ev.target,f=el.dataset.f;
   if(el.dataset.trk&&el.type==="file"){if(ev.type==="change"&&el.files&&el.files[0]){importTrack(el.files[0],el.dataset.trk);el.value="";}return;}
+  if(el.id==="restore"){if(ev.type==="change"&&el.files&&el.files[0]){restoreAll(el.files[0]);el.value="";}return;}
   if(el.dataset.sob){S.sob.d[el.dataset.sob]=el.value;return;}
   if(el.dataset.ra){S.runadd[el.dataset.ra]=el.value;return;}
   if(el.id==="gymcam"){if(ev.type==="change"&&el.files&&el.files[0])handlePhoto(el.files[0]);return;}
