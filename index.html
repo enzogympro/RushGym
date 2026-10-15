@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=19">
+<link rel="manifest" href="manifest.webmanifest?v=21">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -528,6 +528,27 @@ button.w{width:100%}
 .aup,.adn{font-style:normal;font-weight:800;margin-left:2px}.aup{color:var(--good)}.adn{color:var(--hot)}
 .mealph{display:flex;flex-direction:column;gap:10px}.mrow{display:grid;grid-template-columns:28px 1fr 92px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--edge)}.mrow.off{opacity:.4}.mrow .ck{width:26px;height:26px;border-radius:8px;border:2px solid var(--edge);display:flex;align-items:center;justify-content:center;font-weight:800}.mrow.on .ck{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}.mrow .field{height:44px;padding:0 10px}.mrow .field input{font-size:18px}
 .photobtn.soon{opacity:.45;filter:grayscale(1)}
+.premhero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:26px 18px 20px;border-radius:26px}
+.premhero h2{font-size:24px;line-height:1.15;letter-spacing:-.4px}.premhero h2 span{background:linear-gradient(90deg,var(--accent),var(--hot));-webkit-background-clip:text;background-clip:text;color:transparent}
+.premlogo .logo{width:58px;height:58px}.premlogo.sm .logo{width:38px;height:38px}
+.premcta{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:20px}
+.seg{display:flex;gap:4px;padding:4px;border-radius:14px}.seg button{flex:1;padding:10px;border-radius:11px;font-weight:700;color:var(--muted)}.seg button.on{background:var(--fg);color:var(--bg)}.seg small{color:var(--good);font-weight:800;margin-left:4px}.seg button.on small{color:inherit;opacity:.7}
+.plan{position:relative;display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:22px}
+.plan.best{box-shadow:0 0 0 2px var(--accent),0 18px 40px -22px var(--accent)}.plan.elite{background-image:linear-gradient(135deg,rgba(255,215,120,.10),transparent 60%)}
+.planflag{position:absolute;top:-11px;left:18px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:800;padding:4px 10px;border-radius:99px;letter-spacing:.3px}
+.plann{font-size:20px}.planp b{font-size:22px;font-variant-numeric:tabular-nums}.planp small{color:var(--muted);font-size:12px;margin-left:2px}.planp s{color:var(--muted);font-size:13px;margin-right:4px}
+.planf{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.planf li{font-size:14px;padding-left:24px;position:relative}.planf li:before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:800}
+.plan .btn[disabled]{opacity:.55}
+.discrow{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--edge)}.discrow:last-of-type{border-bottom:0}.discrow.lock{opacity:.45}.discrow.on .discp{background:var(--good);color:#04130a}
+.discp{font-weight:800;font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:99px;background:var(--well)}
+.fbadge{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:#3a2600;background:linear-gradient(135deg,#FFE7A0,#E0A526);box-shadow:0 6px 18px -8px #E0A526}
+.fline{display:grid;grid-template-columns:62px 1fr;column-gap:10px;padding:8px 0;border-bottom:1px solid var(--edge)}.fline:last-child{border-bottom:0}.fline span.sm{grid-column:2}.fline b{grid-row:span 2}
+.fline.f0 b{color:#E0B040}.fline.f1 b{color:#B9C3CF}.fline.f2 b{color:#D08A55}
+.news{display:flex;flex-direction:column;gap:22px;padding:34px 4px 20px}
+.newshead{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}.newshead h1{font-size:32px;line-height:1.08;letter-spacing:-.8px;margin:6px 0 0}
+.newslist{display:flex;flex-direction:column;gap:20px;padding:0 6px}.newsrow{display:grid;grid-template-columns:48px 1fr;gap:14px;align-items:start}.newsrow b{font-size:16px}
+.newsico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;background:var(--c);box-shadow:0 8px 20px -10px var(--c)}
+.tipcard{border-left:3px solid var(--accent)}
 </style>
 
 <div class="field-bg" aria-hidden="true"></div>
@@ -573,7 +594,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=19;var APPDATE="2026-10-16";
+var APPV=21;var APPDATE="2026-10-16";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -1073,6 +1094,9 @@ function vSession(){
   var h='<div class="shead glass"><button class="back" data-a="minimise" aria-label="Retour">‹</button><h2>'+esc(s.name)+'</h2><span class="clock" id="clock">0:00</span></div>';
   h+=proofCard(s);
   if(s.boost)h+='<p class="boostline">Booster XP ×2 actif sur cette séance</p>';else if((S.shop.boost||0)>0)h+='<button class="btn line small" style="width:100%" data-a="use-boost">Activer un booster XP ×2 ('+S.shop.boost+' dispo)</button>';
+  var tipOk=false;try{tipOk=localStorage.getItem("rg-logtip")==="1";}catch(e){}
+  if(!tipOk)h+='<section class="glass card stack tipcard"><p class="eyebrow">Avant de commencer</p><b class="h3">Note tout, précisément</b><p class="sm">'+esc(LOGTIP)+'</p><button class="btn line small" data-a="logtip-ok">C\'est compris</button></section>';
+  else h+='<p class="xs muted" style="padding:0 6px">Note la charge et les reps réelles de chaque série : c\'est ce qui fait progresser ta séance suivante.</p>';
   h+='<p class="sm muted" style="padding:0 6px">Échauffement au poids du corps : muscle-ups et tractions, puis une série légère sur le premier exercice.</p>';
   s.exercises.forEach(function(ex,i){
     var ety=ex.type||exType(ex.exId),hist=exHistory(ex.exId,s.id),last=hist[hist.length-1],n=doneSets(ex).length,cnt='<span class="cnt">'+n+'/'+ex.sets.length+'</span>';
@@ -1395,12 +1419,60 @@ function questDefs(w,per){var wl=weakGroups().join(" / ").toLowerCase();return [
   {id:"prot",label:"Objectif protéines 4 jours",val:w.prot,target:4,xp:100}];}
 function rankCard(X){var CC=coinsOf(X),R2=rankOf(X.total),pct=R2.hi?Math.min(100,(X.total-R2.lo)/(R2.hi-R2.lo)*100):100;
   return '<button class="rankcard glass" data-a="rank-open">'+badge(R2.t,R2.div,58)+'<span class="grow"><span class="eyebrow">Ton rang</span><span class="rname">'+R2.name+(titleTxt()?'<small class="rtitle">'+esc(titleTxt())+'</small>':'')+'</span><span class="meter" style="--m:linear-gradient(90deg,'+TIERS[R2.t][2]+','+TIERS[R2.t][3]+')"><i style="width:'+pct+'%"></i></span><span class="xs muted num">'+(R2.hi?big(X.total)+' / '+big(R2.hi)+' XP · prochain : '+R2.next:big(X.total)+' XP')+(X.streak>1?' · série de '+X.streak+' semaines':'')+'</span></span><span class="coins sm">'+coinIco(16)+'<b>'+big(CC)+'</b></span></button>';}
+/* ---------- RushGym+ (abonnements, fondateurs, réductions de rang) ---------- */
+var PLANS=[{id:"free",n:"Gratuit",m:0,y:0,f:["Séances, programmes et 200+ exercices","Rangs, quêtes et boutique","Diète et scanner","Fitness, Hyrox et Course","3 gymbros"]},
+ {id:"plus",n:"RushGym+",m:2.99,y:21.99,f:["Tout le gratuit","Progression auto complète","Statistiques sur tout l'historique","Sauvegarde automatique","Gymbros illimités et messagerie","Strava, Garmin, Apple Santé","Photo d'assiette (30 / mois)"]},
+ {id:"elite",n:"Elite",m:5.99,y:42.99,f:["Tout RushGym+","Coach forme : ta séance s'adapte à ta forme du jour","Programme sur mesure","Photo d'assiette illimitée","Défis privés entre gymbros","Tous les thèmes et cadres"]}];
+var RANKDISC=[[4,10],[5,20],[6,30],[7,40]];
+function isVerified(s){return s.kind==="run"?s.src!=="manual":!!(s.proof&&s.proof.ok);}
+function verified30(){var t=Date.now()-30*864e5;return doneSessions().filter(function(s){return s.start>=t&&isVerified(s);}).length;}
+function rankDisc(){var R=rankOf(xpCompute().total),d=0;RANKDISC.forEach(function(x){if(R.t>=x[0])d=x[1];});return {pct:d,tier:R.t,active:verified30()>=8};}
+function founderProg(){var ds=doneSessions(),t0=(S.profile&&S.profile.created)||(ds[0]&&ds[0].start)||Date.now(),end=t0+30*864e5,
+  v=ds.filter(function(s){return s.start<=end&&isVerified(s);}).length,P=S.profile||{},prof=!!(P.name&&num(P.weight)&&num(P.height)&&P.goal),fr=Object.keys(S.friends||{}).length;
+  return {v:Math.min(12,v),prof:prof,fr:Math.min(1,fr),left:Math.max(0,Math.ceil((end-Date.now())/864e5)),ok:v>=12&&prof&&fr>=1};}
+function eur(n){return n.toFixed(2).replace(".",",")+" €";}
+function vPremium(){var yr=S.billing==="y",RD=rankDisc(),h='<div class="shead glass"><button class="back" data-a="prem-close" aria-label="Retour">‹</button><h2>RushGym+</h2></div>';
+  h+='<section class="premhero glass"><span class="premlogo">'+LOGO+'</span><h2>Va plus loin avec <span>RushGym+</span></h2><p class="sm muted">Pendant la bêta, tout est débloqué gratuitement pour toi.</p></section>';
+  h+='<div class="seg glass"><button class="'+(yr?"":"on")+'" data-a="bill" data-v="m">Mensuel</button><button class="'+(yr?"on":"")+'" data-a="bill" data-v="y">Annuel <small>-40 %</small></button></div>';
+  var disc=RD.active?RD.pct:0;
+  PLANS.forEach(function(p){var base=yr?p.y:p.m,pr=base*(1-disc/100),best=p.id==="plus";
+    h+='<section class="plan glass'+(best?" best":"")+(p.id==="elite"?" elite":"")+'">'+(best?'<span class="planflag">Le plus choisi</span>':'')+'<div class="row between" style="align-items:flex-end"><b class="plann">'+p.n+'</b><span class="planp">'+(base?(disc?'<s>'+eur(base)+'</s> ':'')+'<b>'+eur(pr)+'</b><small>/'+(yr?"an":"mois")+'</small>':'<b>0 €</b>')+'</span></div>'+
+     (base&&yr?'<p class="xs muted">soit '+eur(pr/12)+' par mois</p>':'')+'<ul class="planf">'+p.f.map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ul>'+
+     (base?'<button class="btn'+(best?"":" line")+' small" disabled>Bientôt disponible</button>':'<p class="xs muted">Ta formule actuelle</p>')+'</section>';});
+  /* rank discount */
+  var R=rankOf(xpCompute().total);
+  h+='<section class="sect"><p class="eyebrow">Ton rang te fait payer moins cher</p><div class="glass card">'+RANKDISC.map(function(x){var on=RD.tier>=x[0]&&(RANKDISC.filter(function(y){return RD.tier>=y[0];}).pop()||[])[0]===x[0];return '<div class="discrow'+(on?" on":"")+(RD.tier<x[0]?" lock":"")+'">'+badge(x[0],2,34)+'<b class="grow">'+TIERS[x[0]][0]+'</b><span class="discp">-'+x[1]+' %</span></div>';}).join("")+
+   '<p class="xs muted" style="margin-top:8px">'+(RD.pct?(RD.active?'Ta réduction de <b>-'+RD.pct+' %</b> est active.':'Ta réduction de -'+RD.pct+' % est en pause : fais 8 séances vérifiées sur 30 jours ('+verified30()+'/8).'):'Tu es '+esc(R.name)+'. Dès Émeraude, tes abonnements baissent, tant que tu restes actif (8 séances vérifiées sur 30 jours).')+'</p></div></section>';
+  /* founders */
+  var F=founderProg(),fl=[["Or","1 à 100","RushGym+ gratuit à vie · Elite -50 %"],["Argent","101 à 300","RushGym+ gratuit à vie · Elite -30 %"],["Bronze","301 à 500","RushGym+ -50 % à vie · Elite -20 %"]];
+  h+='<section class="sect"><p class="eyebrow">Programme Fondateurs</p><div class="glass card stack founder"><div class="row" style="gap:12px"><span class="fbadge">F</span><span class="grow"><b class="h3" style="display:block">500 places au lancement</b><span class="xs muted">Un badge numéroté et des avantages à vie</span></span></div>';
+  h+='<div>'+fl.map(function(x,i){return '<div class="fline f'+i+'"><b>'+x[0]+'</b><span class="xs muted">places '+x[1]+'</span><span class="sm">'+x[2]+'</span></div>';}).join("")+'</div>';
+  h+='<p class="eyebrow" style="margin-top:4px">Pour le devenir, en 30 jours</p>'+[["12 séances vérifiées",F.v,12],["Profil complet",F.prof?1:0,1],["1 gymbro invité",F.fr,1]].map(function(x){return '<div class="quest'+(x[1]>=x[2]?" done":"")+'"><div class="row between"><b>'+x[0]+'</b><span class="xs num">'+(x[1]>=x[2]?"✓":x[1]+" / "+x[2])+'</span></div><div class="meter" style="--m:var(--accent)"><i style="width:'+Math.min(100,x[1]/x[2]*100)+'%"></i></div></div>';}).join("")+
+   '<p class="xs muted">'+(F.ok?'Tu remplis toutes les conditions : ta place sera réservée au lancement.':'Les places seront attribuées dans l\'ordre, à la sortie sur l\'App Store.')+'</p></div></section>';
+  h+='<p class="xs muted" style="text-align:center;padding:0 10px">Abonnement sans engagement, résiliable à tout moment depuis ton iPhone. La meilleure réduction s\'applique (Fondateur ou rang), sans cumul.</p>';
+  return h;}
+/* ---------- nouveautés ---------- */
+var NEWSV=21;
+var NEWS=[["#FF6A2B","🏃","Hyrox et Course","Deux nouvelles sections avec leur profil, leurs programmes, la simulation Hyrox chronométrée et les sorties GPS."],
+ ["#2BB673","↗","Progression automatique","Tes charges sont préparées d'après ta dernière séance : +2,5 kg quand tu as tout réussi, la même charge sinon."],
+ ["#7A5CFF","★","RushGym+ et Fondateurs","Découvre les futures formules, les 500 places Fondateurs et les réductions liées à ton rang. Tout reste offert pendant la bêta."],
+ ["#1E88E5","⇅","Sauvegarde de tes données","Garde une copie de toutes tes séances dans Mes applis, et remets-la en un geste si tu changes de téléphone."]];
+var LOGTIP="Note chaque série exactement comme tu l'as faite : la vraie charge, les vraies répétitions, même quand c'est moins que prévu. Ces chiffres sont ton carnet d'entraînement : ils calculent ta progression, préparent ta prochaine séance et te montrent le chemin jusqu'à ton objectif. Des données précises, ce sont des progrès réels.";
+function newsSeen(){try{return +localStorage.getItem("rg-news")||0;}catch(e){return NEWSV;}}
+function newsDone(){try{localStorage.setItem("rg-news",String(NEWSV));}catch(e){}}
+function newsCheck(){if(S.profile&&S.view==="tabs"&&!S.active&&newsSeen()<NEWSV){S.newsBack="tabs";S.view="news";render();window.scrollTo(0,0);}}
+function vNews(){var h='<div class="news">';
+  h+='<div class="newshead"><span class="premlogo">'+LOGO+'</span><h1>Quoi de neuf<br>dans RushGym</h1><p class="muted">'+majTxt()+'</p></div>';
+  h+='<div class="newslist">'+NEWS.map(function(n){return '<div class="newsrow"><span class="newsico" style="--c:'+n[0]+'">'+n[1]+'</span><span><b>'+esc(n[2])+'</b><span class="sm muted" style="display:block">'+esc(n[3])+'</span></span></div>';}).join("")+'</div>';
+  h+='<section class="glass card stack tipcard"><p class="eyebrow">Le conseil du coach</p><b class="h3">Écris précisément ce que tu fais</b><p class="sm">'+esc(LOGTIP)+'</p></section>';
+  h+='<button class="btn" data-a="news-close">Continuer</button></div>';return h;}
 function vRank(){
   var X=xpCompute(),R2=rankOf(X.total),Q=X.cur.quests,h='<div class="shead glass"><button class="back" data-a="rank-close" aria-label="Retour">‹</button><h2>Ton rang</h2></div>';
   h+='<section class="rankhero glass">'+badge(R2.t,R2.div,132)+'<h2 class="rbig" style="--t1:'+TIERS[R2.t][2]+';--t2:'+TIERS[R2.t][3]+'">'+R2.name+'</h2><p class="muted num">'+big(X.total)+' XP au total</p>';
   if(R2.hi)h+='<div class="meter" style="width:100%;--m:linear-gradient(90deg,'+TIERS[R2.t][2]+','+TIERS[R2.t][3]+')"><i style="width:'+Math.min(100,(X.total-R2.lo)/(R2.hi-R2.lo)*100)+'%"></i></div><p class="sm">Encore <b>'+big(R2.hi-X.total)+' XP</b> pour passer '+R2.next+'</p>';
   h+='</section>';
   h+='<button class="btn" data-a="shop-open">'+coinIco(20)+' Boutique · '+big(coinsOf(X))+' pièces</button>';
+  var RDk=rankDisc();h+='<button class="premcta glass" data-a="prem-open"><span class="premlogo sm">'+LOGO+'</span><span class="grow"><b>'+(RDk.pct?'-'+RDk.pct+' % sur RushGym+':'Dès Émeraude : -10 % sur RushGym+')+'</b><span class="xs muted" style="display:block">'+(RDk.pct?(RDk.active?"Réduction active grâce à ton rang":"En pause : reste actif pour la garder"):"Jusqu'à -40 % au rang Légende")+'</span></span><span class="chev">›</span></button>';
   var curWk=wkOf(new Date()),jw=(S.shop.jokerWeeks||[]);
   if((S.shop.joker||0)>0&&jw.indexOf(curWk)<0&&!Q[0].done)h+='<button class="btn line small" style="width:100%" data-a="use-joker">Utiliser un joker de série cette semaine ('+S.shop.joker+' dispo)</button>';
   else if(jw.indexOf(curWk)>=0)h+='<p class="xs muted" style="text-align:center">Joker actif cette semaine : ta série est protégée.</p>';
@@ -1497,25 +1569,26 @@ function vOnboard(){
   return h;}
 function vProfile(){
   var p=S.pedit,h='<div class="shead glass"><button class="back" data-a="prof-close" aria-label="Retour">‹</button><h2>Mon profil</h2></div>';
+  h+='<button class="premcta glass" data-a="prem-open"><span class="premlogo sm">'+LOGO+'</span><span class="grow"><b>RushGym+</b><span class="xs muted" style="display:block">Formules, Fondateurs et réductions de rang</span></span><span class="tag">Bêta</span></button>';
   h+='<section class="glass card stack"><label class="lab">Prénom<input class="inp" id="pf-name" data-p="name" value="'+esc(p.name)+'"></label>'+accentPicker(p.accent)+profForm(p,null)+'</section>';
   h+='<section class="glass card stack"><p class="eyebrow">Mes sports</p>'+["hyrox","course"].map(function(k){var d=spData(k),on=d.lv!=null;return '<button class="row" style="width:100%;text-align:left" data-a="sob-edit" data-v="'+k+'"><span class="sporticon">'+sportIco(k)+'</span><span class="grow"><b class="h3" style="display:block">'+(k==="hyrox"?"Hyrox":"Course")+'</b><span class="xs muted">'+(on?esc(LV[k][d.lv])+" · modifier niveau, stats et objectif":"Pas encore configuré")+'</span></span><span class="chev">›</span></button>';}).join("")+'<button class="btn line small" style="width:100%" data-a="apps-open">Mes applis · Strava, Garmin… prochainement</button></section>';
   h+=whoopCard()+remCard();
   if(useGeo()){var gg=S.profile&&S.profile.gym,cd=gymCooldown();h+='<section class="glass card stack"><p class="eyebrow">Ma salle</p><p class="sm">'+(gg?'Enregistrée le '+dlong(gg.setAt)+'. Tes photos de séance doivent être prises sur place.':'Pas encore enregistrée : ce sera fait à ta première séance, une fois dans la salle.')+'</p>'+(gg?'<button class="btn line small" style="width:100%" data-a="gym-reset">'+(cd?'Changer de salle (possible dans '+cd+' jours)':'Changer de salle')+'</button>':'')+'</section>';}
-  h+='<div class="stack"><button class="btn" data-a="prof-save">Enregistrer</button><p class="xs muted" style="text-align:center">Enregistrer recalcule tes objectifs diète à partir de ton profil.</p><p class="xs muted" style="text-align:center">RushGym · '+majTxt()+'</p></div>';
+  h+='<div class="stack"><button class="btn" data-a="prof-save">Enregistrer</button><p class="xs muted" style="text-align:center">Enregistrer recalcule tes objectifs diète à partir de ton profil.</p><p class="xs muted" style="text-align:center">RushGym · '+majTxt()+' · <button class="link" style="padding:0;font-size:inherit" data-a="news-open">Voir les nouveautés</button></p></div>';
   return h;}
 function profValid(p,step){
   if(step===0&&!String(p.name||"").trim())return "Indique ton prénom";
   if(step===1||step==null){var a=num(p.age),hh=num(p.height),w=num(p.weight);if(!(a>=12&&a<=90))return "Indique ton âge";if(!(hh>=120&&hh<=230))return "Indique ta taille en centimètres";if(!(w>=30&&w<=250))return "Indique ton poids en kilos";}
   return null;}
 function saveProfile(p){if(S.profile&&S.profile.plan)p.plan=S.profile.plan;if(S.profile&&S.profile.rem)p.rem=S.profile.rem;if(S.profile&&S.profile.gym!==undefined)p.gym=S.profile.gym;if(S.profile&&S.profile.sp)p.sp=S.profile.sp;if(S.profile&&S.profile.sport)p.sport=S.profile.sport;
-  var prevW=S.profile&&num(S.profile.weight);S.profile=clone(p);S.profile.name=String(p.name||"").trim();put("profil");
+  var prevW=S.profile&&num(S.profile.weight);p.created=(S.profile&&S.profile.created)||p.created||Date.now();S.profile=clone(p);S.profile.name=String(p.name||"").trim();put("profil");
   var w=num(p.weight);if(w>0&&w!==prevW){S.poids.entries=S.poids.entries||{};S.poids.entries[ymd(new Date())]=Math.round(w*10)/10;put("poids");}
   var T=calcTargets(p);if(T){S.diet.targets=T;put("diete");}}
 function cleanStale(){var now=Date.now(),ch=false;Object.keys(S.sessions).forEach(function(id){var x=S.sessions[id];if(x.done)return;
   if(countSets(x)===0&&now-x.start>3*3600000){delete S.sessions[id];put("s:"+id);ch=true;}
   else if(countSets(x)>0&&now-x.start>12*3600000){x.done=true;x.end=x.start+(x.min||60)*60000;put("s:"+id);ch=true;}});
   if(ch){if(S.active&&!(S.sessions[S.active]&&!S.sessions[S.active].done))S.active=null;if(S.view==="session"&&!S.active)S.view="tabs";render();}}
-function afterLoad(){cleanStale();if(notifState()==='granted')swReg();setTimeout(remCheck,2000);if(!S.profile&&S.view==="tabs"){S.view="onboard";S.ob={step:0,p:{name:(window.RG_NAME||""),sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"}};render();}
+function afterLoad(){setTimeout(newsCheck,700);cleanStale();if(notifState()==='granted')swReg();setTimeout(remCheck,2000);if(!S.profile&&S.view==="tabs"){S.view="onboard";S.ob={step:0,p:{name:(window.RG_NAME||""),sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"}};render();}
   else if(S.profile&&S.profile.whoop&&WH.state==="off")whoopFetch(false);}
 
 /* ---------- gym photo proof ---------- */
@@ -2030,7 +2103,7 @@ function render(){
   app.classList.toggle("insession",S.view==="session");
   document.getElementById("tabs").hidden=insess;
   var key=S.view+"|"+S.tab;if(key!==lastKey){lastKey=key;app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");clearTimeout(render.t);render.t=setTimeout(function(){app.classList.remove("enter");},900);}
-  app.innerHTML=S.view==="sportob"?vSportOb():S.view==="apps"?vApps():S.view==="runadd"?vRunAdd():S.view==="friends"?vFriends():S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="week"?vWeek():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vStats():vToday();
+  app.innerHTML=S.view==="news"?vNews():S.view==="premium"?vPremium():S.view==="sportob"?vSportOb():S.view==="apps"?vApps():S.view==="runadd"?vRunAdd():S.view==="friends"?vFriends():S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="week"?vWeek():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vStats():vToday();
   Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.classList.toggle("on",t.dataset.v===S.tab);});
   renderRest();tick();hydratePhotos();
 }
@@ -2081,6 +2154,12 @@ function act(a,el){
    case "apps-close":S.view=S.appBack==="profile"&&S.pedit?"profile":"tabs";render();window.scrollTo(0,0);break;
    case "app-open":S.appOpen=S.appOpen===v?null:v;render();break;
    case "export-all":exportAll();break;
+   case "prem-open":S.premBack=S.view;S.view="premium";render();window.scrollTo(0,0);break;
+   case "prem-close":S.view=S.premBack&&S.premBack!=="premium"?S.premBack:"tabs";render();window.scrollTo(0,0);break;
+   case "bill":S.billing=v;render();break;
+   case "news-open":S.newsBack=S.view;S.view="news";render();window.scrollTo(0,0);break;
+   case "news-close":newsDone();S.view=S.newsBack==="profile"&&S.pedit?"profile":"tabs";render();window.scrollTo(0,0);break;
+   case "logtip-ok":try{localStorage.setItem("rg-logtip","1");}catch(e){}render();break;
    case "resume":armAudio();S.view="session";render();break;
    case "minimise":S.view="tabs";S.tab="today";render();break;
    case "focus":S.focus={week:weekKey(),muscle:v};put("programme");render();break;
@@ -2151,7 +2230,7 @@ function act(a,el){
    case "ptog":{var tg=S.view==="onboard"?S.ob.p:S.pedit,k4=el.dataset.k,other=k4==="likes"?"dislikes":"likes";tg[k4]=tg[k4]||[];tg[other]=tg[other]||[];var ix4=tg[k4].indexOf(v);if(ix4>=0)tg[k4].splice(ix4,1);else{tg[k4].push(v);var io=tg[other].indexOf(v);if(io>=0)tg[other].splice(io,1);}render();break;}
    case "ob-next":{var O=S.ob,er2=profValid(O.p,O.step);if(er2){toast(er2);return;}
      if(O.step<5){O.step++;if(O.step===4&&!(window.claude&&window.claude.use))O.step=5;render();window.scrollTo(0,0);}
-     else{saveProfile(O.p);S.ob=null;S.view="tabs";S.tab="today";render();window.scrollTo(0,0);toast("Profil créé. Bon entraînement !");}break;}
+     else{saveProfile(O.p);newsDone();S.ob=null;S.view="tabs";S.tab="today";render();window.scrollTo(0,0);toast("Profil créé. Bon entraînement !");}break;}
    case "ob-back":if(S.ob.step>0){S.ob.step--;if(S.ob.step===4&&!(window.claude&&window.claude.use))S.ob.step=3;render();}break;
    case "ob-whoop":S.ob.p.whoop=true;S.profile=S.profile||null;render();whoopFetch(true);break;
    case "whoop-on":if(!S.profile)return;if(S.view==="profile"){S.pedit.whoop=true;}S.profile.whoop=true;put("profil");render();whoopFetch(true);break;
