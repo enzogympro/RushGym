@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=23">
+<link rel="manifest" href="manifest.webmanifest?v=24">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -554,6 +554,10 @@ button.w{width:100%}
 .band span{font-weight:800;letter-spacing:3px;font-size:13px;background:linear-gradient(180deg,var(--t1),var(--t2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .band i{width:7px;height:7px;border-radius:50%;background:linear-gradient(180deg,var(--t1),var(--t2))}
 .gifts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.giftt{display:flex;flex-direction:column;gap:4px;padding:12px;border-radius:16px;background:var(--well)}.giftt .gi{color:var(--accent);margin-bottom:2px}.giftt b{font-size:14px}
+.heopen{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px auto 4px;padding:10px 16px;border-radius:99px;font-weight:700;font-size:13.5px;color:var(--muted);background:var(--well)}
+.herow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--edge)}.herow:last-child{border-bottom:0}.herow.off .grow{opacity:.45}
+.hemove{display:flex;gap:6px}.hemove button{width:34px;height:34px;border-radius:10px;background:var(--well);font-weight:800}.hemove button[disabled]{opacity:.25}.hemove.dis button{opacity:.35}
+.wgrid2{grid-auto-flow:row dense}
 </style>
 
 <div class="field-bg" aria-hidden="true"></div>
@@ -599,7 +603,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=23;var APPDATE="2026-10-16";
+var APPV=24;var APPDATE="2026-10-16";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -1084,9 +1088,11 @@ function vToday(){
   else if(hr<11)order=["hero","whoop","supp","streak","week","rank","prot","team","focus","rec"];
   else if(hr>=19)order=["hero","prot","supp","streak","rank","week","team","rec","focus","whoop"];
   else order=["hero","streak","rank","week","whoop","prot","supp","team","focus","rec"];
-  if(sp!=="fitness"){var SW=sportWidgets(sp);Object.keys(SW).forEach(function(k){W["s_"+k]=SW[k];});order=["hero"].concat(sp==="course"?["s_km","s_rec","s_last"]:["s_best","s_st","s_km"],["rank","streak","week","s_apps","whoop","prot","supp","team"]);}
+  if(sp!=="fitness"){var SW=sportWidgets(sp);Object.keys(SW).forEach(function(k){W["s_"+k]=SW[k];});order=["hero"].concat(sp==="course"?["s_km","s_rec","s_last"]:["s_best","s_st","s_km"],["rank","streak","week","apps","whoop","prot","supp","team"]);W.apps=SW.apps;}
   else{W.apps=sportWidgets("fitness").apps;order=order.concat(["apps"]);}
+  if(S.profile)order=applyHome(sp,order);
   h+='<div class="wgrid2">'+order.map(function(k){return W[k]||"";}).join("")+'</div>';
+  h+='<button class="heopen" data-a="he-open"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M17.5 14v7M14 17.5h7"/></svg>Personnaliser l\'accueil</button>';
   return h;
 }
 function teamFeed(){var F=Object.keys(S.friends||{}).map(function(k){return S.friends[k];}),ev=[];
@@ -1458,11 +1464,10 @@ function vPremium(){var yr=S.billing==="y",RD=rankDisc(),h='<div class="shead gl
   h+='<p class="xs muted" style="text-align:center;padding:0 10px">Abonnement sans engagement, résiliable à tout moment depuis ton iPhone. La meilleure réduction s\'applique (Fondateur ou rang), sans cumul.</p>';
   return h;}
 /* ---------- nouveautés ---------- */
-var NEWSV=21;
-var NEWS=[["#FF6A2B","🏃","Hyrox et Course","Deux nouvelles sections avec leur profil, leurs programmes, la simulation Hyrox chronométrée et les sorties GPS."],
+var NEWSV=24;
+var NEWS=[["#FF2D7A","▦","Ton accueil, à ta façon","Choisis tes widgets et leur ordre : touche « Personnaliser l'accueil » tout en bas."],["#FF6A2B","🏃","Hyrox et Course","Deux nouvelles sections avec leur profil, leurs programmes, la simulation Hyrox chronométrée et les sorties GPS."],
  ["#2BB673","↗","Progression automatique","Tes charges sont préparées d'après ta dernière séance : +2,5 kg quand tu as tout réussi, la même charge sinon."],
- ["#7A5CFF","★","RushGym+ et Fondateurs","Découvre les futures formules, les 500 places Fondateurs et les réductions liées à ton rang. Tout reste offert pendant la bêta."],
- ["#1E88E5","⇅","Sauvegarde de tes données","Garde une copie de toutes tes séances dans Mes applis, et remets-la en un geste si tu changes de téléphone."]];
+ ["#7A5CFF","★","RushGym+ et Fondateurs","Les futures formules, les 500 places Fondateurs, les réductions de rang et un cadeau avec l'abonnement annuel. Tout reste offert pendant la bêta."]];
 var LOGTIP="Note chaque série exactement comme tu l'as faite : la vraie charge, les vraies répétitions, même quand c'est moins que prévu. Ces chiffres sont ton carnet d'entraînement : ils calculent ta progression, préparent ta prochaine séance et te montrent le chemin jusqu'à ton objectif. Des données précises, ce sont des progrès réels.";
 function newsSeen(){try{return +localStorage.getItem("rg-news")||0;}catch(e){return NEWSV;}}
 function newsDone(){try{localStorage.setItem("rg-news",String(NEWSV));}catch(e){}}
@@ -1481,6 +1486,21 @@ function giftBlock(){var R=rankOf(xpCompute().total),nm=((S.profile&&S.profile.n
   h+='<div class="band" style="--t1:'+T[2]+';--t2:'+T[3]+'"><span>'+esc(nm)+'</span><i></i><span>'+esc(R.name.toUpperCase())+'</span></div><p class="xs muted" style="text-align:center;margin-top:-4px">Aperçu de ton bracelet</p>';
   h+='<div class="gifts">'+GIFTS.map(function(g){return '<div class="giftt"><span class="gi">'+giftIco(g[0])+'</span><b>'+g[1]+'</b><span class="xs muted">'+g[2]+'</span></div>';}).join("")+'</div><p class="xs muted">Un cadeau au choix par compte. Ton grade évolue ? Ton bracelet peut suivre, avec une nouvelle gravure dans la boutique.</p></div></section>';
   return h;}
+/* ---------- personnalisation de l'accueil ---------- */
+var WLAB={rank:["Rang","Ton grade et tes XP"],streak:["Objectif de la semaine","Séances faites / prévues"],week:["Cette semaine","Tes jours et tes repos"],prot:["Protéines","Ton objectif du jour"],supp:["Compléments","Coche-les en un geste"],team:["Gymbros","Ta team et leurs séances"],focus:["Focus semaine","Le muscle à travailler"],rec:["Dernier record","Ton dernier exploit"],whoop:["Whoop","Récup et sommeil (si connecté)"],apps:["Mes applis","Strava, Garmin…"],
+  s_km:["Kilomètres","Ta distance de la semaine"],s_rec:["Records course","5 km, 10 km, semi, marathon"],s_last:["Dernière sortie","Distance et allure"],s_best:["Meilleur temps Hyrox","Ton record de simulation"],s_st:["Stations Hyrox","Tes meilleurs temps"]};
+var WNAT={fitness:["streak","rank","week","prot","supp","team","focus","rec","whoop","apps"],course:["s_km","s_rec","s_last","rank","streak","week","apps","whoop","prot","supp","team"],hyrox:["s_best","s_st","s_km","rank","streak","week","apps","whoop","prot","supp","team"]};
+function homeCfg(sp){var P=S.profile||{};P.home=P.home||{};if(!P.home[sp])P.home[sp]={auto:true,order:WNAT[sp].slice(),hidden:[]};var c=P.home[sp];WNAT[sp].forEach(function(k){if(c.order.indexOf(k)<0)c.order.push(k);});c.order=c.order.filter(function(k){return WNAT[sp].indexOf(k)>=0;});return c;}
+function applyHome(sp,order){var c=homeCfg(sp),base=c.auto?order.filter(function(k){return k!=="hero";}):c.order.slice();
+  WNAT[sp].forEach(function(k){if(base.indexOf(k)<0)base.push(k);});return ["hero"].concat(base.filter(function(k){return c.hidden.indexOf(k)<0;}));}
+function vHomeEdit(){var sp=curSport(),c=homeCfg(sp),h='<div class="shead glass"><button class="back" data-a="he-close" aria-label="Retour">‹</button><h2>Personnaliser l\'accueil</h2></div>';
+  h+='<p class="sm muted" style="padding:0 4px">Choisis les widgets à afficher et leur ordre'+(sp!=="fitness"?' pour la section '+(sp==="hyrox"?"Hyrox":"Course"):'')+'. La grande carte « On rush quoi ? » reste toujours en haut.</p>';
+  h+='<section class="glass card"><div class="remrow"><button class="tog'+(c.auto?" on":"")+'" data-a="he-auto" aria-label="Ordre automatique"><i></i></button><span class="grow"><b>Ordre intelligent</b><span class="xs muted" style="display:block">Les widgets se rangent selon le moment : matin, après la séance, soir, jour de repos…</span></span></div></section>';
+  var list=c.auto?WNAT[sp]:c.order;
+  h+='<section class="glass card">'+list.map(function(k,i){var on=c.hidden.indexOf(k)<0,L=WLAB[k]||[k,""];return '<div class="herow'+(on?"":" off")+'"><button class="tog'+(on?" on":"")+'" data-a="he-tog" data-v="'+k+'" aria-label="Afficher '+esc(L[0])+'"><i></i></button><span class="grow"><b>'+esc(L[0])+'</b><span class="xs muted" style="display:block">'+esc(L[1])+'</span></span>'+
+    '<span class="hemove'+(c.auto?" dis":"")+'"><button data-a="he-up" data-i="'+i+'" aria-label="Monter"'+(i===0?" disabled":"")+'>↑</button><button data-a="he-down" data-i="'+i+'" aria-label="Descendre"'+(i===list.length-1?" disabled":"")+'>↓</button></span></div>';}).join("")+'</section>';
+  h+='<p class="xs muted" style="padding:0 4px">'+(c.auto?"Touche une flèche pour choisir ton propre ordre : l'ordre intelligent se désactive.":"Ton ordre est fixe. Réactive l'ordre intelligent pour qu'il s'adapte à ta journée.")+'</p>';
+  h+='<div class="stack"><button class="btn" data-a="he-close">Terminé</button><button class="link" data-a="he-reset">Revenir aux réglages d\'origine</button></div>';return h;}
 function vRank(){
   var X=xpCompute(),R2=rankOf(X.total),Q=X.cur.quests,h='<div class="shead glass"><button class="back" data-a="rank-close" aria-label="Retour">‹</button><h2>Ton rang</h2></div>';
   h+='<section class="rankhero glass">'+badge(R2.t,R2.div,132)+'<h2 class="rbig" style="--t1:'+TIERS[R2.t][2]+';--t2:'+TIERS[R2.t][3]+'">'+R2.name+'</h2><p class="muted num">'+big(X.total)+' XP au total</p>';
@@ -1595,7 +1615,7 @@ function profValid(p,step){
   if(step===0&&!String(p.name||"").trim())return "Indique ton prénom";
   if(step===1||step==null){var a=num(p.age),hh=num(p.height),w=num(p.weight);if(!(a>=12&&a<=90))return "Indique ton âge";if(!(hh>=120&&hh<=230))return "Indique ta taille en centimètres";if(!(w>=30&&w<=250))return "Indique ton poids en kilos";}
   return null;}
-function saveProfile(p){if(S.profile&&S.profile.plan)p.plan=S.profile.plan;if(S.profile&&S.profile.rem)p.rem=S.profile.rem;if(S.profile&&S.profile.gym!==undefined)p.gym=S.profile.gym;if(S.profile&&S.profile.sp)p.sp=S.profile.sp;if(S.profile&&S.profile.sport)p.sport=S.profile.sport;
+function saveProfile(p){if(S.profile&&S.profile.plan)p.plan=S.profile.plan;if(S.profile&&S.profile.rem)p.rem=S.profile.rem;if(S.profile&&S.profile.gym!==undefined)p.gym=S.profile.gym;if(S.profile&&S.profile.sp)p.sp=S.profile.sp;if(S.profile&&S.profile.sport)p.sport=S.profile.sport;if(S.profile&&S.profile.home)p.home=S.profile.home;
   var prevW=S.profile&&num(S.profile.weight);p.created=(S.profile&&S.profile.created)||p.created||Date.now();S.profile=clone(p);S.profile.name=String(p.name||"").trim();put("profil");
   var w=num(p.weight);if(w>0&&w!==prevW){S.poids.entries=S.poids.entries||{};S.poids.entries[ymd(new Date())]=Math.round(w*10)/10;put("poids");}
   var T=calcTargets(p);if(T){S.diet.targets=T;put("diete");}}
@@ -2118,7 +2138,7 @@ function render(){
   app.classList.toggle("insession",S.view==="session");
   document.getElementById("tabs").hidden=insess;
   var key=S.view+"|"+S.tab;if(key!==lastKey){lastKey=key;app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");clearTimeout(render.t);render.t=setTimeout(function(){app.classList.remove("enter");},900);}
-  app.innerHTML=S.view==="news"?vNews():S.view==="premium"?vPremium():S.view==="sportob"?vSportOb():S.view==="apps"?vApps():S.view==="runadd"?vRunAdd():S.view==="friends"?vFriends():S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="week"?vWeek():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vStats():vToday();
+  app.innerHTML=S.view==="homeedit"?vHomeEdit():S.view==="news"?vNews():S.view==="premium"?vPremium():S.view==="sportob"?vSportOb():S.view==="apps"?vApps():S.view==="runadd"?vRunAdd():S.view==="friends"?vFriends():S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="week"?vWeek():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vStats():vToday();
   Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.classList.toggle("on",t.dataset.v===S.tab);});
   renderRest();tick();hydratePhotos();
 }
@@ -2172,6 +2192,12 @@ function act(a,el){
    case "prem-open":S.premBack=S.view;S.view="premium";render();window.scrollTo(0,0);break;
    case "prem-close":S.view=S.premBack&&S.premBack!=="premium"?S.premBack:"tabs";render();window.scrollTo(0,0);break;
    case "bill":S.billing=v;render();break;
+   case "he-open":if(!S.profile)return;S.view="homeedit";render();window.scrollTo(0,0);break;
+   case "he-close":put("profil");S.view="tabs";S.tab="today";render();window.scrollTo(0,0);break;
+   case "he-auto":{var hc=homeCfg(curSport());hc.auto=!hc.auto;if(!hc.auto)hc.order=WNAT[curSport()].filter(function(k){return hc.order.indexOf(k)>=0;}).length?hc.order:WNAT[curSport()].slice();put("profil");render();break;}
+   case "he-tog":{var hc2=homeCfg(curSport()),hx=hc2.hidden.indexOf(v);if(hx>=0)hc2.hidden.splice(hx,1);else hc2.hidden.push(v);put("profil");render();break;}
+   case "he-up":case "he-down":{var hc3=homeCfg(curSport());if(hc3.auto){hc3.auto=false;hc3.order=WNAT[curSport()].slice();}var o=hc3.order,j2=a==="he-up"?i-1:i+1;if(j2<0||j2>=o.length)return;var tmp=o[i];o[i]=o[j2];o[j2]=tmp;put("profil");render();break;}
+   case "he-reset":S.profile.home=S.profile.home||{};delete S.profile.home[curSport()];put("profil");render();toast("Accueil remis par défaut");break;
    case "news-open":S.newsBack=S.view;S.view="news";render();window.scrollTo(0,0);break;
    case "news-close":newsDone();S.view=S.newsBack==="profile"&&S.pedit?"profile":"tabs";render();window.scrollTo(0,0);break;
    case "logtip-ok":try{localStorage.setItem("rg-logtip","1");}catch(e){}render();break;
