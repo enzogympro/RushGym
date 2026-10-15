@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=24">
+<link rel="manifest" href="manifest.webmanifest?v=25">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -558,6 +558,8 @@ button.w{width:100%}
 .herow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--edge)}.herow:last-child{border-bottom:0}.herow.off .grow{opacity:.45}
 .hemove{display:flex;gap:6px}.hemove button{width:34px;height:34px;border-radius:10px;background:var(--well);font-weight:800}.hemove button[disabled]{opacity:.25}.hemove.dis button{opacity:.35}
 .wgrid2{grid-auto-flow:row dense}
+.steprow{display:flex;flex-direction:column;gap:8px;margin:2px 0 4px}.steppill{align-self:flex-start;font-size:12.5px;padding:7px 12px;border-radius:99px;background:var(--well);color:var(--fg)}.steppill b{color:var(--accent)}
+.stepbox{display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:16px;background:var(--well)}.stepbox .chip{padding:7px 11px;font-size:13px}.stepbox .field{background:var(--bg)}
 </style>
 
 <div class="field-bg" aria-hidden="true"></div>
@@ -603,7 +605,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=24;var APPDATE="2026-10-16";
+var APPV=25;var APPDATE="2026-10-16";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -650,7 +652,16 @@ function sportProgram(sp,lv){var f=[0.75,1,1.25,1.5][lv]||1;function n(x){return
 function PD(){var sp=curSport();if(sp==="fitness")return S.program.days;S.program.alt=S.program.alt||{};
   if(!S.program.alt[sp]){var lv=((S.profile&&S.profile.sp&&S.profile.sp[sp])||{}).lv||1;S.program.alt[sp]={days:sportProgram(sp,lv)};}return S.program.alt[sp].days;}
 function setPD(d){var sp=curSport();if(sp==="fitness")S.program.days=d;else{PD();S.program.alt[sp].days=d;}}
-function incFor(id){var e=lib(id),q=e&&e.q;return q==="Poids du corps"?0:q==="Haltères"?2:2.5;}
+function incDef(id){var e=lib(id),q=e&&e.q;return q==="Poids du corps"?0:q==="Haltères"?2:2.5;}
+function incFor(id){var st=S.program&&S.program.steps;if(st&&st[id]!=null&&isFinite(st[id]))return st[id];return incDef(id);}
+var STEPS=[0,1,2,2.5,5,10];
+function stepCtl(ex,i){var inc=incFor(ex.exId),open=S.stepOpen===i,h='<div class="steprow"><button class="steppill" data-a="step-open" data-i="'+i+'">Palier de progression · <b>'+(inc?"+"+kg(inc)+" kg":"désactivé")+'</b> <span class="muted">'+(open?"▴":"✎")+'</span></button>';
+  if(open){h+='<div class="stepbox"><div class="chips">'+STEPS.map(function(x){return '<button class="chip'+(x===inc?" on":"")+'" data-a="step-set" data-i="'+i+'" data-v="'+x+'">'+(x?"+"+kg(x)+" kg":"Aucun")+'</button>';}).join("")+'</div><label class="field" style="height:46px"><input id="stepc-'+i+'" data-step="'+i+'" inputmode="decimal" placeholder="Autre" value="'+(STEPS.indexOf(inc)<0?kg(inc):"")+'" aria-label="Palier personnalisé"><span>kg</span></label>'+
+    '<p class="xs muted">Ajouté d\'une série à l\'autre, et d\'une séance à l\'autre quand tu réussis toutes tes reps. Réglé pour cet exercice, l\'appli s\'en souviendra.</p></div>';}
+  return h+'</div>';}
+function applyStep(s,i){var ex=s.exercises[i],inc=incFor(ex.exId),j0=-1;ex.sets.forEach(function(x,j){if(x.done&&num(x.kg)>0)j0=j;});
+  if(j0<0)ex.sets.some(function(x,j){if(num(x.kg)>0){j0=j;return true;}return false;});if(j0<0)return;
+  var base=num(ex.sets[j0].kg);ex.sets.forEach(function(x,j){if(j>j0&&!x.done){x.kg=kg(base+inc*(j-j0));x.auto=inc?"up":"";}});}
 function reco(id,last,j,target){if(!last)return null;var ls=last.sets[j];if(!ls||!(num(ls.kg)>0))return null;var k=num(ls.kg),r=num(ls.reps),t=num(ls.target)||target,inc=incFor(id);
   if(!inc)return {kg:k,why:"same"};if(r>=t)return {kg:k+inc,why:"up"};if(r<=t-3)return {kg:Math.max(inc,k-inc),why:"down"};return {kg:k,why:"same"};}
 function autoHint(ex,last){var up=0,dn=0,sm=0;ex.sets.forEach(function(x){if(x.auto==="up")up++;else if(x.auto==="down")dn++;else if(x.auto==="same")sm++;});var inc=incFor(ex.exId);
@@ -767,7 +778,7 @@ async function exportAll(){var data=JSON.stringify({app:"RushGym",v:APPV,at:new 
 /* ---------- sport home & progress ---------- */
 function sportHero(sp,nd,act,doneToday){var d=spData(sp),h='<section class="w wide whero glass">';
   if(sp==="hyrox"){var br=bestRace(),dec=parseT(d.best),ref=br?br.total:dec,goal=parseT(d.goal),days=d.date?Math.ceil((new Date(d.date+"T09:00:00")-new Date())/864e5):null;
-    h+='<p class="eyebrow">Hyrox'+(d.cat?" · "+esc(d.cat.charAt(0).toUpperCase()+d.cat.slice(1)):"")+'</p><h2 class="rushq">On <span>rush</span> la Hyrox ?</h2>';
+    h+='<p class="eyebrow">Hyrox'+(d.cat?" · "+esc(d.cat.charAt(0).toUpperCase()+d.cat.slice(1)):"")+'</p><h2 class="rushq">On <span>rush</span> l\'Hyrox ?</h2>';
     h+='<button class="wsug" data-a="race-start"><span class="sporticon">🏁</span><span class="grow"><b>Simulation complète</b><span class="xs muted">8 × 1 km + 8 stations, chrono par étape'+(ref?" · record "+fmtT(ref):"")+'</span></span><span class="wgo">Go</span></button>';
     h+='<div class="hscroll">'+PD().map(function(x){return '<button class="chip'+(x.id===nd.id?" on":"")+'" data-a="start" data-v="'+esc(x.id)+'">'+esc(x.name.replace("Hyrox · ",""))+'</button>';}).join("")+'<button class="chip" data-a="build-new">+ Séance</button></div>';
     if(days!=null&&days>=0)h+='<p class="sm"><b>J−'+days+'</b> avant ta course'+(goal?" · objectif "+fmtT(goal)+(ref?" (écart "+(ref>goal?"+":"−")+fmtT(Math.abs(ref-goal))+")":""):"")+'</p>';}
@@ -1118,6 +1129,7 @@ function vSession(){
     if(last){h+='<p class="xs muted last">Dernière fois, le '+dshort(last.t)+' : <b>'+setsText(last.sets)+'</b></p>';
       if(ety==="force")h+=autoHint(ex,last);}
     else h+='<p class="xs muted">'+(ety==="dist"?"Note la distance et ton temps : ils serviront de repère.":ety==="time"?"Note ton temps : il servira de repère.":"Première fois : note tes charges, elles serviront de repère.")+'</p>';
+    if(ety==="force")h+=stepCtl(ex,i);
     h+='<div class="sets">';
     ex.sets.forEach(function(st,j){
       if(ety==="dist"||ety==="time"){h+='<div class="set '+(ety==="dist"?"dt":"to")+(st.done?" done":"")+'"><span class="n">'+(j+1)+'</span>'+(ety==="dist"?'<label class="field"><input id="d-'+i+'-'+j+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+esc(st.d)+'" data-i="'+i+'" data-j="'+j+'" data-f="d" aria-label="Distance série '+(j+1)+'"><span>m</span></label>':'')+
@@ -1464,9 +1476,9 @@ function vPremium(){var yr=S.billing==="y",RD=rankDisc(),h='<div class="shead gl
   h+='<p class="xs muted" style="text-align:center;padding:0 10px">Abonnement sans engagement, résiliable à tout moment depuis ton iPhone. La meilleure réduction s\'applique (Fondateur ou rang), sans cumul.</p>';
   return h;}
 /* ---------- nouveautés ---------- */
-var NEWSV=24;
+var NEWSV=25;
 var NEWS=[["#FF2D7A","▦","Ton accueil, à ta façon","Choisis tes widgets et leur ordre : touche « Personnaliser l'accueil » tout en bas."],["#FF6A2B","🏃","Hyrox et Course","Deux nouvelles sections avec leur profil, leurs programmes, la simulation Hyrox chronométrée et les sorties GPS."],
- ["#2BB673","↗","Progression automatique","Tes charges sont préparées d'après ta dernière séance : +2,5 kg quand tu as tout réussi, la même charge sinon."],
+ ["#2BB673","↗","Progression automatique","Tes charges sont préparées d'après ta dernière séance. Règle ton palier pour chaque exercice : +2,5 kg, +5 kg, +10 kg ou ce que tu veux."],
  ["#7A5CFF","★","RushGym+ et Fondateurs","Les futures formules, les 500 places Fondateurs, les réductions de rang et un cadeau avec l'abonnement annuel. Tout reste offert pendant la bêta."]];
 var LOGTIP="Note chaque série exactement comme tu l'as faite : la vraie charge, les vraies répétitions, même quand c'est moins que prévu. Ces chiffres sont ton carnet d'entraînement : ils calculent ta progression, préparent ta prochaine séance et te montrent le chemin jusqu'à ton objectif. Des données précises, ce sont des progrès réels.";
 function newsSeen(){try{return +localStorage.getItem("rg-news")||0;}catch(e){return NEWSV;}}
@@ -2167,7 +2179,7 @@ function act(a,el){
    case "sob-cancel":S.sob=null;S.view=S.pedit?"profile":"tabs";render();break;
    case "sob-next":{var SO=S.sob,sd=SO.d;
      if(SO.step===0&&sd.lv==null){toast("Choisis ton niveau");return;}
-     if(SO.step===1&&SO.sport==="hyrox"&&!sd.done){toast("Dis-nous si tu as déjà fait une Hyrox");return;}
+     if(SO.step===1&&SO.sport==="hyrox"&&!sd.done){toast("Dis-nous si tu as déjà fait une course Hyrox");return;}
      var bad=["best","kmpace","r5","r10","r21","r42","goal"].filter(function(k){return sd[k]&&!parseT(sd[k]);})[0];if(bad){toast("Temps au format h:mm:ss ou m:ss");return;}
      if(SO.step<2){SO.step++;render();window.scrollTo(0,0);break;}
      S.profile.sp=S.profile.sp||{};var hadLv=S.profile.sp[SO.sport]&&S.profile.sp[SO.sport].lv;S.profile.sp[SO.sport]=sd;S.profile.sport=SO.sport;if(S.pedit){S.pedit.sp=clone(S.profile.sp);S.pedit.sport=SO.sport;}put("profil");
@@ -2192,6 +2204,8 @@ function act(a,el){
    case "prem-open":S.premBack=S.view;S.view="premium";render();window.scrollTo(0,0);break;
    case "prem-close":S.view=S.premBack&&S.premBack!=="premium"?S.premBack:"tabs";render();window.scrollTo(0,0);break;
    case "bill":S.billing=v;render();break;
+   case "step-open":S.stepOpen=S.stepOpen===i?null:i;render();break;
+   case "step-set":{var exs=s&&s.exercises[i];if(!exs)return;S.program.steps=S.program.steps||{};S.program.steps[exs.exId]=+v;put("programme");applyStep(s,i);put("s:"+s.id);S.stepOpen=null;render();toast(+v?"Palier réglé à +"+kg(+v)+" kg pour "+exs.name:"Progression désactivée pour "+exs.name);break;}
    case "he-open":if(!S.profile)return;S.view="homeedit";render();window.scrollTo(0,0);break;
    case "he-close":put("profil");S.view="tabs";S.tab="today";render();window.scrollTo(0,0);break;
    case "he-auto":{var hc=homeCfg(curSport());hc.auto=!hc.auto;if(!hc.auto)hc.order=WNAT[curSport()].filter(function(k){return hc.order.indexOf(k)>=0;}).length?hc.order:WNAT[curSport()].slice();put("profil");render();break;}
@@ -2342,6 +2356,7 @@ function onField(ev){
   if(el.id==="restore"){if(ev.type==="change"&&el.files&&el.files[0]){restoreAll(el.files[0]);el.value="";}return;}
   if(el.id==="mealpic"){if(ev.type==="change"&&el.files&&el.files[0]){mealPhoto(el.files[0]);}return;}
   if(el.dataset.mp!=null){var mpi=S.add&&S.add.photo&&S.add.photo.items[+el.dataset.mp];if(mpi){mpi.g=el.value;var mt=document.getElementById("mptot");if(mt)mt.textContent=mpTot();}return;}
+  if(el.dataset.step!=null){if(ev.type!=="change")return;var sv=num(el.value),ss=S.active&&S.sessions[S.active],ie=+el.dataset.step;if(!ss||!isFinite(sv)||sv<0||sv>50){toast("Palier entre 0 et 50 kg");return;}var exq=ss.exercises[ie];S.program.steps=S.program.steps||{};S.program.steps[exq.exId]=Math.round(sv*4)/4;put("programme");applyStep(ss,ie);put("s:"+ss.id);S.stepOpen=null;render();toast("Palier réglé à +"+kg(S.program.steps[exq.exId])+" kg");return;}
   if(el.dataset.sob){S.sob.d[el.dataset.sob]=el.value;return;}
   if(el.dataset.ra){S.runadd[el.dataset.ra]=el.value;return;}
   if(el.id==="gymcam"){if(ev.type==="change"&&el.files&&el.files[0])handlePhoto(el.files[0]);return;}
