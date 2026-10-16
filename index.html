@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=27">
+<link rel="manifest" href="manifest.webmanifest?v=28">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -586,10 +586,10 @@ button.w{width:100%}
 <script>
 /* RushGym access gate: personal codes, revocable by removing a line below and re-uploading index.html */
 (function(){
-var ACCESS={"4cqir2": {"name": "Sandric", "owner": false}, "1xu5ebw": {"name": "Elena", "owner": false}, "m6mi9x": {"name": "Enzo", "owner": true}};
+var ACCESS={"4cqir2": {"name": "Sandric", "owner": false}, "1xu5ebw": {"name": "Elena", "owner": false}, "m6mi9x": {"name": "Enzo", "owner": true}, "1w8f433": {"name": "Hugo", "owner": false}, "6ejiu7": {"name": "", "owner": false}};
 var K="rushgym-access",DATA="carnet-de-fonte-v1";
 function h(c){var x=2166136261,s="rushgym:"+c;for(var i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,16777619);}return (x>>>0).toString(36);}
-function norm(c){return String(c||"").toUpperCase().replace(/[\s\u2010-\u2015_]+/g,"-").replace(/^-+|-+$/g,"").replace(/-+/g,"-");}
+function norm(c){return String(c||"").toUpperCase().replace(/Œ/g,"OE").replace(/Æ/g,"AE").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[\s\u2010-\u2015_]+/g,"-").replace(/^-+|-+$/g,"").replace(/-+/g,"-");}
 function get(){try{return JSON.parse(localStorage.getItem(K)||"null");}catch(e){return null;}}
 function set(v){try{localStorage.setItem(K,JSON.stringify(v));}catch(e){}}
 window.RG_GATE=function(){try{var dd=JSON.parse(localStorage.getItem(DATA)||"null");if(dd&&dd.profile&&dd.profile.accent&&dd.profile.accent!=="orange")document.documentElement.setAttribute("data-accent",dd.profile.accent);}catch(e){}
@@ -601,7 +601,7 @@ window.RG_GATE=function(){try{var dd=JSON.parse(localStorage.getItem(DATA)||"nul
 function draw(msg){
   var tabs=document.getElementById("tabs");if(tabs)tabs.hidden=true;
   var app=document.getElementById("app");
-  app.innerHTML='<div class="ob" style="padding-top:8vh"><div class="obhero">'+(window.RG_LOGO||"")+'<h1 class="word" style="font-size:38px">Rush<b>Gym</b></h1><p class="muted">Version de test privée. Entre le code personnel qu\'Enzo t\'a donné.</p></div><section class="glass card stack"><label class="lab">Code d\'accès<input class="inp" id="rgcode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="PRÉNOM-XXXX" style="font-size:18px;letter-spacing:.06em;text-transform:uppercase"></label><p class="sm" id="rgmsg" style="color:var(--hot);font-weight:600">'+msg+'</p><button class="btn" id="rggo">Entrer</button></section></div>';
+  app.innerHTML='<div class="ob" style="padding-top:8vh"><div class="obhero">'+(window.RG_LOGO||"")+'<h1 class="word" style="font-size:38px">Rush<b>Gym</b></h1><p class="muted">Version de test privée. Entre le code personnel qu\'Enzo t\'a donné.</p></div><section class="glass card stack"><label class="lab">Code d\'accès<input class="inp" id="rgcode" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="PRÉNOM-XXXX" style="font-size:18px;letter-spacing:.06em;text-transform:uppercase"></label><p class="sm" id="rgmsg" style="color:var(--hot);font-weight:600">'+msg+'</p><button class="btn" id="rggo">Entrer</button></section></div>';
   function go(){var c=norm(document.getElementById("rgcode").value),k=h(c);
     if(ACCESS[k]){set(ACCESS[k].owner?{who:"owner"}:{h:k});location.reload();}
     else document.getElementById("rgmsg").textContent="Ce code ne marche pas. Vérifie-le avec Enzo.";}
@@ -613,7 +613,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=27;var APPDATE="2026-10-16";
+var APPV=28;var APPDATE="2026-10-16";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
