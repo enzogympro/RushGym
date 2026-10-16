@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=39">
+<link rel="manifest" href="manifest.webmanifest?v=41">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -408,6 +408,16 @@ body.locked{position:fixed;left:0;right:0;overflow:hidden}
 .shotx{position:absolute;top:10px;right:10px;z-index:2;min-width:34px;height:34px;padding:0 10px;border-radius:99px;font-weight:800;font-size:15px;color:#fff;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25)}
 .fico{width:58px;height:58px;border-radius:18px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,var(--g1),var(--g2) 55%,var(--g3))}
 .lb{display:flex;flex-direction:column}
+.mdot{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:9px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;vertical-align:2px}
+.chatlist{display:flex;flex-direction:column;gap:6px;padding:14px 2px 150px}.chatempty{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:60px 20px}
+.chatday{align-self:center;font-size:11px;font-weight:700;color:var(--muted);margin:10px 0 2px;text-transform:capitalize}
+.bub{max-width:78%;align-self:flex-start;background:var(--glass-2);border:1px solid var(--edge);padding:8px 12px;border-radius:18px 18px 18px 6px;display:flex;flex-direction:column;gap:2px;word-wrap:break-word;overflow-wrap:anywhere}
+.bub span{white-space:pre-wrap;font-size:15px;line-height:1.35}.bub small{font-size:10px;color:var(--muted);align-self:flex-end}
+.bub.me{align-self:flex-end;background:var(--accent);border-color:transparent;color:#fff;border-radius:18px 18px 6px 18px}.bub.me small{color:rgba(255,255,255,.8)}
+.chatquick{position:fixed;left:0;right:0;bottom:calc(74px + env(safe-area-inset-bottom,0px));display:flex;gap:6px;overflow-x:auto;padding:0 12px;scrollbar-width:none;z-index:6}.chatquick::-webkit-scrollbar{display:none}.chatquick .chip{white-space:nowrap;flex:none}
+.chatbar{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:flex-end;gap:8px;padding:8px 8px 8px 16px;border-radius:26px;z-index:6}
+.chatbar textarea{flex:1;resize:none;border:0;background:transparent;color:var(--fg);font:inherit;font-size:16px;line-height:1.35;padding:8px 0;max-height:120px;outline:none}
+.chatsend{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .lbrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--edge);cursor:pointer}
 .lb>.lbrow:first-child,.lb.lbmini .lbrow:first-child{border-top:0}
 .lbrow b{display:block;font-weight:800;font-size:15px}
@@ -640,7 +650,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=39;var APPDATE="2026-10-16";
+var APPV=41;var APPDATE="2026-10-16";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -1115,6 +1125,7 @@ function vToday(){
   /* rank */
   var pct=R2.hi?(X.total-R2.lo)/(R2.hi-R2.lo):1;
   W.rank='<button class="w glass" data-a="rank-open">'+badge(R2.t,R2.div,46)+'<b class="wv">'+R2.name+'</b><span class="meter" style="--m:linear-gradient(90deg,'+TIERS[R2.t][2]+','+TIERS[R2.t][3]+')"><i style="width:'+pct*100+'%"></i></span><span class="wl">'+(R2.hi?big(R2.hi-X.total)+" XP avant "+R2.next:"Rang max")+'</span></button>';
+  W.shop='<button class="w glass" data-a="shop-open"><span class="wico2">'+coinIco(40)+'</span><b class="wv">'+big(coinsOf(X))+' pièces</b><span class="wl">Boutique · dépense tes pièces</span></button>';
   /* streak / week */
   W.streak='<button class="w glass" data-a="tab" data-v="week">'+ring(weekCount/per,64,"var(--good)",'<b>'+weekCount+'</b><span>/'+per+'</span>')+'<b class="wv">'+(X.streak?"🔥 "+X.streak+" sem.":"Série à lancer")+'</b><span class="wl">'+(weekCount>=per?"Objectif atteint":"Encore "+(per-weekCount)+" séance"+(per-weekCount>1?"s":""))+'</span></button>';
   /* protein */
@@ -1139,15 +1150,15 @@ function vToday(){
   W.apps='';
   /* adaptive order */
   var order;
-  if(act)order=["hero","rank","streak","week","prot","supp","team","focus","rec","whoop"];
-  else if(doneToday.length)order=["hero","prot","rank","supp","team","streak","week","rec","focus","whoop"];
-  else if(tp==="rest")order=["hero","whoop","prot","supp","week","streak","rank","team","focus","rec"];
-  else if(hr<11)order=["hero","whoop","supp","streak","week","rank","prot","team","focus","rec"];
-  else if(hr>=19)order=["hero","prot","supp","streak","rank","week","team","rec","focus","whoop"];
-  else order=["hero","streak","rank","week","whoop","prot","supp","team","focus","rec"];
+  if(act)order=["hero","rank","shop","streak","week","prot","supp","team","focus","rec","whoop"];
+  else if(doneToday.length)order=["hero","prot","rank","shop","supp","team","streak","week","rec","focus","whoop"];
+  else if(tp==="rest")order=["hero","whoop","prot","supp","week","streak","rank","shop","team","focus","rec"];
+  else if(hr<11)order=["hero","whoop","supp","streak","week","rank","shop","prot","team","focus","rec"];
+  else if(hr>=19)order=["hero","prot","supp","streak","rank","shop","week","team","rec","focus","whoop"];
+  else order=["hero","streak","rank","shop","week","whoop","prot","supp","team","focus","rec"];
   W.coach=coachWidget();
-  if(sp==="home"||sp==="pilates"){var HW=homeWidgets(sp);W.s_tip=HW.tip;W.s_min=HW.min;W.apps=sportWidgets(sp).apps;order=["hero","s_tip","s_min","streak","rank","week","prot","supp","team","apps"];}
-  else if(sp!=="fitness"){var SW=sportWidgets(sp);Object.keys(SW).forEach(function(k){W["s_"+k]=SW[k];});order=["hero"].concat(sp==="course"?["s_km","s_rec","s_last"]:["s_best","s_st","s_km"],["rank","streak","week","apps","whoop","prot","supp","team"]);W.apps=SW.apps;}
+  if(sp==="home"||sp==="pilates"){var HW=homeWidgets(sp);W.s_tip=HW.tip;W.s_min=HW.min;W.apps=sportWidgets(sp).apps;order=["hero","s_tip","s_min","streak","rank","shop","week","prot","supp","team","apps"];}
+  else if(sp!=="fitness"){var SW=sportWidgets(sp);Object.keys(SW).forEach(function(k){W["s_"+k]=SW[k];});order=["hero"].concat(sp==="course"?["s_km","s_rec","s_last"]:["s_best","s_st","s_km"],["rank","shop","streak","week","apps","whoop","prot","supp","team"]);W.apps=SW.apps;}
   else if(sp==="fitness"){W.apps=sportWidgets("fitness").apps;order=order.slice(0,2).concat(["coach"],order.slice(2),["apps"]);}
   if(S.profile)order=applyHome(sp,order);
   h+='<div class="wgrid2">'+order.map(function(k){return W[k]||"";}).join("")+'</div>';
@@ -1533,8 +1544,8 @@ function vPremium(){var yr=S.billing==="y",RD=rankDisc(),h='<div class="shead gl
   h+='<p class="xs muted" style="text-align:center;padding:0 10px">Abonnement sans engagement, résiliable à tout moment depuis ton iPhone. La meilleure réduction s\'applique (Fondateur ou rang), sans cumul.</p>';
   return h;}
 /* ---------- nouveautés ---------- */
-var NEWSV=39;
-var NEWS=[["#FF5FA2","▶","Des démos fidèles à chaque exercice","Toutes les animations ont été refaites : plus de 150 mouvements différents, avec la bonne posture, le bon angle et le bon matériel (banc, poulie, machine, tapis…)."],["#1E88E5","⇄","Ta team en direct","Chacun a maintenant un code court, comme ENZO-4K7. Une fois ajoutés, les XP, séances et rangs de tes gymbros se mettent à jour tout seuls."],["#2BB673","⌂","Section Domicile","Renfo, Pilates, Yoga, Mobilité et Cardio : tout pour t'entraîner chez toi, avec un conseil et une démonstration animée sur chaque exercice."],["#FF6A2B","🍽","Tes repas de la semaine","Dis-nous ton objectif, ce que tu aimes et tes allergies : RushGym te propose 7 jours de repas adaptés. Inclus dans Elite, offert en bêta."],["#7A5CFF","🧠","Ton coach personnel","Après un mois, il analyse tes séances et te conseille charges, exercices et habitudes selon ton objectif. Inclus dans Elite, offert en bêta."],["#FF6A2B","⇄","Teste les séances de ta team","Programme → « Tester la séance d'un gymbro » : toutes les séances de tes gymbros, prêtes à faire. À la fin, envoie-leur tes charges."],["#2BB673","＋","Ajouter sa team, en un geste","Envoie ton code, colle celui de ton gymbro : c'est ajouté."],["#1E88E5","◉","Ta photo de profil","Touche ton avatar dans ton profil pour ajouter ta photo."],["#FF2D7A","▦","Ton accueil, à ta façon","Choisis tes widgets et leur ordre : touche « Personnaliser l'accueil » tout en bas."]];
+var NEWSV=41;
+var NEWS=[["#1E88E5","💬","La messagerie gymbros","Écris à ta team directement dans RushGym : Gymbros & gymsis → touche un gymbro → « Écrire ». Messages rapides inclus pour motiver ou proposer une séance."],["#FF5FA2","▶","Des démos fidèles à chaque exercice","Toutes les animations ont été refaites : plus de 150 mouvements différents, avec la bonne posture, le bon angle et le bon matériel (banc, poulie, machine, tapis…)."],["#1E88E5","⇄","Ta team en direct","Chacun a maintenant un code court, comme ENZO-4K7. Une fois ajoutés, les XP, séances et rangs de tes gymbros se mettent à jour tout seuls."],["#2BB673","⌂","Section Domicile","Renfo, Pilates, Yoga, Mobilité et Cardio : tout pour t'entraîner chez toi, avec un conseil et une démonstration animée sur chaque exercice."],["#FF6A2B","🍽","Tes repas de la semaine","Dis-nous ton objectif, ce que tu aimes et tes allergies : RushGym te propose 7 jours de repas adaptés. Inclus dans Elite, offert en bêta."],["#7A5CFF","🧠","Ton coach personnel","Après un mois, il analyse tes séances et te conseille charges, exercices et habitudes selon ton objectif. Inclus dans Elite, offert en bêta."],["#FF6A2B","⇄","Teste les séances de ta team","Programme → « Tester la séance d'un gymbro » : toutes les séances de tes gymbros, prêtes à faire. À la fin, envoie-leur tes charges."],["#2BB673","＋","Ajouter sa team, en un geste","Envoie ton code, colle celui de ton gymbro : c'est ajouté."],["#1E88E5","◉","Ta photo de profil","Touche ton avatar dans ton profil pour ajouter ta photo."],["#FF2D7A","▦","Ton accueil, à ta façon","Choisis tes widgets et leur ordre : touche « Personnaliser l'accueil » tout en bas."]];
 var NEWS_OLD=[["#FF6A2B","🏃","Hyrox et Course","Deux nouvelles sections avec leur profil, leurs programmes, la simulation Hyrox chronométrée et les sorties GPS."],
  ["#2BB673","↗","Progression automatique","Tes charges sont préparées d'après ta dernière séance. Règle ton palier pour chaque exercice : +2,5 kg, +5 kg, +10 kg ou ce que tu veux."],
  ["#7A5CFF","★","RushGym+ et Fondateurs","Les futures formules, les 500 places Fondateurs, les réductions de rang et un cadeau avec l'abonnement annuel. Tout reste offert pendant la bêta."]];
@@ -1557,9 +1568,9 @@ function giftBlock(){var R=rankOf(xpCompute().total),nm=((S.profile&&S.profile.n
   h+='<div class="gifts">'+GIFTS.map(function(g){return '<div class="giftt"><span class="gi">'+giftIco(g[0])+'</span><b>'+g[1]+'</b><span class="xs muted">'+g[2]+'</span></div>';}).join("")+'</div><p class="xs muted">Un cadeau au choix par compte. Ton grade évolue ? Ton bracelet peut suivre, avec une nouvelle gravure dans la boutique.</p></div></section>';
   return h;}
 /* ---------- personnalisation de l'accueil ---------- */
-var WLAB={coach:["Ton coach","Bilan, charges et conseils (Elite)"],s_tip:["Conseil du jour","Une astuce chaque jour"],s_min:["Minutes de la semaine","Ton temps d'entraînement"],rank:["Rang","Ton grade et tes XP"],streak:["Objectif de la semaine","Séances faites / prévues"],week:["Cette semaine","Tes jours et tes repos"],prot:["Protéines","Ton objectif du jour"],supp:["Compléments","Coche-les en un geste"],team:["Gymbros","Ta team et leurs séances"],focus:["Focus semaine","Le muscle à travailler"],rec:["Dernier record","Ton dernier exploit"],whoop:["Whoop","Récup et sommeil (si connecté)"],apps:["Mes applis","Strava, Garmin…"],
+var WLAB={shop:["Boutique","Tes pièces et la boutique"],coach:["Ton coach","Bilan, charges et conseils (Elite)"],s_tip:["Conseil du jour","Une astuce chaque jour"],s_min:["Minutes de la semaine","Ton temps d'entraînement"],rank:["Rang","Ton grade et tes XP"],streak:["Objectif de la semaine","Séances faites / prévues"],week:["Cette semaine","Tes jours et tes repos"],prot:["Protéines","Ton objectif du jour"],supp:["Compléments","Coche-les en un geste"],team:["Gymbros","Ta team et leurs séances"],focus:["Focus semaine","Le muscle à travailler"],rec:["Dernier record","Ton dernier exploit"],whoop:["Whoop","Récup et sommeil (si connecté)"],apps:["Mes applis","Strava, Garmin…"],
   s_km:["Kilomètres","Ta distance de la semaine"],s_rec:["Records course","5 km, 10 km, semi, marathon"],s_last:["Dernière sortie","Distance et allure"],s_best:["Meilleur temps Hyrox","Ton record de simulation"],s_st:["Stations Hyrox","Tes meilleurs temps"]};
-var WNAT={home:["s_tip","s_min","streak","rank","week","prot","supp","team","apps"],pilates:["s_tip","s_min","streak","rank","week","prot","supp","team","apps"],fitness:["coach","streak","rank","week","prot","supp","team","focus","rec","whoop","apps"],course:["s_km","s_rec","s_last","rank","streak","week","apps","whoop","prot","supp","team"],hyrox:["s_best","s_st","s_km","rank","streak","week","apps","whoop","prot","supp","team"]};
+var WNAT={home:["s_tip","s_min","streak","rank","shop","week","prot","supp","team","apps"],pilates:["s_tip","s_min","streak","rank","shop","week","prot","supp","team","apps"],fitness:["coach","streak","rank","shop","week","prot","supp","team","focus","rec","whoop","apps"],course:["s_km","s_rec","s_last","rank","shop","streak","week","apps","whoop","prot","supp","team"],hyrox:["s_best","s_st","s_km","rank","shop","streak","week","apps","whoop","prot","supp","team"]};
 function homeCfg(sp){var P=S.profile||{};P.home=P.home||{};if(!P.home[sp])P.home[sp]={auto:true,order:WNAT[sp].slice(),hidden:[]};var c=P.home[sp];WNAT[sp].forEach(function(k){if(c.order.indexOf(k)<0)c.order.push(k);});c.order=c.order.filter(function(k){return WNAT[sp].indexOf(k)>=0;});return c;}
 function applyHome(sp,order){var c=homeCfg(sp),base=c.auto?order.filter(function(k){return k!=="hero";}):c.order.slice();
   WNAT[sp].forEach(function(k){if(base.indexOf(k)<0)base.push(k);});return ["hero"].concat(base.filter(function(k){return c.hidden.indexOf(k)<0;}));}
@@ -2390,7 +2401,57 @@ function sbSoon(what,delay){if(!S.profile)return;clearTimeout(SB.t[what]);SB.t[w
 async function sbRun(what){try{if(what==="card")await sbPushCard();else if(what==="backup")await sbPushBackup();else if(what==="pull")await sbPullFriends();SB.st="ok";SB.err="";}catch(e){SB.st="err";SB.err=e.message||String(e);}
   var b=document.getElementById("sbstat");if(b)b.outerHTML=sbStat();}
 function sbStat(){return '<p class="xs" id="sbstat" style="text-align:center;color:var(--'+(SB.st==="err"?"hot":SB.st==="ok"?"good":"muted")+')">'+(SB.st==="ok"?"● Synchronisé avec le serveur RushGym":SB.st==="err"?"● Serveur indisponible : "+esc(SB.err):"● Connexion au serveur…")+'</p>';}
-function sbBoot(){if(!S.profile)return;sbRun("card").then(function(){sbRun("pull");});sbSoon("backup",8000);setInterval(function(){if(!document.hidden){sbRun("pull");}},60000);}
+function sbBoot(){if(!S.profile)return;sbRun("card").then(function(){sbRun("pull");sbPullMsgs();});sbSoon("backup",8000);setInterval(function(){if(!document.hidden){sbRun("pull");}},60000);setInterval(function(){if(!document.hidden&&S.view!=="chat")sbPullMsgs();},25000);document.addEventListener("visibilitychange",function(){if(!document.hidden)sbPullMsgs();});}
+/* ---------- messagerie gymbros ---------- */
+var MSG={list:[],last:0,read:{},poll:null,busy:false,err:""};
+function msgLoad(){try{var o=JSON.parse(localStorage.getItem("rg-msgs")||"null");if(o){MSG.list=o.l||[];MSG.last=o.k||0;MSG.read=o.r||{};}}catch(e){}}
+function msgSave(){try{localStorage.setItem("rg-msgs",JSON.stringify({l:MSG.list.slice(-600),k:MSG.last,r:MSG.read}));}catch(e){}}
+msgLoad();
+function friendByCode(c){var F=S.friends||{};for(var k in F)if(F[k].sc===c)return F[k];return null;}
+function convWith(code){var me=myCode();return MSG.list.filter(function(m){return (m.f===code&&m.to===me)||(m.f===me&&m.to===code);});}
+function unreadFrom(code){var r=MSG.read[code]||0,me=myCode();return MSG.list.filter(function(m){return m.f===code&&m.to===me&&m.t>r;}).length;}
+function unreadAll(){var n=0,F=S.friends||{};for(var k in F)if(F[k].sc)n+=unreadFrom(F[k].sc);return n;}
+function msgDot(code){var n=code?unreadFrom(code):0;return n?'<span class="mdot">'+(n>9?"9+":n)+'</span>':'';}
+async function sbPullMsgs(){if(!S.profile||!myCode()||MSG.busy)return;MSG.busy=true;
+  try{var rows=await sbReq("messages?select=id,from_code,to_code,body,created_at&id=gt."+MSG.last+"&order=id.asc&limit=300"),me=myCode(),news=[];
+    (rows||[]).forEach(function(r){MSG.last=Math.max(MSG.last,r.id);if(MSG.list.some(function(m){return m.id===r.id;}))return;
+      var tmp=MSG.list.findIndex(function(m){return !m.id&&m.f===r.from_code&&m.to===r.to_code&&m.b===r.body;});
+      var m={id:r.id,f:r.from_code,to:r.to_code,b:r.body,t:Date.parse(r.created_at)||Date.now()};
+      if(tmp>=0)MSG.list[tmp]=m;else{MSG.list.push(m);if(m.f!==me)news.push(m);}});
+    MSG.list.sort(function(a,b){return a.t-b.t;});MSG.err="";msgSave();
+    for(var i=0;i<news.length;i++){var m=news[i];if(!friendByCode(m.f))await msgAutoAdd(m.f);}
+    var open=S.view==="chat"&&S.chat?(S.friends[S.chat]||{}).sc:null;
+    if(open)MSG.read[open]=Date.now(),msgSave();
+    var other=news.filter(function(m){return m.f!==open;});
+    if(other.length){var fr=friendByCode(other[other.length-1].f);toast("💬 "+((fr&&fr.n)||other[other.length-1].f)+" : "+other[other.length-1].b.slice(0,60));}
+    if(news.length)msgRefresh();}
+  catch(e){MSG.err=e.message||String(e);}
+  MSG.busy=false;}
+async function msgAutoAdd(code){try{var rows=await sbReq("cards?select=code,card,updated_at&code=eq."+encodeURIComponent(code));if(rows&&rows.length){var c=cardFromRow(rows[0]);if(c.i&&c.i!==myFid()){S.friends[c.i]=c;put("amis");}}}catch(e){}}
+function msgRefresh(){if(S.view==="chat"){var el=document.getElementById("chatlist");if(el){el.innerHTML=chatBubbles();chatScroll();}}
+  else if(S.view==="friends"||(S.view==="tabs"&&S.tab==="today"))render();}
+async function msgSend(){var inp=document.getElementById("chatin"),f=S.friends[S.chat],me=myCode();if(!inp||!f)return;var b=inp.value.trim().slice(0,500);if(!b)return;
+  if(!me||!f.sc){toast("Messagerie indisponible : ajoute ce gymbro avec son code court");return;}
+  var m={id:0,f:me,to:f.sc,b:b,t:Date.now(),p:1};MSG.list.push(m);msgSave();inp.value="";chatAutosize(inp);msgRefresh();
+  try{await sbReq("messages",{method:"POST",headers:{Prefer:"return=minimal"},body:{from_code:me,to_code:f.sc,body:b}});m.p=0;msgSave();sbPullMsgs();}
+  catch(e){m.p=2;msgSave();msgRefresh();toast("Message non envoyé : "+(e.status===404?"messagerie pas encore activée sur le serveur":"vérifie ta connexion"));}}
+function chatHm(t){var d=new Date(t);return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
+function chatBubbles(){var f=S.friends[S.chat]||{},L=f.sc?convWith(f.sc):[],me=myCode(),h="",lastDay="";
+  if(!L.length)return '<div class="chatempty"><b>Dis bonjour à '+esc(f.n||"ton gymbro")+' 👋</b><span class="xs muted">Motive-le, propose une séance ou chambre son dernier record.</span></div>';
+  L.forEach(function(m){var d=new Date(m.t).toDateString();if(d!==lastDay){lastDay=d;var td=new Date().toDateString(),yd=new Date(Date.now()-864e5).toDateString();h+='<div class="chatday">'+(d===td?"Aujourd'hui":d===yd?"Hier":dlong(new Date(m.t).toISOString().slice(0,10)))+'</div>';}
+    var mine=m.f===me;h+='<div class="bub'+(mine?" me":"")+'"><span>'+esc(m.b)+'</span><small>'+chatHm(m.t)+(mine?(m.p===1?" · envoi…":m.p===2?" · non envoyé":" · ✓"):"")+'</small></div>';});
+  return h;}
+function chatScroll(){requestAnimationFrame(function(){window.scrollTo(0,document.body.scrollHeight);});}
+function chatAutosize(el){el.style.height="auto";el.style.height=Math.min(120,el.scrollHeight)+"px";}
+function vChat(){var f=S.friends[S.chat]||{n:"?"},R2=rankOf(f.x||0);
+  var h='<div class="shead glass"><button class="back" data-a="chat-close" aria-label="Retour">‹</button><span class="pav" style="--c:'+accHex(f.a)+'">'+esc((f.n||"?").charAt(0).toUpperCase())+'</span><div style="min-width:0"><h2 style="font-size:17px">'+esc(f.n)+'</h2><span class="xs muted">'+R2.name+' · '+big(f.x||0)+' XP</span></div></div>';
+  if(!f.sc)h+='<section class="glass card stack" style="margin-top:12px"><b>Messagerie pas encore disponible avec '+esc(f.n)+'</b><p class="sm muted">Ce gymbro a été ajouté avec l\'ancien code. Demande-lui son code court (ex. ELENA-4K7) et rajoute-le : vous pourrez discuter.</p></section>';
+  h+='<div class="chatlist" id="chatlist">'+chatBubbles()+'</div>';
+  if(f.sc)h+='<div class="chatquick">'+["💪 Go séance ?","🔥 Bien joué !","On s'entraîne quand ?","Tu bats mon record ?"].map(function(t){return '<button class="chip" data-a="chat-quick" data-v="'+esc(t)+'">'+esc(t)+'</button>';}).join("")+'</div><div class="chatbar glass"><textarea id="chatin" rows="1" maxlength="500" placeholder="Message à '+esc(f.n)+'…"></textarea><button class="chatsend" data-a="chat-send" aria-label="Envoyer"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z"/></svg></button></div>';
+  return h;}
+function chatOpen(fid){S.view="chat";S.chat=fid;var f=S.friends[fid];if(f&&f.sc){MSG.read[f.sc]=Date.now();msgSave();}render();chatScroll();
+  clearInterval(MSG.poll);MSG.poll=setInterval(function(){if(S.view!=="chat"){clearInterval(MSG.poll);return;}if(!document.hidden)sbPullMsgs();},4000);sbPullMsgs();}
+
 function vRank(){
   var X=xpCompute(),R2=rankOf(X.total),Q=X.cur.quests,h='<div class="shead glass"><button class="back" data-a="rank-close" aria-label="Retour">‹</button><h2>Ton rang</h2></div>';
   h+='<section class="rankhero glass">'+badge(R2.t,R2.div,132)+'<h2 class="rbig" style="--t1:'+TIERS[R2.t][2]+';--t2:'+TIERS[R2.t][3]+'">'+R2.name+'</h2><p class="muted num">'+big(X.total)+' XP au total</p>';
@@ -2787,13 +2848,13 @@ function people(){var me=myCard();me.me=true;var L=[me];Object.keys(S.friends||{
 function friendsCard(){var F=Object.keys(S.friends||{});
   if(!F.length)return '<button class="rankcard glass" data-a="friends-open"><span class="fico">'+'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6c2 .7 3.2 2.5 3.5 5.4"/></svg></span><span class="grow"><span class="eyebrow">Gymbros &amp; gymsis</span><b class="h3" style="display:block">Défie ta team</b><span class="xs muted">Ajoute tes gymbros et gymsis pour comparer rangs, séances et records.</span></span><span class="chev">›</span></button>';
   var L=people(),pos=L.findIndex(function(p){return p.me;})+1;
-  return '<div class="glass card stack" role="button" tabindex="0" style="cursor:pointer" data-a="friends-open"><div class="row between"><p class="eyebrow">Classement gymbros</p><span class="xs muted">'+(pos===1?"Tu es 1er 🔥":"Tu es "+pos+"e sur "+L.length)+'</span></div><div class="lb lbmini">'+L.slice(0,3).map(function(p,i){var R2=rankOf(p.x);return '<div class="lbrow'+(p.me?" me":"")+'"><span class="pos">'+(i+1)+'</span><span class="pav" style="--c:'+accHex(p.a)+'">'+esc(p.n.charAt(0).toUpperCase())+'</span><span class="grow"><b>'+esc(p.me?"Toi":p.n)+'</b><span class="xs muted">'+R2.name+'</span></span><span class="num xs" style="font-weight:800">'+big(p.x)+' XP</span></div>';}).join("")+'</div></div>';}
+  return '<div class="glass card stack" role="button" tabindex="0" style="cursor:pointer" data-a="friends-open"><div class="row between"><p class="eyebrow">Classement gymbros</p><span class="xs muted">'+(unreadAll()?'<b style="color:var(--accent-ink)">💬 '+unreadAll()+' message'+(unreadAll()>1?"s":"")+'</b>':pos===1?"Tu es 1er 🔥":"Tu es "+pos+"e sur "+L.length)+'</span></div><div class="lb lbmini">'+L.slice(0,3).map(function(p,i){var R2=rankOf(p.x);return '<div class="lbrow'+(p.me?" me":"")+'"><span class="pos">'+(i+1)+'</span><span class="pav" style="--c:'+accHex(p.a)+'">'+esc(p.n.charAt(0).toUpperCase())+'</span><span class="grow"><b>'+esc(p.me?"Toi":p.n)+'</b><span class="xs muted">'+R2.name+'</span></span><span class="num xs" style="font-weight:800">'+big(p.x)+' XP</span></div>';}).join("")+'</div></div>';}
 function vFriends(){
   var L=people(),open=S.fopen,h='<div class="shead glass"><button class="back" data-a="friends-close" aria-label="Retour">‹</button><h2>Gymbros &amp; gymsis</h2></div>';
   var mc=myCode();h+='<section class="glass card stack"><p class="eyebrow">Ton code gymbro</p><div class="mycode">'+(mc?esc(mc):"…")+'</div><div class="row"><button class="btn small" style="flex:1" data-a="share-short">Envoyer mon code</button><button class="btn line small" style="flex:.8" data-a="copy-short">Copier</button></div><p class="eyebrow" style="margin-top:6px">Ajouter un gymbro</p><div class="row"><input class="inp" id="fcode" placeholder="Son code, ex. ELENA-4K7" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" style="text-transform:uppercase"><button class="btn small" data-a="friend-add">Ajouter</button></div><p class="xs muted">Une fois ajoutés, les XP, séances et rangs de ta team se mettent à jour tout seuls.</p></section>'+sbStat();
   h+='<section class="sect"><p class="eyebrow">Classement</p><div class="glass card lb">';
   L.forEach(function(p,i){var R2=rankOf(p.x),isOpen=!p.me&&open===p.i;
-    h+='<div class="lbrow'+(p.me?" me":"")+'"'+(p.me?'':' data-a="friend-open" data-v="'+esc(p.i)+'" role="button" tabindex="0"')+'><span class="pos">'+(i+1)+'</span>'+badge(R2.t,R2.div,34)+'<span class="grow"><b>'+esc(p.me?"Toi":p.n)+(p.t?' <span class="rtitle" style="display:inline">· '+esc(p.t)+'</span>':'')+'</b><span class="xs muted">'+R2.name+' · '+p.wNow+' séance'+(p.wNow>1?"s":"")+' cette semaine'+(p.k>1?' · série '+p.k+' sem.':'')+(p.me?'':' · '+(Date.now()-p.u>2*864e5?'<span class="stale">à jour '+ago(p.u)+'</span>':'à jour '+ago(p.u)))+'</span></span><span class="num" style="font-weight:800;font-size:14px">'+big(p.x)+'<small class="muted"> XP</small></span></div>';
+    h+='<div class="lbrow'+(p.me?" me":"")+'"'+(p.me?'':' data-a="friend-open" data-v="'+esc(p.i)+'" role="button" tabindex="0"')+'><span class="pos">'+(i+1)+'</span>'+badge(R2.t,R2.div,34)+'<span class="grow"><b>'+esc(p.me?"Toi":p.n)+(p.me?"":msgDot(p.sc))+(p.t?' <span class="rtitle" style="display:inline">· '+esc(p.t)+'</span>':'')+'</b><span class="xs muted">'+R2.name+' · '+p.wNow+' séance'+(p.wNow>1?"s":"")+' cette semaine'+(p.k>1?' · série '+p.k+' sem.':'')+(p.me?'':' · '+(Date.now()-p.u>2*864e5?'<span class="stale">à jour '+ago(p.u)+'</span>':'à jour '+ago(p.u)))+'</span></span><span class="num" style="font-weight:800;font-size:14px">'+big(p.x)+'<small class="muted"> XP</small></span></div>';
     if(isOpen)h+=compareBlock(p);});
   h+='</div></section>';
   if(Object.keys(S.friends||{}).length)h+='<p class="xs muted" style="text-align:center;padding:0 12px">Les gymbros ajoutés avec un code court se mettent à jour tout seuls. Ceux ajoutés avec l\'ancien code long : rajoute-les une fois avec leur nouveau code.</p><p class="xs muted" style="text-align:center">Touche un gymbro ou une gymsis pour comparer vos stats et vos records.</p>';else h+='<p class="xs muted" style="text-align:center">Ta team est vide pour l\'instant : envoie ton code pour commencer.</p>';
@@ -2801,7 +2862,7 @@ function vFriends(){
 function compareBlock(f){var me=myCard(),mine={},his={};me.r.forEach(function(r){mine[r[0]]=r;});(f.r||[]).forEach(function(r){his[r[0]]=r;});
   var common=Object.keys(mine).filter(function(k){return his[k];});
   function row(l,a,b,fmt){var w=a>b?"me":b>a?"him":"";return '<div class="cmp"><span class="'+(w==="me"?"win":"")+'">'+(fmt?fmt(a):a)+'</span><b>'+l+'</b><span class="'+(w==="him"?"win":"")+'">'+(fmt?fmt(b):b)+'</span></div>';}
-  var h='<div class="cmpbox"><div class="cmp head"><span>Toi</span><b></b><span>'+esc(f.n)+'</span></div>'+row("XP",me.x,f.x,big)+row("Séances au total",me.s,f.s)+row("Cette semaine",me.w,f.wk===wkOf(new Date())?f.w:0)+row("Série (semaines)",me.k,f.k||0);
+  var h='<div class="cmpbox"><button class="btn small" style="width:100%;margin-bottom:12px" data-a="friend-chat" data-v="'+esc(f.i)+'">💬 Écrire à '+esc(f.n)+(f.sc&&unreadFrom(f.sc)?' · '+unreadFrom(f.sc)+' nouveau'+(unreadFrom(f.sc)>1?'x':''):'')+'</button><div class="cmp head"><span>Toi</span><b></b><span>'+esc(f.n)+'</span></div>'+row("XP",me.x,f.x,big)+row("Séances au total",me.s,f.s)+row("Cette semaine",me.w,f.wk===wkOf(new Date())?f.w:0)+row("Série (semaines)",me.k,f.k||0);
   if(common.length){h+='<p class="eyebrow" style="margin:12px 0 4px">Records en commun</p>';common.forEach(function(k){h+=row(esc(exName(k,mine[k][2])),mine[k][1],his[k][1],function(v){return kg(v)+" kg";});});}
   else h+='<p class="xs muted" style="margin-top:10px">Pas encore d\'exercice en commun : faites les mêmes et comparez vos charges.</p>';
   if(f.ss&&f.ss.length){h+='<p class="eyebrow" style="margin:12px 0 4px">Ses dernières séances</p>'+f.ss.map(function(x){return '<div class="exline"><b>'+esc(x[0])+'</b><span class="r">'+dlong(x[1])+'<br>'+x[2]+' séries · '+big(x[3])+' kg</span></div>';}).join("");}
@@ -3039,7 +3100,7 @@ function render(){
   app.classList.toggle("insession",S.view==="session");
   document.getElementById("tabs").hidden=insess;
   var key=S.view+"|"+S.tab;if(key!==lastKey){lastKey=key;app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");clearTimeout(render.t);render.t=setTimeout(function(){app.classList.remove("enter");},900);}
-  app.innerHTML=S.view==="coach"?vCoach():S.view==="dietob"?vDietOb():S.view==="fses"?vFses():S.view==="homeedit"?vHomeEdit():S.view==="news"?vNews():S.view==="premium"?vPremium():S.view==="sportob"?vSportOb():S.view==="apps"?vApps():S.view==="runadd"?vRunAdd():S.view==="friends"?vFriends():S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="week"?vWeek():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vStats():vToday();
+  app.innerHTML=S.view==="chat"?vChat():S.view==="coach"?vCoach():S.view==="dietob"?vDietOb():S.view==="fses"?vFses():S.view==="homeedit"?vHomeEdit():S.view==="news"?vNews():S.view==="premium"?vPremium():S.view==="sportob"?vSportOb():S.view==="apps"?vApps():S.view==="runadd"?vRunAdd():S.view==="friends"?vFriends():S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="week"?vWeek():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vStats():vToday();
   Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.classList.toggle("on",t.dataset.v===S.tab);});
   renderRest();renderChrono();tick();hydratePhotos();animStart();
 }
@@ -3179,6 +3240,10 @@ function act(a,el){
    case "fsend-open":S.fsend=S.fsend===v?null:v;render();break;
    case "friend-paste":pasteFriend();break;
    case "friend-open":S.fopen=S.fopen===v?null:v;render();break;
+   case "friend-chat":chatOpen(v);break;
+   case "chat-close":clearInterval(MSG.poll);S.view="friends";S.fopen=S.chat;render();window.scrollTo(0,0);break;
+   case "chat-send":msgSend();break;
+   case "chat-quick":{var ci=document.getElementById("chatin");if(ci){ci.value=v;msgSend();}break;}
    case "friend-del":if(S.confirm!=="fdel"+v){S.confirm="fdel"+v;render();return;}var nm0=(S.friends[v]||{}).n;delete S.friends[v];put("amis");S.confirm=null;S.fopen=null;render();toast((nm0||"Gymbro")+" retiré de ta team");break;
    case "dex-del":{var dd2=findDay(el.dataset.d),ix2=+el.dataset.i;if(!dd2)return;if(dd2.exercises.length<=1){toast("Une séance doit garder au moins un exercice");return;}var gone=dd2.exercises.splice(ix2,1)[0];dd2.min=estMin(dd2.exercises);put("programme");render();toast(gone.name+" retiré de la séance");break;}
    case "ex-rm":{var exr=s&&s.exercises[i];if(!exr)return;if(doneSets(exr).length&&S.confirm!=="exrm"+i){S.confirm="exrm"+i;render();return;}if(s.exercises.length<=1){toast("Garde au moins un exercice, ou abandonne la séance");return;}s.exercises.splice(i,1);S.confirm=null;put("s:"+s.id);render();toast(exr.name+" retiré");break;}
@@ -3305,6 +3370,7 @@ function onField(ev){
   var s=S.active&&S.sessions[S.active];if(!s)return;
   var st=s.exercises[+el.dataset.i].sets[+el.dataset.j];if(!st)return;st[f]=el.value;putSoon("s:"+s.id);
 }
+document.addEventListener("input",function(ev){if(ev.target&&ev.target.id==="chatin")chatAutosize(ev.target);});document.addEventListener("keydown",function(ev){if(ev.target&&ev.target.id==="chatin"&&ev.key==="Enter"&&!ev.shiftKey&&!ev.isComposing){ev.preventDefault();msgSend();}});
 document.addEventListener("input",onField);document.addEventListener("change",onField);
 document.addEventListener("focusin",function(ev){if(ev.target.matches&&ev.target.matches(".field input"))try{ev.target.select();}catch(e){}});
 document.addEventListener("visibilitychange",function(){if(!document.hidden){flushAll();tick();}});
