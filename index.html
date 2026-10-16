@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=41">
+<link rel="manifest" href="manifest.webmanifest?v=42">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -408,6 +408,8 @@ body.locked{position:fixed;left:0;right:0;overflow:hidden}
 .shotx{position:absolute;top:10px;right:10px;z-index:2;min-width:34px;height:34px;padding:0 10px;border-radius:99px;font-weight:800;font-size:15px;color:#fff;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25)}
 .fico{width:58px;height:58px;border-radius:18px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,var(--g1),var(--g2) 55%,var(--g3))}
 .lb{display:flex;flex-direction:column}
+header.top .sync{display:none}
+.hico{position:relative;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);border:1px solid var(--edge);cursor:pointer;flex:none}.hbadge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--accent);color:#fff;font-size:10px;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center}
 .mdot{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:9px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;vertical-align:2px}
 .chatlist{display:flex;flex-direction:column;gap:6px;padding:14px 2px 150px}.chatempty{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:60px 20px}
 .chatday{align-self:center;font-size:11px;font-weight:700;color:var(--muted);margin:10px 0 2px;text-transform:capitalize}
@@ -650,7 +652,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=41;var APPDATE="2026-10-16";
+var APPV=42;var APPDATE="2026-10-16";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -1107,7 +1109,7 @@ function vToday(){
   if(tp&&tp!=="rest"&&findDay(tp))nd=findDay(tp);
   var doneToday=ds.filter(function(s){return ymd(s.start)===today;}),name=(S.profile&&S.profile.name)||"";
   var greet=GREETS[GI];
-  var h='<header class="top"><div class="brand">'+LOGO+'<h1 class="word">Rush<b>Gym</b></h1></div><div class="row" style="gap:8px"><span class="sync glass '+(S.sync==="ok"?"ok":S.sync==="err"?"err":"")+'" id="sync" title="'+syncLabel()+'"><i></i><span>'+syncLabel()+'</span></span><button class="avatar'+frameCls()+'" data-a="prof-open" aria-label="Mon profil">'+avInner(name)+'</button></div></header>';
+  var h='<header class="top"><div class="brand">'+LOGO+'<h1 class="word">Rush<b>Gym</b></h1></div><div class="row" style="gap:8px"><span class="sync glass '+(S.sync==="ok"?"ok":S.sync==="err"?"err":"")+'" id="sync" title="'+syncLabel()+'"><i></i><span>'+syncLabel()+'</span></span><button class="hico glass" data-a="shop-open" aria-label="Boutique"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg></button><button class="hico glass" data-a="inbox-open" aria-label="Messages"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.8 7L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg>'+(unreadAll()?'<i class="hbadge">'+(unreadAll()>9?"9+":unreadAll())+'</i>':'')+'</button><button class="avatar'+frameCls()+'" data-a="prof-open" aria-label="Mon profil">'+avInner(name)+'</button></div></header>';
   h+='<div class="hello"><h2>'+(name?esc(greet).replace("{n}",esc(name)):esc(greet.replace(/,? ?\{n\}/,"")))+'</h2><p class="quote" id="quote">'+esc(QUOTES[QI])+'</p></div>';
   var sp=curSport();h+=sportSwitch();
   var W={};
@@ -2429,7 +2431,7 @@ async function sbPullMsgs(){if(!S.profile||!myCode()||MSG.busy)return;MSG.busy=t
   MSG.busy=false;}
 async function msgAutoAdd(code){try{var rows=await sbReq("cards?select=code,card,updated_at&code=eq."+encodeURIComponent(code));if(rows&&rows.length){var c=cardFromRow(rows[0]);if(c.i&&c.i!==myFid()){S.friends[c.i]=c;put("amis");}}}catch(e){}}
 function msgRefresh(){if(S.view==="chat"){var el=document.getElementById("chatlist");if(el){el.innerHTML=chatBubbles();chatScroll();}}
-  else if(S.view==="friends"||(S.view==="tabs"&&S.tab==="today"))render();}
+  else if(S.view==="friends"||S.view==="inbox"||(S.view==="tabs"&&S.tab==="today"))render();}
 async function msgSend(){var inp=document.getElementById("chatin"),f=S.friends[S.chat],me=myCode();if(!inp||!f)return;var b=inp.value.trim().slice(0,500);if(!b)return;
   if(!me||!f.sc){toast("Messagerie indisponible : ajoute ce gymbro avec son code court");return;}
   var m={id:0,f:me,to:f.sc,b:b,t:Date.now(),p:1};MSG.list.push(m);msgSave();inp.value="";chatAutosize(inp);msgRefresh();
@@ -2449,6 +2451,14 @@ function vChat(){var f=S.friends[S.chat]||{n:"?"},R2=rankOf(f.x||0);
   h+='<div class="chatlist" id="chatlist">'+chatBubbles()+'</div>';
   if(f.sc)h+='<div class="chatquick">'+["💪 Go séance ?","🔥 Bien joué !","On s'entraîne quand ?","Tu bats mon record ?"].map(function(t){return '<button class="chip" data-a="chat-quick" data-v="'+esc(t)+'">'+esc(t)+'</button>';}).join("")+'</div><div class="chatbar glass"><textarea id="chatin" rows="1" maxlength="500" placeholder="Message à '+esc(f.n)+'…"></textarea><button class="chatsend" data-a="chat-send" aria-label="Envoyer"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z"/></svg></button></div>';
   return h;}
+function vInbox(){var F=Object.keys(S.friends||{}).map(function(k){return S.friends[k];}).filter(function(f){return f&&f.n;}),me=myCode();
+  var h='<div class="shead glass"><button class="back" data-a="inbox-close" aria-label="Retour">‹</button><h2>Messages</h2></div>';
+  if(!F.length)return h+'<section class="glass card stack" style="margin-top:12px"><b class="h3">Pas encore de gymbro</b><p class="sm muted">Ajoute ta team avec leur code pour pouvoir leur écrire.</p><button class="btn" data-a="friends-open">Ajouter un gymbro</button></section>';
+  F.forEach(function(f){var c=f.sc?convWith(f.sc):[];f._last=c.length?c[c.length-1]:null;});
+  F.sort(function(a,b){return ((b._last||{}).t||0)-((a._last||{}).t||0);});
+  h+='<section class="glass card lb" style="margin-top:12px">'+F.map(function(f){var L=f._last,u=f.sc?unreadFrom(f.sc):0;
+    return '<div class="lbrow" data-a="friend-chat" data-v="'+esc(f.i)+'" role="button" tabindex="0"><span class="pav" style="--c:'+accHex(f.a)+'">'+esc(f.n.charAt(0).toUpperCase())+'</span><span class="grow" style="min-width:0"><b>'+esc(f.n)+'</b><span class="xs muted" style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'+(u?';color:var(--fg);font-weight:700':'')+'">'+(L?(L.f===me?"Toi : ":"")+esc(L.b):f.sc?"Écris-lui un premier message 👋":"Rajoute-le avec son code court pour discuter")+'</span></span>'+(u?'<span class="mdot">'+u+'</span>':L?'<span class="xs muted">'+chatHm(L.t)+'</span>':'')+'</div>';}).join("")+'</section>';
+  return h+'<p class="xs muted" style="text-align:center;margin-top:10px">Pour ajouter quelqu\'un : Gymbros &amp; gymsis → son code.</p>';}
 function chatOpen(fid){S.view="chat";S.chat=fid;var f=S.friends[fid];if(f&&f.sc){MSG.read[f.sc]=Date.now();msgSave();}render();chatScroll();
   clearInterval(MSG.poll);MSG.poll=setInterval(function(){if(S.view!=="chat"){clearInterval(MSG.poll);return;}if(!document.hidden)sbPullMsgs();},4000);sbPullMsgs();}
 
@@ -3100,7 +3110,7 @@ function render(){
   app.classList.toggle("insession",S.view==="session");
   document.getElementById("tabs").hidden=insess;
   var key=S.view+"|"+S.tab;if(key!==lastKey){lastKey=key;app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");clearTimeout(render.t);render.t=setTimeout(function(){app.classList.remove("enter");},900);}
-  app.innerHTML=S.view==="chat"?vChat():S.view==="coach"?vCoach():S.view==="dietob"?vDietOb():S.view==="fses"?vFses():S.view==="homeedit"?vHomeEdit():S.view==="news"?vNews():S.view==="premium"?vPremium():S.view==="sportob"?vSportOb():S.view==="apps"?vApps():S.view==="runadd"?vRunAdd():S.view==="friends"?vFriends():S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="week"?vWeek():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vStats():vToday();
+  app.innerHTML=S.view==="inbox"?vInbox():S.view==="chat"?vChat():S.view==="coach"?vCoach():S.view==="dietob"?vDietOb():S.view==="fses"?vFses():S.view==="homeedit"?vHomeEdit():S.view==="news"?vNews():S.view==="premium"?vPremium():S.view==="sportob"?vSportOb():S.view==="apps"?vApps():S.view==="runadd"?vRunAdd():S.view==="friends"?vFriends():S.view==="shop"?vShop():S.view==="onboard"?vOnboard():S.view==="profile"?vProfile():S.view==="rank"?vRank():S.view==="build"?vBuild():S.view==="session"?vSession():S.view==="summary"?vSummary():S.tab==="week"?vWeek():S.tab==="prog"?vProg():S.tab==="diet"?vDiet():S.tab==="stats"?vStats():S.tab==="hist"?vStats():vToday();
   Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.classList.toggle("on",t.dataset.v===S.tab);});
   renderRest();renderChrono();tick();hydratePhotos();animStart();
 }
@@ -3220,8 +3230,8 @@ function act(a,el){
      if(GEO!=null){navigator.geolocation.clearWatch(GEO);GEO=null;}delete S.sessions[s.id];put("s:"+s.id);S.active=null;S.rest=null;S.confirm=null;S.view="tabs";S.tab="today";render();window.scrollTo(0,0);break;
    case "close-sum":S.view="tabs";S.tab="today";render();window.scrollTo(0,0);break;
    case "open":S.open=S.open===v?null:v;S.edit=null;render();break;
-   case "shop-open":S.view="shop";S.confirm=null;render();window.scrollTo(0,0);break;
-   case "shop-close":S.view="rank";S.confirm=null;render();window.scrollTo(0,0);break;
+   case "shop-open":S.shopFrom=S.view;S.view="shop";S.confirm=null;render();window.scrollTo(0,0);break;
+   case "shop-close":S.view=S.shopFrom==="rank"?"rank":"tabs";if(S.view==="tabs")S.tab="today";S.confirm=null;render();window.scrollTo(0,0);break;
    case "buy":buy(v);break;
    case "equip":equip(v);break;
    case "unequip":unequip(v);break;
@@ -3240,8 +3250,10 @@ function act(a,el){
    case "fsend-open":S.fsend=S.fsend===v?null:v;render();break;
    case "friend-paste":pasteFriend();break;
    case "friend-open":S.fopen=S.fopen===v?null:v;render();break;
-   case "friend-chat":chatOpen(v);break;
-   case "chat-close":clearInterval(MSG.poll);S.view="friends";S.fopen=S.chat;render();window.scrollTo(0,0);break;
+   case "friend-chat":S.chatFrom=S.view;chatOpen(v);break;
+   case "inbox-open":S.view="inbox";render();window.scrollTo(0,0);sbPullMsgs();break;
+   case "inbox-close":S.view="tabs";S.tab="today";render();window.scrollTo(0,0);break;
+   case "chat-close":clearInterval(MSG.poll);S.view=S.chatFrom==="inbox"?"inbox":"friends";S.fopen=S.chat;render();window.scrollTo(0,0);break;
    case "chat-send":msgSend();break;
    case "chat-quick":{var ci=document.getElementById("chatin");if(ci){ci.value=v;msgSend();}break;}
    case "friend-del":if(S.confirm!=="fdel"+v){S.confirm="fdel"+v;render();return;}var nm0=(S.friends[v]||{}).n;delete S.friends[v];put("amis");S.confirm=null;S.fopen=null;render();toast((nm0||"Gymbro")+" retiré de ta team");break;
