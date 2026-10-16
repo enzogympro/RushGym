@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=36">
+<link rel="manifest" href="manifest.webmanifest?v=38">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -593,6 +593,8 @@ button.w{width:100%}
 .chronob .big{color:var(--accent)}.pill.go{background:var(--accent);color:var(--on-accent)}
 .chronoh{width:34px;height:34px;border-radius:12px;background:var(--well);font-size:16px;flex:none}
 .chrbtns{justify-content:flex-end;flex-wrap:wrap}.steppill.bwon{background:var(--accent);color:var(--on-accent)}.steppill.bwon b{color:inherit}
+.stale{color:var(--hot);font-weight:700}
+.mycode{font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:.06em;text-align:center;padding:10px;border-radius:16px;background:var(--well);user-select:all}
 </style>
 
 <div class="field-bg" aria-hidden="true"></div>
@@ -638,7 +640,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=36;var APPDATE="2026-10-16";
+var APPV=38;var APPDATE="2026-10-16";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -986,7 +988,7 @@ function flush(key){
   (async function(){try{for(;;){var v=ver[key]||0;await writeRemote(key);if((ver[key]||0)===v){pending.delete(key);break;}}
     setSync(pending.size?"err":"ok");}catch(e){setSync("err");}finally{busy[key]=false;saveLocal();}})();
 }
-function put(key){pending.add(key);ver[key]=(ver[key]||0)+1;saveLocal();flush(key);}
+function put(key){pending.add(key);ver[key]=(ver[key]||0)+1;saveLocal();flush(key);if(typeof SB!=="undefined"&&S.profile){if(/^(s:|profil|programme|amis)/.test(key))sbSoon("card",3000);sbSoon("backup",20000);}}
 var debT={};function putSoon(key){clearTimeout(debT[key]);debT[key]=setTimeout(function(){put(key);},700);}
 function flushAll(){pending.forEach(function(k){flush(k);});}
 async function connect(){
@@ -1210,6 +1212,7 @@ function vSummary(){
   if(prev){var pv=volume(prev),d=pv?Math.round((v-pv)/pv*100):0;h+='<p>'+(d>=0?'<span class="up">+'+d+' %</span>':'<span class="down">'+d+' %</span>')+' par rapport à ta dernière séance '+esc(s.name)+' du '+dshort(prev.start)+'.</p>';}
   h+='<div class="tiles"><div class="tile glass"><b>'+Math.round((s.end-s.start)/60000)+'</b><span>minutes</span></div><div class="tile glass"><b>'+countSets(s)+'</b><span>séries</span></div><div class="tile glass"><b>'+prs.length+'</b><span>records</span></div></div>';
   if(prs.length){h+='<div class="glass card stack"><p class="eyebrow">Records battus</p><div class="lines">'+prs.map(function(p){return '<div><span>'+esc(p)+'</span><span class="tag">Record</span></div>';}).join("")+'</div></div>';}
+  if(Object.keys(S.friends||{}).length&&!(s.from&&s.from.i))h+='<section class="glass card stack sharecard"><p class="eyebrow">Ta team</p><p class="sm">Envoie ta progression à tes gymbros : ils verront tes nouveaux XP, ta séance et ton rang.</p><button class="btn" data-a="share-prog" data-v="'+esc(s.id)+'">Partager ma séance avec ma team</button></section>';
   if(s.from&&s.from.i)h+='<section class="glass card stack"><p class="eyebrow">Séance de '+esc(s.from.n||"ton gymbro")+'</p><p class="sm">Envoie-lui tes charges et tes reps : il verra comment tu t\'en es sorti.</p><button class="btn" data-a="share-res" data-v="'+esc(s.id)+'">Envoyer mes stats à '+esc(s.from.n||"mon gymbro")+'</button></section>';
   h+='<button class="btn'+(s.from&&s.from.i?" line":"")+'" data-a="close-sum">Retour à l\'accueil</button></div>';
   return h;
@@ -1530,8 +1533,8 @@ function vPremium(){var yr=S.billing==="y",RD=rankDisc(),h='<div class="shead gl
   h+='<p class="xs muted" style="text-align:center;padding:0 10px">Abonnement sans engagement, résiliable à tout moment depuis ton iPhone. La meilleure réduction s\'applique (Fondateur ou rang), sans cumul.</p>';
   return h;}
 /* ---------- nouveautés ---------- */
-var NEWSV=34;
-var NEWS=[["#2BB673","⌂","Section Domicile","Renfo, Pilates, Yoga, Mobilité et Cardio : tout pour t'entraîner chez toi, avec un conseil et une démonstration animée sur chaque exercice."],["#FF6A2B","🍽","Tes repas de la semaine","Dis-nous ton objectif, ce que tu aimes et tes allergies : RushGym te propose 7 jours de repas adaptés. Inclus dans Elite, offert en bêta."],["#7A5CFF","🧠","Ton coach personnel","Après un mois, il analyse tes séances et te conseille charges, exercices et habitudes selon ton objectif. Inclus dans Elite, offert en bêta."],["#FF6A2B","⇄","Teste les séances de ta team","Programme → « Tester la séance d'un gymbro » : toutes les séances de tes gymbros, prêtes à faire. À la fin, envoie-leur tes charges."],["#2BB673","＋","Ajouter sa team, en un geste","Envoie ton code, colle celui de ton gymbro : c'est ajouté."],["#1E88E5","◉","Ta photo de profil","Touche ton avatar dans ton profil pour ajouter ta photo."],["#FF2D7A","▦","Ton accueil, à ta façon","Choisis tes widgets et leur ordre : touche « Personnaliser l'accueil » tout en bas."]];
+var NEWSV=38;
+var NEWS=[["#1E88E5","⇄","Ta team en direct","Chacun a maintenant un code court, comme ENZO-4K7. Une fois ajoutés, les XP, séances et rangs de tes gymbros se mettent à jour tout seuls."],["#2BB673","⌂","Section Domicile","Renfo, Pilates, Yoga, Mobilité et Cardio : tout pour t'entraîner chez toi, avec un conseil et une démonstration animée sur chaque exercice."],["#FF6A2B","🍽","Tes repas de la semaine","Dis-nous ton objectif, ce que tu aimes et tes allergies : RushGym te propose 7 jours de repas adaptés. Inclus dans Elite, offert en bêta."],["#7A5CFF","🧠","Ton coach personnel","Après un mois, il analyse tes séances et te conseille charges, exercices et habitudes selon ton objectif. Inclus dans Elite, offert en bêta."],["#FF6A2B","⇄","Teste les séances de ta team","Programme → « Tester la séance d'un gymbro » : toutes les séances de tes gymbros, prêtes à faire. À la fin, envoie-leur tes charges."],["#2BB673","＋","Ajouter sa team, en un geste","Envoie ton code, colle celui de ton gymbro : c'est ajouté."],["#1E88E5","◉","Ta photo de profil","Touche ton avatar dans ton profil pour ajouter ta photo."],["#FF2D7A","▦","Ton accueil, à ta façon","Choisis tes widgets et leur ordre : touche « Personnaliser l'accueil » tout en bas."]];
 var NEWS_OLD=[["#FF6A2B","🏃","Hyrox et Course","Deux nouvelles sections avec leur profil, leurs programmes, la simulation Hyrox chronométrée et les sorties GPS."],
  ["#2BB673","↗","Progression automatique","Tes charges sont préparées d'après ta dernière séance. Règle ton palier pour chaque exercice : +2,5 kg, +5 kg, +10 kg ou ce que tu veux."],
  ["#7A5CFF","★","RushGym+ et Fondateurs","Les futures formules, les 500 places Fondateurs, les réductions de rang et un cadeau avec l'abonnement annuel. Tout reste offert pendant la bêta."]];
@@ -1576,7 +1579,7 @@ function encSes(d){var o={f:myFid().slice(0,8),fn:(S.profile&&S.profile.name)||"
 function encRes(s){var o={f:myFid().slice(0,8),fn:(S.profile&&S.profile.name)||"",n:s.name,t:s.start,d:Math.round(((s.end||Date.now())-s.start)/60000),e:s.exercises.filter(function(ex){return doneSets(ex).length;}).map(function(ex){return [ex.exId,setsText(doneSets(ex)),LIB[ex.exId]?"":ex.name];})};return "RGR"+b64u(JSON.stringify(o));}
 function decAny(txt){var t=String(txt||""),m=t.match(/RG([SR])([A-Za-z0-9_-]{8,})/);if(m){try{var o=JSON.parse(unb64u(m[2]));o.kind=m[1];return o;}catch(e){return null;}}var c=decCard(t);if(c){c.kind="F";return c;}return null;}
 async function decAnyA(txt){var m=String(txt||"").match(/RG4([A-Za-z0-9_-]{12,})/);if(m){try{var c=parseRG3(await unzb64(m[1]));if(c){c.kind="F";return c;}}catch(e){}return null;}return decAny(txt);}
-function addFriendCard(c){if(c.i===String(myFid()).slice(0,8)){toast("C'est ton propre code");return;}var old=S.friends[c.i];if(old&&old.tests)c.tests=old.tests;
+function addFriendCard(c){if(c.i===String(myFid()).slice(0,8)||c.i===myFid()){toast("C'est ton propre code");return;}var lg=String(c.i).slice(0,8);if(lg!==c.i&&S.friends[lg]){if(S.friends[lg].tests)c.tests=S.friends[lg].tests;delete S.friends[lg];}var old=S.friends[c.i];if(old&&old.tests)c.tests=old.tests;
   var had=old&&!old.stub;S.friends[c.i]=c;put("amis");S.fopen=c.i;S.showPaste=false;render();toast(had?c.n+" mis à jour":c.n+" ajouté"+(c.g==="f"?"e comme gymsis":" comme gymbro"));}
 function friendStub(f,fn){if(!S.friends[f])S.friends[f]={v:1,i:f,n:fn||"Gymbro",a:"orange",x:0,w:0,wk:"",s:0,k:0,u:Date.now(),r:[],ss:[],stub:true};return S.friends[f];}
 async function handleCode(txt){var o=await decAnyA(txt);if(!o){toast("Code invalide : copie le code reçu en entier");return;}
@@ -1911,6 +1914,39 @@ function chronoDone(auto){var c=S.chrono;if(!c)return;var secs=c.mode==="down"?(
   if(secs<1){toast("Chrono annulé");return;}st.t=fmtT(secs);st.reps="1";st.done=true;put("s:"+s.id);
   var last=c.i===s.exercises.length-1&&c.j===ex.sets.length-1;if(!last&&ex.rest)startRest(ex.rest,ex.name);render();toast(auto?"Série terminée 💪":"Temps noté : "+fmtT(secs));}
 setInterval(function(){if(S.chrono)chronoTick();},250);
+/* ---------- serveur RushGym (Supabase) ---------- */
+var SB={url:"https://anxjkfezcdjzpalugxhx.supabase.co",key:"sb_publishable_WU87F9m2kY5uWYZCWGimoA_6WOVe-22",st:"off",err:"",ses:null,t:{}};
+function sbLoad(){try{SB.ses=JSON.parse(localStorage.getItem("rg-sb")||"null");}catch(e){SB.ses=null;}}
+function sbSave(){try{localStorage.setItem("rg-sb",JSON.stringify(SB.ses));}catch(e){}}
+function sbHead(auth){var h={"apikey":SB.key,"Content-Type":"application/json"};if(auth&&SB.ses)h.Authorization="Bearer "+SB.ses.access;return h;}
+async function sbAuthReq(path,body){var r=await fetch(SB.url+"/auth/v1/"+path,{method:"POST",headers:sbHead(false),body:JSON.stringify(body||{})}),j=await r.json().catch(function(){return {};});
+  if(!r.ok||!j.access_token)throw new Error(j.msg||j.message||j.error_description||j.error||("Erreur "+r.status));
+  SB.ses={access:j.access_token,refresh:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000,uid:j.user&&j.user.id};sbSave();}
+async function sbAuth(){if(!SB.ses)sbLoad();if(SB.ses&&SB.ses.exp>Date.now()+60000)return;
+  if(SB.ses&&SB.ses.refresh){try{await sbAuthReq("token?grant_type=refresh_token",{refresh_token:SB.ses.refresh});return;}catch(e){}}
+  await sbAuthReq("signup",{data:{},gotrue_meta_security:{}});}
+async function sbReq(path,opt){await sbAuth();opt=opt||{};var r=await fetch(SB.url+"/rest/v1/"+path,{method:opt.method||"GET",headers:Object.assign(sbHead(true),opt.headers||{}),body:opt.body?JSON.stringify(opt.body):undefined});
+  if(r.status===401&&!opt.retry){SB.ses.exp=0;return sbReq(path,Object.assign({},opt,{retry:true}));}
+  var txt=await r.text(),j=null;try{j=txt?JSON.parse(txt):null;}catch(e){}if(!r.ok){var e2=new Error((j&&(j.message||j.hint))||("Erreur "+r.status));e2.code=j&&j.code;e2.status=r.status;throw e2;}return j;}
+function shortCode(){var n=norm((S.profile&&S.profile.name)||"RUSH").toUpperCase().replace(/[^A-Z]/g,"").slice(0,8)||"RUSH",al="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",x="";for(var i=0;i<3;i++)x+=al.charAt(Math.floor(Math.random()*al.length));return n+"-"+x;}
+function myCode(){return S.profile&&S.profile.sc;}
+async function sbPushCard(){if(!S.profile)return;await sbAuth();var c=myCard();for(var k=0;k<4;k++){if(!S.profile.sc){S.profile.sc=shortCode();saveLocal();}
+    try{await sbReq("cards?on_conflict=id",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:{id:SB.ses.uid,code:S.profile.sc,card:c,updated_at:new Date().toISOString()}});SB.st="ok";SB.err="";return;}
+    catch(e){if(e.code==="23505"&&String(e.message).indexOf("code")>=0){S.profile.sc=null;continue;}throw e;}}}
+async function sbPushBackup(){if(!S.profile)return;await sbAuth();await sbReq("backups?on_conflict=id",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:{id:SB.ses.uid,data:{profile:S.profile,program:S.program,sessions:S.sessions,poids:S.poids,diet:S.diet,friends:S.friends,shop:S.shop},updated_at:new Date().toISOString()}});}
+function cardFromRow(r){var c=r.card||{};c.sc=r.code;c.u=Date.parse(r.updated_at)||c.u;return c;}
+async function sbPullFriends(){var F=S.friends||{},codes=Object.keys(F).map(function(k){return F[k].sc;}).filter(Boolean);if(!codes.length)return;
+  var rows=await sbReq("cards?select=code,card,updated_at&code=in.("+codes.map(encodeURIComponent).join(",")+")");var ch=false;
+  (rows||[]).forEach(function(r){var c=cardFromRow(r);if(!c.i)return;var old=F[c.i];if(old&&old.tests)c.tests=old.tests;if(!old||old.u!==c.u){F[c.i]=c;ch=true;}});
+  if(ch){S.friends=F;saveLocal();if(S.view==="friends"||S.view==="tabs"||S.view==="fses")render();}}
+async function sbAddCode(code){code=code.toUpperCase().trim();try{var rows=await sbReq("cards?select=code,card,updated_at&code=eq."+encodeURIComponent(code));
+    if(!rows||!rows.length){toast("Code "+code+" introuvable : vérifie-le avec ton gymbro");return;}var c=cardFromRow(rows[0]);addFriendCard(c);}
+  catch(e){toast("Serveur indisponible : réessaie dans un instant");SB.err=e.message;}}
+function sbSoon(what,delay){if(!S.profile)return;clearTimeout(SB.t[what]);SB.t[what]=setTimeout(function(){sbRun(what);},delay);}
+async function sbRun(what){try{if(what==="card")await sbPushCard();else if(what==="backup")await sbPushBackup();else if(what==="pull")await sbPullFriends();SB.st="ok";SB.err="";}catch(e){SB.st="err";SB.err=e.message||String(e);}
+  var b=document.getElementById("sbstat");if(b)b.outerHTML=sbStat();}
+function sbStat(){return '<p class="xs" id="sbstat" style="text-align:center;color:var(--'+(SB.st==="err"?"hot":SB.st==="ok"?"good":"muted")+')">'+(SB.st==="ok"?"● Synchronisé avec le serveur RushGym":SB.st==="err"?"● Serveur indisponible : "+esc(SB.err):"● Connexion au serveur…")+'</p>';}
+function sbBoot(){if(!S.profile)return;sbRun("card").then(function(){sbRun("pull");});sbSoon("backup",8000);setInterval(function(){if(!document.hidden){sbRun("pull");}},60000);}
 function vRank(){
   var X=xpCompute(),R2=rankOf(X.total),Q=X.cur.quests,h='<div class="shead glass"><button class="back" data-a="rank-close" aria-label="Retour">‹</button><h2>Ton rang</h2></div>';
   h+='<section class="rankhero glass">'+badge(R2.t,R2.div,132)+'<h2 class="rbig" style="--t1:'+TIERS[R2.t][2]+';--t2:'+TIERS[R2.t][3]+'">'+R2.name+'</h2><p class="muted num">'+big(X.total)+' XP au total</p>';
@@ -2035,7 +2071,7 @@ function cleanStale(){var now=Date.now(),ch=false;Object.keys(S.sessions).forEac
   if(countSets(x)===0&&now-x.start>3*3600000){delete S.sessions[id];put("s:"+id);ch=true;}
   else if(countSets(x)>0&&now-x.start>12*3600000){x.done=true;x.end=x.start+(x.min||60)*60000;put("s:"+id);ch=true;}});
   if(ch){if(S.active&&!(S.sessions[S.active]&&!S.sessions[S.active].done))S.active=null;if(S.view==="session"&&!S.active)S.view="tabs";render();}}
-function afterLoad(){setTimeout(newsCheck,700);cleanStale();if(notifState()==='granted')swReg();setTimeout(remCheck,2000);if(!S.profile&&S.view==="tabs"){S.view="onboard";S.ob={step:0,p:{name:(window.RG_NAME||""),sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"}};render();}
+function afterLoad(){setTimeout(sbBoot,1200);setTimeout(newsCheck,700);cleanStale();if(notifState()==='granted')swReg();setTimeout(remCheck,2000);if(!S.profile&&S.view==="tabs"){S.view="onboard";S.ob={step:0,p:{name:(window.RG_NAME||""),sex:"h",age:"",height:"",weight:"",target:"",goal:"masse",perWeek:5,likes:[],dislikes:[],whoop:false,accent:"orange"}};render();}
   else if(S.profile&&S.profile.whoop&&WH.state==="off")whoopFetch(false);}
 
 /* ---------- gym photo proof ---------- */
@@ -2310,13 +2346,13 @@ function friendsCard(){var F=Object.keys(S.friends||{});
   return '<div class="glass card stack" role="button" tabindex="0" style="cursor:pointer" data-a="friends-open"><div class="row between"><p class="eyebrow">Classement gymbros</p><span class="xs muted">'+(pos===1?"Tu es 1er 🔥":"Tu es "+pos+"e sur "+L.length)+'</span></div><div class="lb lbmini">'+L.slice(0,3).map(function(p,i){var R2=rankOf(p.x);return '<div class="lbrow'+(p.me?" me":"")+'"><span class="pos">'+(i+1)+'</span><span class="pav" style="--c:'+accHex(p.a)+'">'+esc(p.n.charAt(0).toUpperCase())+'</span><span class="grow"><b>'+esc(p.me?"Toi":p.n)+'</b><span class="xs muted">'+R2.name+'</span></span><span class="num xs" style="font-weight:800">'+big(p.x)+' XP</span></div>';}).join("")+'</div></div>';}
 function vFriends(){
   var L=people(),open=S.fopen,h='<div class="shead glass"><button class="back" data-a="friends-close" aria-label="Retour">‹</button><h2>Gymbros &amp; gymsis</h2></div>';
-  h+='<section class="glass card stack"><p class="eyebrow">Ajoute ta team</p><p class="sm">Envoie ton code. Copie celui de ton gymbro, touche « Ajouter » : c\'est fait. Ça marche aussi pour les séances et les stats que ta team t\'envoie.</p><div class="row"><button class="btn small" style="flex:1" data-a="share-card">Envoyer mon code</button><button class="btn line small" style="flex:.7" data-a="friend-paste">Ajouter</button></div>'+(S.showPaste?'<input class="inp code" id="fcode" placeholder="Colle le code ici" autocomplete="off" autocapitalize="off" spellcheck="false">':'')+(S.showCode?'<textarea class="inp code" id="mycode" readonly rows="2">'+esc(typeof S.showCode==="string"?S.showCode:encCard(myCard()))+'</textarea><p class="xs muted">Appuie longuement sur le code pour le copier.</p>':'')+'<p class="xs muted">Renvoie ton code de temps en temps : ta team verra ta progression.</p></section>';
+  var mc=myCode();h+='<section class="glass card stack"><p class="eyebrow">Ton code gymbro</p><div class="mycode">'+(mc?esc(mc):"…")+'</div><div class="row"><button class="btn small" style="flex:1" data-a="share-short">Envoyer mon code</button><button class="btn line small" style="flex:.8" data-a="copy-short">Copier</button></div><p class="eyebrow" style="margin-top:6px">Ajouter un gymbro</p><div class="row"><input class="inp" id="fcode" placeholder="Son code, ex. ELENA-4K7" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" style="text-transform:uppercase"><button class="btn small" data-a="friend-add">Ajouter</button></div><p class="xs muted">Une fois ajoutés, les XP, séances et rangs de ta team se mettent à jour tout seuls.</p></section>'+sbStat();
   h+='<section class="sect"><p class="eyebrow">Classement</p><div class="glass card lb">';
   L.forEach(function(p,i){var R2=rankOf(p.x),isOpen=!p.me&&open===p.i;
-    h+='<div class="lbrow'+(p.me?" me":"")+'"'+(p.me?'':' data-a="friend-open" data-v="'+esc(p.i)+'" role="button" tabindex="0"')+'><span class="pos">'+(i+1)+'</span>'+badge(R2.t,R2.div,34)+'<span class="grow"><b>'+esc(p.me?"Toi":p.n)+(p.t?' <span class="rtitle" style="display:inline">· '+esc(p.t)+'</span>':'')+'</b><span class="xs muted">'+R2.name+' · '+p.wNow+' séance'+(p.wNow>1?"s":"")+' cette semaine'+(p.k>1?' · série '+p.k+' sem.':'')+(p.me?'':' · '+ago(p.u))+'</span></span><span class="num" style="font-weight:800;font-size:14px">'+big(p.x)+'<small class="muted"> XP</small></span></div>';
+    h+='<div class="lbrow'+(p.me?" me":"")+'"'+(p.me?'':' data-a="friend-open" data-v="'+esc(p.i)+'" role="button" tabindex="0"')+'><span class="pos">'+(i+1)+'</span>'+badge(R2.t,R2.div,34)+'<span class="grow"><b>'+esc(p.me?"Toi":p.n)+(p.t?' <span class="rtitle" style="display:inline">· '+esc(p.t)+'</span>':'')+'</b><span class="xs muted">'+R2.name+' · '+p.wNow+' séance'+(p.wNow>1?"s":"")+' cette semaine'+(p.k>1?' · série '+p.k+' sem.':'')+(p.me?'':' · '+(Date.now()-p.u>2*864e5?'<span class="stale">à jour '+ago(p.u)+'</span>':'à jour '+ago(p.u)))+'</span></span><span class="num" style="font-weight:800;font-size:14px">'+big(p.x)+'<small class="muted"> XP</small></span></div>';
     if(isOpen)h+=compareBlock(p);});
   h+='</div></section>';
-  if(Object.keys(S.friends||{}).length)h+='<p class="xs muted" style="text-align:center">Touche un gymbro ou une gymsis pour comparer vos stats et vos records.</p>';else h+='<p class="xs muted" style="text-align:center">Ta team est vide pour l\'instant : envoie ton code pour commencer.</p>';
+  if(Object.keys(S.friends||{}).length)h+='<p class="xs muted" style="text-align:center;padding:0 12px">Les gymbros ajoutés avec un code court se mettent à jour tout seuls. Ceux ajoutés avec l\'ancien code long : rajoute-les une fois avec leur nouveau code.</p><p class="xs muted" style="text-align:center">Touche un gymbro ou une gymsis pour comparer vos stats et vos records.</p>';else h+='<p class="xs muted" style="text-align:center">Ta team est vide pour l\'instant : envoie ton code pour commencer.</p>';
   return h;}
 function compareBlock(f){var me=myCard(),mine={},his={};me.r.forEach(function(r){mine[r[0]]=r;});(f.r||[]).forEach(function(r){his[r[0]]=r;});
   var common=Object.keys(mine).filter(function(k){return his[k];});
@@ -2328,7 +2364,7 @@ function compareBlock(f){var me=myCard(),mine={},his={};me.r.forEach(function(r)
   else if(f.l)h+='<p class="xs muted" style="margin-top:10px">Dernière séance de '+esc(f.n)+' : '+esc(f.l[0])+', le '+dshort(f.l[1])+'.</p>';
   h+=testsBlock(f);
   return h+'<button class="btn danger small" style="width:100%;margin-top:12px" data-a="friend-del" data-v="'+esc(f.i)+'">'+(S.confirm==="fdel"+f.i?"Confirmer : retirer "+esc(f.n):"Retirer "+esc(f.n)+" de ma team")+'</button></div>';}
-async function shareCard(){var code=await encCardZ(myCard()),txt="RushGym 💪 "+code;
+async function shareCard(msg){var code=await encCardZ(myCard()),txt="RushGym 💪 "+(typeof msg==="string"?msg+" ":"")+code;S.lastShare=Date.now();try{localStorage.setItem("rg-lastshare",String(Date.now()));}catch(e){}
   try{if(navigator.share){await navigator.share({title:"RushGym",text:txt});return;}}catch(e){if(e&&e.name==="AbortError")return;}
   try{await navigator.clipboard.writeText(txt);toast("Code copié : envoie-le à ta team");return;}catch(e){}
   S.showCode=true;render();}
@@ -2615,6 +2651,7 @@ function act(a,el){
    case "prem-close":S.view=S.premBack&&S.premBack!=="premium"?S.premBack:"tabs";render();window.scrollTo(0,0);break;
    case "bill":S.billing=v;render();break;
    case "chrono-go":chronoStart(i,j);break;
+   case "share-prog":{var sp3=S.sessions[v];shareCard(sp3?"Je viens de finir « "+sp3.name+" » ("+big(xpCompute().bySes[sp3.id]?xpCompute().bySes[sp3.id].xp:0)+" XP), voici ma progression :":"");break;}
    case "bw-tog":{var be=s&&s.exercises[i];if(!be)return;S.program.bw=S.program.bw||{};var nb=!bwOf(be.exId);S.program.bw[be.exId]=nb;put("programme");if(nb)be.sets.forEach(function(x){if(!x.done&&x.auto){x.kg="";delete x.auto;}});render();toast(nb?"Poids du corps : note seulement le lest éventuel":"Charge en kilos");break;}
    case "chrono-free":chronoFree();break;
    case "chrono-pause":{var cc=S.chrono;if(!cc)return;if(cc.paused){var dd=Date.now()-cc.pauseAt;if(cc.mode==="down")cc.end+=dd;else cc.start+=dd;cc.paused=false;}else{cc.paused=true;cc.pauseAt=Date.now();}renderChrono();break;}
@@ -2687,10 +2724,12 @@ function act(a,el){
    case "use-joker":{var ck=wkOf(new Date());if((S.shop.joker||0)>0){S.shop.joker--;S.shop.jokerWeeks=(S.shop.jokerWeeks||[]).concat([ck]);put("boutique");render();toast("Joker utilisé : série protégée");}break;}
    case "gym-set":setGym();break;
    case "gym-reset":if(gymCooldown()>0){toast("Changement possible dans "+gymCooldown()+" jours");return;}S.profile.gym=null;if(S.pedit)S.pedit.gym=null;put("profil");render();toast("Salle effacée : enregistre la nouvelle à ta prochaine séance");break;
-   case "friends-open":S.view="friends";S.fopen=null;S.showCode=false;S.showPaste=false;myFid();render();window.scrollTo(0,0);break;
+   case "friends-open":S.view="friends";S.fopen=null;S.showCode=false;S.showPaste=false;myFid();render();window.scrollTo(0,0);if(typeof SB!=="undefined"){sbRun("card").then(function(){sbRun("pull");});}break;
    case "friends-close":S.view="tabs";S.tab="today";render();window.scrollTo(0,0);break;
    case "share-card":shareCard();break;
-   case "friend-add":handleCode(document.getElementById("fcode").value);break;
+   case "friend-add":{var fv=(document.getElementById("fcode").value||"").trim();if(!fv){toast("Tape le code de ton gymbro");return;}if(/^[A-Za-z]{1,8}-[A-Za-z0-9]{3}$/.test(fv))sbAddCode(fv);else handleCode(fv);break;}
+   case "share-short":{var mc2=myCode();if(!mc2){toast("Connexion au serveur en cours, réessaie dans un instant");sbRun("card");return;}shareCode("Ajoute-moi sur RushGym 💪 Mon code : "+mc2,"Code copié : envoie-le à ta team");break;}
+   case "copy-short":{var mc3=myCode();if(!mc3)return;try{navigator.clipboard.writeText(mc3).then(function(){toast("Code copié : "+mc3);});}catch(e){toast(mc3);}break;}
    case "share-ses":{var dd=findDay(v);if(!dd)return;shareCode("RushGym 💪 Séance « "+dd.name+" » à tester : "+encSes(dd),"Séance copiée : envoie-la à ton gymbro");break;}
    case "share-res":{var sr=S.sessions[v];if(!sr)return;shareCode("RushGym 💪 Mes stats sur ta séance « "+sr.name+" » : "+encRes(sr),"Stats copiées : envoie-les à "+((sr.from&&sr.from.n)||"ton gymbro"));break;}
    case "fsend-open":S.fsend=S.fsend===v?null:v;render();break;
