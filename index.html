@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=43">
+<link rel="manifest" href="manifest.webmanifest?v=44">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>RushGym</title>
 </head>
@@ -410,6 +410,8 @@ body.locked{position:fixed;left:0;right:0;overflow:hidden}
 .lb{display:flex;flex-direction:column}
 header.top .sync{display:none}
 .hico{position:relative;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);border:1px solid var(--edge);cursor:pointer;flex:none}.hbadge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--accent);color:#fff;font-size:10px;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center}
+.mxback{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20}.mxsheet{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));max-height:80vh;overflow-y:auto;border-radius:26px;padding:18px;z-index:21;display:flex;flex-direction:column;gap:10px;background:var(--bg)}.mxlist{display:flex;flex-direction:column}
+.bub.ses{cursor:pointer}
 .chatplus{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--edge);background:var(--glass);color:var(--fg);font-size:22px;line-height:1;cursor:pointer}
 .chatpick{position:fixed;left:10px;right:10px;bottom:calc(132px + env(safe-area-inset-bottom,0px));max-height:52vh;overflow-y:auto;border-radius:22px;padding:14px;z-index:7;display:flex;flex-direction:column;gap:6px}
 .pickrow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:14px;background:var(--glass);border:1px solid var(--edge);color:var(--fg);cursor:pointer}
@@ -657,7 +659,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=43;var APPDATE="2026-10-16";
+var APPV=44;var APPDATE="2026-10-16";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -2446,7 +2448,7 @@ function chatHm(t){var d=new Date(t);return String(d.getHours()).padStart(2,"0")
 function chatBubbles(){var f=S.friends[S.chat]||{},L=f.sc?convWith(f.sc):[],me=myCode(),h="",lastDay="";
   if(!L.length)return '<div class="chatempty"><b>Dis bonjour à '+esc(f.n||"ton gymbro")+' 👋</b><span class="xs muted">Motive-le, propose une séance ou chambre son dernier record.</span></div>';
   L.forEach(function(m){var d=new Date(m.t).toDateString();if(d!==lastDay){lastDay=d;var td=new Date().toDateString(),yd=new Date(Date.now()-864e5).toDateString();h+='<div class="chatday">'+(d===td?"Aujourd'hui":d===yd?"Hier":dlong(new Date(m.t).toISOString().slice(0,10)))+'</div>';}
-    var mine=m.f===me,so=sesOf(m);if(so){h+='<div class="bub ses'+(mine?" me":"")+'">'+sesBubble(m,so,mine)+'<small>'+chatHm(m.t)+(mine?(m.p===1?" · envoi…":m.p===2?" · non envoyé":" · ✓"):"")+'</small></div>';return;}h+='<div class="bub'+(mine?" me":"")+'"><span>'+esc(m.b)+'</span><small>'+chatHm(m.t)+(mine?(m.p===1?" · envoi…":m.p===2?" · non envoyé":" · ✓"):"")+'</small></div>';});
+    var mine=m.f===me,so=sesOf(m);if(so){h+='<div class="bub ses'+(mine?" me":"")+'"'+(m.id?' data-a="mx-open" data-v="'+m.id+'" role="button" tabindex="0"':'')+'>'+sesBubble(m,so,mine)+'<small>'+chatHm(m.t)+(mine?(m.p===1?" · envoi…":m.p===2?" · non envoyé":" · ✓"):"")+'</small></div>';return;}h+='<div class="bub'+(mine?" me":"")+'"><span>'+esc(m.b)+'</span><small>'+chatHm(m.t)+(mine?(m.p===1?" · envoi…":m.p===2?" · non envoyé":" · ✓"):"")+'</small></div>';});
   return h;}
 function chatScroll(){requestAnimationFrame(function(){window.scrollTo(0,document.body.scrollHeight);});}
 function chatAutosize(el){el.style.height="auto";el.style.height=Math.min(120,el.scrollHeight)+"px";}
@@ -2454,7 +2456,7 @@ function vChat(){var f=S.friends[S.chat]||{n:"?"},R2=rankOf(f.x||0);
   var h='<div class="shead glass"><button class="back" data-a="chat-close" aria-label="Retour">‹</button><span class="pav" style="--c:'+accHex(f.a)+'">'+esc((f.n||"?").charAt(0).toUpperCase())+'</span><div style="min-width:0"><h2 style="font-size:17px">'+esc(f.n)+'</h2><span class="xs muted">'+R2.name+' · '+big(f.x||0)+' XP</span></div></div>';
   if(!f.sc)h+='<section class="glass card stack" style="margin-top:12px"><b>Messagerie pas encore disponible avec '+esc(f.n)+'</b><p class="sm muted">Ce gymbro a été ajouté avec l\'ancien code. Demande-lui son code court (ex. ELENA-4K7) et rajoute-le : vous pourrez discuter.</p></section>';
   h+='<div class="chatlist" id="chatlist">'+chatBubbles()+'</div>';
-  if(f.sc)h+='<div class="chatquick">'+["💪 Go séance ?","🔥 Bien joué !","On s'entraîne quand ?","Tu bats mon record ?"].map(function(t){return '<button class="chip" data-a="chat-quick" data-v="'+esc(t)+'">'+esc(t)+'</button>';}).join("")+'</div>'+(S.chatPick?chatPicker():'')+'<div class="chatbar glass"><button class="chatplus" data-a="chat-pick" aria-label="Envoyer une séance">'+(S.chatPick?'×':'＋')+'</button><textarea id="chatin" rows="1" maxlength="500" placeholder="Message à '+esc(f.n)+'…"></textarea><button class="chatsend" data-a="chat-send" aria-label="Envoyer"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z"/></svg></button></div>';
+  if(f.sc)h+='<div class="chatquick">'+["💪 Go séance ?","🔥 Bien joué !","On s'entraîne quand ?","Tu bats mon record ?"].map(function(t){return '<button class="chip" data-a="chat-quick" data-v="'+esc(t)+'">'+esc(t)+'</button>';}).join("")+'</div>'+(S.chatPick?chatPicker():'')+(S.mxOpen?mxSheet():'')+'<div class="chatbar glass"><button class="chatplus" data-a="chat-pick" aria-label="Envoyer une séance">'+(S.chatPick?'×':'＋')+'</button><textarea id="chatin" rows="1" maxlength="500" placeholder="Message à '+esc(f.n)+'…"></textarea><button class="chatsend" data-a="chat-send" aria-label="Envoyer"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z"/></svg></button></div>';
   return h;}
 /* ---------- séances dans la messagerie ---------- */
 var SESMK="§S";
@@ -2474,8 +2476,13 @@ function sesBubble(m,o,mine){var fr=friendByCode(m.f),who=mine?"Ta séance":"Sé
     h+='<div><span>'+esc(L.name)+'</span><em>'+(x[1]&&x[1].length?x[1].length+'×'+(best&&best[0]?kg(best[0])+' kg':'')+(best&&best[1]?' · '+best[1]+' reps':''):'')+'</em></div>';});
   if(o.e.length>8)h+='<div><span class="muted">+ '+(o.e.length-8)+' autres</span></div>';
   h+='</div>';
-  if(m.id&&!mine)h+='<div class="row" style="gap:6px;margin-top:8px"><button class="btn line small" style="flex:1" data-a="mx-add" data-v="'+m.id+'">Garder</button><button class="btn small" style="flex:1.3" data-a="start" data-v="mx:'+m.id+'">Tester</button></div>';
+  if(m.id&&!mine)h+='<div class="row" style="gap:6px;margin-top:8px"><button class="btn line small" style="flex:1" data-a="mx-add" data-v="'+m.id+'">Ajouter</button><button class="btn small" style="flex:1.3" data-a="start" data-v="mx:'+m.id+'">La faire</button></div>';
   return h+'</div>';}
+function mxSheet(){var m=MSG.list.filter(function(x){return String(x.id)===String(S.mxOpen);})[0],o=sesOf(m);if(!o)return "";var mine=m.f===myCode(),fr=friendByCode(m.f);
+  var h='<div class="mxback" data-a="mx-close"></div><div class="mxsheet glass"><div class="row between"><span class="eyebrow">'+(mine?"Ta séance":"Séance de "+esc((fr&&fr.n)||"ton gymbro"))+'</span><button class="link" style="padding:0" data-a="mx-close">Fermer</button></div><b class="h2" style="display:block;font-size:22px">'+esc(o.n)+'</b><span class="xs muted">'+o.e.length+' exercices · environ '+estMin(o.e)+' min</span><div class="mxlist">';
+  o.e.forEach(function(x){var L=LIB[x[0]];if(!L)return;h+='<div class="exline">'+thumb(x[0],"s",o.c)+'<b>'+esc(L.name)+'</b><span class="r">'+((x[1]||[]).length?x[1].map(function(p){return (p[0]?kg(p[0])+' kg × ':'')+p[1];}).join('<br>'):esc(L.d||""))+'</span></div>';});
+  h+='</div><button class="btn" data-a="start" data-v="mx:'+m.id+'">▶ La faire maintenant</button><button class="btn line" data-a="mx-add" data-v="'+m.id+'">＋ Ajouter à mon programme</button></div>';
+  return h;}
 function chatPicker(){var ds=doneSessions().filter(function(s){return s.exercises&&s.exercises.length&&s.kind!=="run"&&s.kind!=="race";}).slice(-6).reverse(),P=PD().filter(function(d){return d.exercises&&d.exercises.length;}).slice(0,8);
   var h='<div class="chatpick glass"><div class="row between"><b>Envoyer une séance</b><button class="link" data-a="chat-pick" style="padding:0">Fermer</button></div>';
   if(ds.length)h+='<p class="eyebrow">Mes dernières séances</p>'+ds.map(function(s){return '<button class="pickrow" data-a="chat-ses" data-v="s:'+esc(s.id)+'"><b>'+esc(s.name)+'</b><span class="xs muted">'+dshort(s.start)+' · '+s.exercises.length+' exos</span></button>';}).join("");
@@ -3168,7 +3175,7 @@ function act(a,el){
   if(a!=="abandon"&&a!=="del"&&a!=="buy"&&a!=="ex-rm"&&a!=="friend-del"&&a!=="run-stop"&&a!=="day-del")S.confirm=null;
   switch(a){
    case "tab":S.tab=v;S.wkOff=0;S.wkOpen=null;S.open=null;S.build=null;S.dietEdit=false;if(v==="diet"){S.dietDay=ymd(new Date());if(!dprefs()&&!S.dobSkip&&S.profile){act("dob-open",{dataset:{}});return;}}render();window.scrollTo(0,0);break;
-   case "start":armAudio();if(S.active&&S.sessions[S.active]&&!S.sessions[S.active].done){S.view="session";render();toast("Termine d'abord ta séance en cours");break;}startSession(v);break;
+   case "start":S.mxOpen=null;armAudio();if(S.active&&S.sessions[S.active]&&!S.sessions[S.active].done){S.view="session";render();toast("Termine d'abord ta séance en cours");break;}startSession(v);break;
    case "sport":{if(!S.profile)return;if(v!=="fitness"&&!spData(v).lv&&spData(v).lv!==0){S.sob={sport:v,step:0,d:{}};S.view="sportob";render();window.scrollTo(0,0);break;}S.profile.sport=v;put("profil");S.open=null;render();break;}
    case "sob-edit":S.sob={sport:v,step:0,d:clone(spData(v)),edit:true};S.view="sportob";render();window.scrollTo(0,0);break;
    case "sob-set":{var sk=el.dataset.k;S.sob.d[sk]=sk==="lv"?+v:v;render();break;}
@@ -3288,9 +3295,11 @@ function act(a,el){
    case "friend-paste":pasteFriend();break;
    case "friend-open":S.fopen=S.fopen===v?null:v;render();break;
    case "friend-chat":S.chatFrom=S.view;S.chatPick=false;chatOpen(v);if(S.shareSes){var pb=sesPayload("s",S.shareSes);S.shareSes=null;if(pb)msgSendBody(v,pb);}break;
+   case "mx-open":S.mxOpen=v;S.chatPick=false;render();break;
+   case "mx-close":S.mxOpen=null;render();chatScroll();break;
    case "chat-pick":S.chatPick=!S.chatPick;render();chatScroll();break;
    case "chat-ses":{var sp2=v.split(":"),pb2=sesPayload(sp2[0],sp2.slice(1).join(":"));S.chatPick=false;render();if(!pb2){toast("Séance impossible à envoyer");break;}msgSendBody(S.chat,pb2);chatScroll();break;}
-   case "mx-add":{var md=mxDay(v);if(!md)return;md.id=uid("d");md.from=md.from||{n:"un gymbro"};S.program.days.push(md);put("programme");if(S.profile&&curSport()!=="fitness"){S.profile.sport="fitness";put("profil");}toast("« "+md.name+" » ajoutée à ton programme");break;}
+   case "mx-add":{var md=mxDay(v);if(!md)return;md.id=uid("d");md.from=md.from||{n:"un gymbro"};S.program.days.push(md);put("programme");if(S.profile&&curSport()!=="fitness"){S.profile.sport="fitness";put("profil");}S.mxOpen=null;if(S.view==="chat"){render();chatScroll();}toast("« "+md.name+" » ajoutée à ton programme");break;}
    case "share-msg":S.shareSes=v;S.view="inbox";render();window.scrollTo(0,0);break;
    case "inbox-open":S.view="inbox";render();window.scrollTo(0,0);sbPullMsgs();break;
    case "share-cancel":S.shareSes=null;render();break;
