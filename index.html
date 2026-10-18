@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=55">
+<link rel="manifest" href="manifest.webmanifest?v=56">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0}img{max-width:100%}:where(input:not([type=file]),textarea,select){font-size:16px}</style>
 <title>RushGym</title>
 </head>
@@ -819,7 +819,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=55;var APPDATE="2026-10-18";
+var APPV=56;var APPDATE="2026-10-18";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -1838,8 +1838,8 @@ function vPremium(){var yr=S.billing==="y",RD=rankDisc(),h='<div class="shead gl
   h+='<p class="xs muted" style="text-align:center;padding:0 10px">Abonnement sans engagement, résiliable à tout moment depuis ton iPhone. La meilleure réduction s\'applique (Fondateur ou rang), sans cumul.</p>';
   return h;}
 /* ---------- nouveautés ---------- */
-var NEWSV=49;
-var NEWS=[["#FFB020","✅","Quêtes du jour","Trois quêtes chaque jour, des pièces à la clé, et un bonus si tu les valides toutes."],["#FFD60A","🏆","Classement France et Monde","Compare-toi à tous les utilisateurs RushGym : XP, séances, développé couché, squat et soulevé de terre."],["#FF2D7A","📲","Partage en story","Ton record, ta séance ou ton rang en visuel prêt pour Instagram et TikTok."],["#1E88E5","⏱","Fin de repos","Une notification et une vibration quand ton repos est fini."],["#2BB673","📍","Salle corrigée","Ta salle a été enregistrée au mauvais endroit ? Tu peux la réenregistrer depuis ta séance."]];
+var NEWSV=50;
+var NEWS=[["#7A5CFF","🤖","L'IA reconnaît ta salle","Prends ta salle en photo : l'IA vérifie que c'est bien une salle de sport, et pas une photo d'écran. Plus besoin de localisation, et ça marche dans toutes les salles."],["#FFB020","✅","Quêtes du jour","Trois quêtes chaque jour, des pièces à la clé."],["#FFD60A","🏆","Classement France et Monde","XP, séances, développé couché, squat et soulevé de terre."],["#FF2D7A","📲","Partage en story","Ton record, ta séance ou ton rang en visuel."]];
 var NEWS_OLD=[["#FF6A2B","🏃","Hyrox et Course","Deux nouvelles sections avec leur profil, leurs programmes, la simulation Hyrox chronométrée et les sorties GPS."],
  ["#2BB673","↗","Progression automatique","Tes charges sont préparées d'après ta dernière séance. Règle ton palier pour chaque exercice : +2,5 kg, +5 kg, +10 kg ou ce que tu veux."],
  ["#7A5CFF","★","RushGym+ et Fondateurs","Les futures formules, les 500 places Fondateurs, les réductions de rang et un cadeau avec l'abonnement annuel. Tout reste offert pendant la bêta."]];
@@ -1847,7 +1847,7 @@ var LOGTIP="Note chaque série exactement comme tu l'as faite : la vraie charge,
 function newsSeen(){try{return +localStorage.getItem("rg-news")||0;}catch(e){return NEWSV;}}
 function newsDone(){try{localStorage.setItem("rg-news",String(NEWSV));}catch(e){}}
 function newsCheck(){if(S.profile&&S.view==="tabs"&&!S.active&&newsSeen()<NEWSV){S.newsBack="tabs";S.view="news";render();window.scrollTo(0,0);}}
-var NEWSK=[["#FFB020","✅","Quêtes du jour","3 quêtes, des pièces chaque jour."],["#FFD60A","🏆","Classement","France et Monde, par exercice."],["#FF2D7A","📲","Story","Partage ton record en un geste."],["#1E88E5","⏱","Fin de repos","Notification et vibration."],["#2BB673","📍","Salle corrigée","Réenregistre ta salle si besoin."]];
+var NEWSK=[["#7A5CFF","🤖","IA salle","Reconnaît ta salle, partout."],["#FFB020","✅","Quêtes du jour","3 quêtes, des pièces."],["#FFD60A","🏆","Classement","France et Monde."],["#FF2D7A","📲","Story","Partage ton record."]];
 function vNews(){var k=S.newsK,h='<div class="news2">';
   h+='<div class="n2top"><span class="premlogo">'+LOGO+'</span><span class="n2date">'+esc(majTxt().replace("Mise à jour du ",""))+'</span></div>';
   h+='<h1 class="n2title">Du nouveau<br>dans ta poche.</h1><p class="n2sub">Touche un mot pour en savoir plus.</p>';
@@ -3036,15 +3036,15 @@ function hydratePhotos(){Array.prototype.forEach.call(document.querySelectorAll(
 function proofCard(s){
   var p=s.proof,h='<section class="glass card stack proof" id="proof">';
   if(PH&&PH.state==="busy")return h+'<p class="eyebrow">Preuve de salle</p><p class="sm">'+esc(PH.msg)+'</p><div class="meter"><i class="indet"></i></div></section>';
-  if(p){var st=p.ok?(p.ai==="oui"||p.ai==="geo"?["good","Salle confirmée"]:["good","Photo validée"]):["hot","Photo refusée"];
+  if(p){var st=p.ai==="attente"?["accent","Vérification IA à venir"]:p.ok?(p.ai==="oui"?["good","Salle reconnue par l\'IA"]:p.ai==="geo"?["good","Salle confirmée"]:["good","Photo validée"]):["hot","Photo refusée"];
     h+='<div class="row between"><p class="eyebrow">Preuve de salle</p><span class="pchip" style="--c:var(--'+st[0]+')">'+st[1]+'</span></div>'+photoTag(p.ref,"proofimg")+
-     '<p class="xs muted">Prise le '+dlong(p.at)+' à '+hhmm(p.at)+' · code '+esc(p.code)+(p.dist!=null?" · à "+fmtDist(p.dist)+" de ta salle":p.ai==="indispo"?" · date contrôlée":"")+'</p>';
+     '<p class="xs muted">Prise le '+dlong(p.at)+' à '+hhmm(p.at)+' · code '+esc(p.code)+(p.dist!=null?" · à "+fmtDist(p.dist)+" de ta salle":p.ai==="attente"?" · l\'IA la vérifiera dès que possible":p.ai==="indispo"?" · date contrôlée":"")+'</p>';
     if(!p.ok)h+='<p class="sm" style="color:var(--hot);font-weight:600">'+esc(p.reason||"Ça ne ressemble pas à une salle de sport.")+' La séance ne rapportera que la moitié des XP.</p>';
     if(!p.ok&&p.dist!=null&&gymCooldown()===0)h+='<button class="btn" data-a="gym-here">Ma salle est ici : la réenregistrer</button><p class="xs muted">Si ta salle a été enregistrée au mauvais endroit, chez toi par exemple. Possible une fois librement, puis une fois par mois.</p>';if(!p.ok||(PH&&PH.state==="err"))h+=camBtn("Reprendre une photo");
     if(PH&&PH.state==="err")h+='<p class="sm" style="color:var(--hot);font-weight:600">'+esc(PH.msg)+'</p>';
     return h+'</section>';}
   if(useGeo()&&!(S.profile&&S.profile.gym)){h+='<div class="row between"><p class="eyebrow">Preuve de salle</p><span class="pchip" style="--c:var(--accent)">À faire</span></div><p class="sm">D\'abord, enregistre la position de ta salle. Fais-le une seule fois, quand tu es dedans : ensuite, chaque photo devra être prise sur place.</p>'+(PH&&PH.state==="err"?'<p class="sm" style="color:var(--hot);font-weight:600">'+esc(PH.msg)+'</p>'+(PH.pos?'<button class="btn line small" data-a="gym-force">Enregistrer quand même</button>':''):'')+'<button class="btn" data-a="gym-set">Je suis à ma salle : l\'enregistrer</button><p class="xs muted">Tu pourras corriger ta salle une fois librement, puis une fois par mois.</p>'+(PH&&PH.state==="err"?'<p class="xs muted" style="margin-top:6px">La localisation ne marche pas ?</p>'+camBtn("Prendre la photo sans localisation"):'')+'</section>';return h;}
-  h+='<div class="row between"><p class="eyebrow">Preuve de salle</p><span class="pchip" style="--c:var(--accent)">À faire</span></div><p class="sm">Prends une photo de ta salle maintenant. Elle est datée et vérifiée. Sans photo, la séance ne rapporte que la moitié des XP et ne compte pas pour les quêtes.</p>';
+  h+='<div class="row between"><p class="eyebrow">Preuve de salle</p><span class="pchip" style="--c:var(--accent)">À faire</span></div><p class="sm">Prends une photo de ta salle maintenant. Elle est datée, et l\'IA vérifie que c\'est bien une vraie salle de sport : machines, poids, racks. Ça marche dans n\'importe quelle salle, même si tu en changes. Sans photo, la séance ne rapporte que la moitié des XP et ne compte pas pour les quêtes.</p>';
   if(PH&&PH.state==="err")h+='<p class="sm" style="color:var(--hot);font-weight:600">'+esc(PH.msg)+'</p>';
   return h+camBtn("Prendre la photo de ma salle")+'</section>';}
 function camBtn(label){return '<label class="btn" for="gymcam"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>'+label+'</label><input type="file" id="gymcam" accept="image/*" capture="environment" hidden>';}
@@ -3069,7 +3069,7 @@ async function handlePhoto(file){
       if(!r||r.err||!g){ai={v:"indispo"};}else{
       dist=Math.round(distM(g,r.p));var lim=Math.min(1000,Math.max(250,r.p.acc+(g.acc||0)));
       ai=dist<=lim?{v:"geo"}:{v:"non",reason:"Photo prise à "+fmtDist(dist)+" de ta salle enregistrée."};}}
-    else ai=await aiCheck(blob);
+    else ai=await gymAI(blob,file);
     PH.msg="Enregistrement…";renderProof();
     var ref=await savePhoto(blob);
     s.proof={ref:ref,at:now,ok:ai.v!=="non",ai:ai.v,reason:ai.reason||"",hash:hash,code:code,dist:dist};
@@ -3168,7 +3168,7 @@ var QI=Math.floor(Math.random()*QUOTES.length);
 setInterval(function(){var q=document.getElementById("quote");if(!q)return;q.style.opacity=0;setTimeout(function(){QI=(QI+1)%QUOTES.length;q.textContent=QUOTES[QI];q.style.opacity=1;},420);},7000);
 
 /* ---------- gym location check (home-screen app) ---------- */
-function useGeo(){return !(window.claude&&window.claude.use)&&!!navigator.geolocation;}
+function useGeo(){return false;}
 function getPos(){return new Promise(function(ok0,ko0){var dn=false,tm=setTimeout(function(){if(!dn){dn=true;ko0({code:"fail"});}},18000);function ok(v){if(!dn){dn=true;clearTimeout(tm);ok0(v);}}function ko(v){if(!dn){dn=true;clearTimeout(tm);ko0(v);}}if(!navigator.geolocation)return ko({code:"none"});navigator.geolocation.getCurrentPosition(function(p){ok({lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy)});},function(e){ko({code:e&&e.code===1?"denied":"fail"});},{enableHighAccuracy:true,timeout:15000,maximumAge:0});});}
 function distM(a,b){var R=6371000,t=Math.PI/180,dLa=(b.lat-a.lat)*t,dLo=(b.lng-a.lng)*t,x=Math.pow(Math.sin(dLa/2),2)+Math.cos(a.lat*t)*Math.cos(b.lat*t)*Math.pow(Math.sin(dLo/2),2);return 2*R*Math.asin(Math.sqrt(x));}
 function fmtDist(m){return m<1000?Math.round(m/10)*10+" m":(Math.round(m/100)/10+" km").replace(".",",");}
@@ -3950,6 +3950,37 @@ function p55Act(a,v,i,el){if(!P55A.test(a))return false;switch(a){
   case "gym-force":{var p=PH&&PH.pos;if(!p)return true;S.profile.gym={lat:p.lat,lng:p.lng,acc:p.acc,setAt:Date.now()};put("profil");PH=null;render();toast("Salle enregistrée");return true;}
  }return false;}
 function p55Order(order){if(order.indexOf("dq")<0){var ix=order.indexOf("chal");order.splice(ix>=0?ix+1:1,0,"dq");}return order;}
+/* ================= v56 : reconnaissance de salle par IA (sur l'appareil) ================= */
+var CLIPV="3.0.2",CLIPM="Xenova/clip-vit-base-patch32",CLIP={p:null,st:"idle",err:"",files:{},pct:0};
+function clipPct(){var l=0,t=0;Object.keys(CLIP.files).forEach(function(k){l+=CLIP.files[k][0];t+=CLIP.files[k][1];});return t?Math.round(l/t*100):0;}
+function clipLoad(){if(CLIP.p)return CLIP.p;CLIP.st="load";CLIP.err="";
+  CLIP.p=import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@"+CLIPV).then(function(T){T.env.allowLocalModels=false;
+    return T.pipeline("zero-shot-image-classification",CLIPM,{progress_callback:function(e){if(e&&e.file&&e.total){CLIP.files[e.file]=[e.loaded||0,e.total];CLIP.pct=clipPct();if(PH&&PH.state==="busy"&&PH.ai){PH.msg="Préparation de la vérification IA… "+CLIP.pct+" %";renderProof();}}}});})
+   .then(function(f){CLIP.st="ok";try{localStorage.setItem("rg-clip","1");}catch(e){}return f;},function(e){CLIP.st="err";CLIP.err=String(e&&e.message||e);CLIP.p=null;throw e;});
+  return CLIP.p;}
+var GYML=["a gym with weight machines","dumbbells and barbells on a rack","a fitness center with exercise equipment","a squat rack in a weight room","treadmills and cardio machines in a gym","a person lifting weights in a gym","a cable machine in a gym","a home gym with weights and a bench"];
+var SCRL=["a photo of a computer screen","a photo of a smartphone screen","a photo of a television screen","a printed photograph on paper"];
+var OTHL=[["a living room","un salon"],["a bedroom with a bed","une chambre"],["a kitchen","une cuisine"],["a bathroom","une salle de bain"],["an office with a desk","un bureau"],["a city street","une rue"],["the inside of a car","l'intérieur d'une voiture"],["a restaurant or a bar","un restaurant"],["a supermarket","un magasin"],["nature outdoors","l'extérieur"],["a close-up selfie of a face","un selfie"],["a very dark blurry photo","une photo floue ou trop sombre"],["a wall or a ceiling","un mur ou un plafond"],["a floor or a carpet","un sol"]];
+async function clipCheck(url){var f=await clipLoad(),labels=GYML.concat(SCRL,OTHL.map(function(x){return x[0];}));
+  var out=await f(url,labels),sc={};(out||[]).forEach(function(o){sc[o.label]=o.score;});
+  var gym=0,scr=0;GYML.forEach(function(l){gym+=sc[l]||0;});SCRL.forEach(function(l){scr+=sc[l]||0;});
+  var top=OTHL.slice().sort(function(a,b){return (sc[b[0]]||0)-(sc[a[0]]||0);})[0];
+  if(scr>=0.35&&scr>gym)return {v:"non",reason:"On dirait une photo d'écran ou d'une image imprimée. Prends ta salle en vrai, devant toi.",g:Math.round(gym*100)};
+  if(gym>=0.45)return {v:"oui",g:Math.round(gym*100)};
+  if(gym>=0.25)return {v:"doute",g:Math.round(gym*100)};
+  return {v:"non",reason:"Ça ne ressemble pas à une salle de sport (on dirait "+top[1]+"). Cadre les machines, les poids ou les racks.",g:Math.round(gym*100)};}
+async function gymAI(blob,file){if(window.claude&&window.claude.use){var r=await aiCheck(blob);if(r.v!=="indispo")return r;}
+  try{if(PH){PH.ai=true;PH.msg=CLIP.st==="ok"?"L'IA vérifie ta salle…":"Préparation de la vérification IA…";renderProof();}
+    var small=await shrinkBlob(file||blob,512),url=URL.createObjectURL(small),res=await clipCheck(url);URL.revokeObjectURL(url);return res;}
+  catch(e){return {v:"attente"};}}
+/* précharger le modèle en arrière-plan pour qu'il soit prêt à la salle */
+function clipPrefetch(){if(!S.profile||CLIP.p)return;var sp=curSport();if(sp==="home"||sp==="pilates")return;setTimeout(function(){if(!document.hidden)clipLoad().catch(function(){});},12000);}
+/* revérifier les photos prises hors ligne */
+async function clipRecheck(){var L=Object.keys(S.sessions).map(function(k){return S.sessions[k];}).filter(function(s){return s.proof&&s.proof.ai==="attente"&&s.proof.ref&&s.proof.ref.indexOf("i:")===0;});if(!L.length)return;
+  for(var i=0;i<L.length;i++){var s=L[i];try{var b=await idbGet(s.proof.ref.slice(2));if(!b)continue;var u=URL.createObjectURL(b),r=await clipCheck(u);URL.revokeObjectURL(u);
+    s.proof.ai=r.v;s.proof.ok=r.v!=="non";s.proof.reason=r.reason||"";put("s:"+s.id);if(!s.proof.ok)toast("Photo de ta séance du "+dshort(s.start)+" refusée par l'IA");}catch(e){return;}}
+  if(S.view==="tabs"||S.view==="session")render();}
+setTimeout(function(){try{clipPrefetch();if(localStorage.getItem("rg-clip")==="1"||Object.keys(S.sessions).some(function(k){var p=S.sessions[k].proof;return p&&p.ai==="attente";}))setTimeout(function(){clipRecheck().catch(function(){});},20000);}catch(e){}},3000);
 
 /* ---------- actions ---------- */
 function startSession(dayId){
