@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#07080E">
 <link rel="apple-touch-icon" href="rg-icon-180.png">
 <link rel="icon" type="image/png" href="rg-icon-192.png">
-<link rel="manifest" href="manifest.webmanifest?v=56">
+<link rel="manifest" href="manifest.webmanifest?v=57">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0}img{max-width:100%}:where(input:not([type=file]),textarea,select){font-size:16px}</style>
 <title>RushGym</title>
 </head>
@@ -819,7 +819,7 @@ function draw(msg){
 <script>
 (function(){
 "use strict";
-var APPV=56;var APPDATE="2026-10-18";
+var APPV=57;var APPDATE="2026-10-18";
 function majTxt(){var d=new Date(APPDATE+"T12:00:00");return "Mise à jour du "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" "+d.getFullYear();}
 var REPS=[12,10,8];
 var GROUPS=["Pectoraux","Dos","Jambes","Épaules","Bras","Abdos","Autre"];
@@ -3705,7 +3705,7 @@ function liveInfo(){if(S.profile&&S.profile.liveOff)return null;var s=S.active&&
   if(L)o.e=evx(L);o.h=ev.slice(-5).reverse().slice(1).map(evx);
   var nx=null;for(var i=0;i<s.exercises.length;i++){if(s.exercises[i].sets.some(function(x){return !x.done;})){nx=s.exercises[i].name;break;}}o.nx=nx;return o;}
 function agoS(t){return Date.now()-t<60000?"à l'instant":ago(t);}
-function isLive(f){var l=f&&f.lv;if(!l)return false;var now=Date.now();return now-(l.at||l.st)<25*60000&&now-l.st<4*3600000;}
+function isLive(f){var l=f&&f.lv;if(!l||!l.st)return false;var now=Date.now(),ref=Math.max(f.u||0,l.at||0,l.st||0);return now-ref<20*60000&&now-l.st<5*3600000;}
 function liveFriends(){return Object.keys(S.friends||{}).map(function(k){return S.friends[k];}).filter(isLive).sort(function(a,b){return (b.lv.at||0)-(a.lv.at||0);});}
 function pav(f,cls){return '<span class="pav '+(cls||"")+'" style="--c:'+accHex(f.a)+'">'+esc((f.n||"?").charAt(0).toUpperCase())+'</span>';}
 function liveLine(l){if(!l.e)return 'vient de lancer <b>'+esc(l.n)+'</b>';return 'vient de finir <b>'+esc(l.e[0])+'</b> · série '+l.e[1]+'/'+l.e[2]+(l.e[3]?' · '+esc(l.e[3]):'')+(l.e[5]?' · 🏆 record':'');}
@@ -3981,6 +3981,8 @@ async function clipRecheck(){var L=Object.keys(S.sessions).map(function(k){retur
     s.proof.ai=r.v;s.proof.ok=r.v!=="non";s.proof.reason=r.reason||"";put("s:"+s.id);if(!s.proof.ok)toast("Photo de ta séance du "+dshort(s.start)+" refusée par l'IA");}catch(e){return;}}
   if(S.view==="tabs"||S.view==="session")render();}
 setTimeout(function(){try{clipPrefetch();if(localStorage.getItem("rg-clip")==="1"||Object.keys(S.sessions).some(function(k){var p=S.sessions[k].proof;return p&&p.ai==="attente";}))setTimeout(function(){clipRecheck().catch(function(){});},20000);}catch(e){}},3000);
+/* direct : battement régulier pendant la séance, pour rester visible même pendant un long repos */
+setInterval(function(){var s=S.active&&S.sessions[S.active];if(!s||s.done||s.kind||!S.profile||document.hidden||typeof sbSoon!=="function")return;sbSoon("card",200);},90000);
 
 /* ---------- actions ---------- */
 function startSession(dayId){
